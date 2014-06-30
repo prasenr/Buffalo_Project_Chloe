@@ -244,7 +244,7 @@ static NSDateFormatter *dateFormatter = nil;
     [contactAddressListView.view removeFromSuperview];
 }
 
-/*-(void) onShowContactAddressEditorView:(NSNotification *)notification {
+-(void) onShowContactAddressEditorView:(NSNotification *)notification {
     contactAddressEditorView = [[AddressEditorViewController alloc] init];
     
     [self.view addSubview:contactAddressEditorView.view];
@@ -254,7 +254,17 @@ static NSDateFormatter *dateFormatter = nil;
     [contactAddressEditorView.view removeFromSuperview];
 }
 
--(void) onShowAddedAddress:(NSNotification *)notification {
+-(void)onShowAddressSearchResults:(NSNotification *)notification {
+    
+}
+
+-(void)onAddAddress:(NSNotification *)notification {
+    
+}
+
+
+
+/*-(void) onShowAddedAddress:(NSNotification *)notification {
     
     AddressHistoryModel *newAddress = [[notification userInfo] valueForKey:@"address"];
     [contactAddressListView addAddress:newAddress];
