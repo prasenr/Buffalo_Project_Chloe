@@ -10,6 +10,7 @@
 #import <LBBlurredImage/UIImageView+LBBlurredImage.h>
 #import "AddressModel.h"
 #import "AddressHistoryModel.h"
+#import "ContactAddressSearchViewController.h"
 
 @interface ContactProfileConversationViewController ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
@@ -26,7 +27,7 @@
 @property (nonatomic, strong) UIView *buttonContent;
 @property (nonatomic, strong) UIImageView *loaderImage;
 @property (nonatomic, strong) UIButton *cancelButton;
-
+@property (nonatomic, strong) ContactAddressSearchViewController *addressSearchResults;
 @end
 
 static NSDateFormatter *dateFormatter = nil;
@@ -177,6 +178,7 @@ static NSDateFormatter *dateFormatter = nil;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactAddressListView:) name:@"cancelContactAddressesList" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactAddressEditorView:) name:@"showContactAddressEditor" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactAddressEditorView:) name:@"cancelAddressEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowAddressSearchResults:) name:@"searchForContactAddress" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddAddress:) name:@"addAddress" object:nil];
 }
 
@@ -255,7 +257,24 @@ static NSDateFormatter *dateFormatter = nil;
 }
 
 -(void)onShowAddressSearchResults:(NSNotification *)notification {
+    NSString *searchText = [[notification userInfo] valueForKey:@"searchText"];
+    self.addressSearchResults = [[ContactAddressSearchViewController alloc] initWithSearch:searchText initWithNibName:@"ContactAddressSearchViewController" bundle:nil];
     
+    CGRect initalFrame = self.addressSearchResults.view.frame;
+    initalFrame.origin.x = self.view.bounds.size.width;
+    
+    self.addressSearchResults.view.frame = initalFrame;
+    
+    CGRect editorTo = CGRectMake(-self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    CGRect resultsTo = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDidStopSelector:@selector(removeAddressListView:finished:context:)];
+    [UIView setAnimationDuration:.5];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
+    contactAddressEditorView.view.frame = editorTo;
+    self.addressSearchResults.view.frame = resultsTo;
+    [UIView commitAnimations];
 }
 
 -(void)onAddAddress:(NSNotification *)notification {

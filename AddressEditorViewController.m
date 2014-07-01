@@ -75,8 +75,8 @@
         address.addressLine1 = [NSMutableString stringWithString:self.accountInput.text];
         addressHistory.account = address;
         
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:addressHistory forKey:@"address"];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"addAddress" object:nil userInfo:userInfo];
+        NSDictionary *userInfo =[NSDictionary dictionaryWithObject:self.accountInput.text forKey:@"searchText"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"searchForContactAddress" object:nil userInfo:userInfo];
     }
     return YES;
 }

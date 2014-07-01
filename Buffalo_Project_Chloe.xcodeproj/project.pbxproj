@@ -109,6 +109,11 @@
 		644894431940B7A1007F9F3E /* cancelCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 644894421940B7A1007F9F3E /* cancelCloseButton.png */; };
 		644894471940BC79007F9F3E /* MeetingEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 644894451940BC79007F9F3E /* MeetingEditorViewController.m */; };
 		644894481940BC79007F9F3E /* MeetingEditorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 644894461940BC79007F9F3E /* MeetingEditorViewController.xib */; };
+		647D9AFF1962422300319938 /* ContactAddressSearchClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 647D9AFE1962422300319938 /* ContactAddressSearchClient.m */; };
+		647D9B02196243FC00319938 /* ContactAddressSearchController.m in Sources */ = {isa = PBXBuildFile; fileRef = 647D9B01196243FC00319938 /* ContactAddressSearchController.m */; };
+		647D9B05196249E900319938 /* AddressSearchModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 647D9B04196249E900319938 /* AddressSearchModel.m */; };
+		647D9B09196257AF00319938 /* ContactAddressSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 647D9B07196257AF00319938 /* ContactAddressSearchViewController.m */; };
+		647D9B0A196257AF00319938 /* ContactAddressSearchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 647D9B08196257AF00319938 /* ContactAddressSearchViewController.xib */; };
 		6484D1471940FF4700D8A0A3 /* NSObject+MeetingModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6484D1461940FF4700D8A0A3 /* NSObject+MeetingModel.m */; };
 		6484D14A1941281600D8A0A3 /* NSObject+MeetingClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 6484D1491941281600D8A0A3 /* NSObject+MeetingClient.m */; };
 		6484D14D19415E4C00D8A0A3 /* MeetingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6484D14C19415E4C00D8A0A3 /* MeetingsController.m */; };
@@ -415,6 +420,15 @@
 		644894441940BC79007F9F3E /* MeetingEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetingEditorViewController.h; sourceTree = "<group>"; };
 		644894451940BC79007F9F3E /* MeetingEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetingEditorViewController.m; sourceTree = "<group>"; };
 		644894461940BC79007F9F3E /* MeetingEditorViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MeetingEditorViewController.xib; sourceTree = "<group>"; };
+		647D9AFD1962422300319938 /* ContactAddressSearchClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactAddressSearchClient.h; sourceTree = "<group>"; };
+		647D9AFE1962422300319938 /* ContactAddressSearchClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactAddressSearchClient.m; sourceTree = "<group>"; };
+		647D9B00196243FC00319938 /* ContactAddressSearchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactAddressSearchController.h; sourceTree = "<group>"; };
+		647D9B01196243FC00319938 /* ContactAddressSearchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactAddressSearchController.m; sourceTree = "<group>"; };
+		647D9B03196249E900319938 /* AddressSearchModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddressSearchModel.h; sourceTree = "<group>"; };
+		647D9B04196249E900319938 /* AddressSearchModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddressSearchModel.m; sourceTree = "<group>"; };
+		647D9B06196257AF00319938 /* ContactAddressSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactAddressSearchViewController.h; sourceTree = "<group>"; };
+		647D9B07196257AF00319938 /* ContactAddressSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactAddressSearchViewController.m; sourceTree = "<group>"; };
+		647D9B08196257AF00319938 /* ContactAddressSearchViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ContactAddressSearchViewController.xib; sourceTree = "<group>"; };
 		6484D1451940FF4700D8A0A3 /* NSObject+MeetingModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+MeetingModel.h"; sourceTree = "<group>"; };
 		6484D1461940FF4700D8A0A3 /* NSObject+MeetingModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+MeetingModel.m"; sourceTree = "<group>"; };
 		6484D1481941281600D8A0A3 /* NSObject+MeetingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+MeetingClient.h"; sourceTree = "<group>"; };
@@ -901,6 +915,17 @@
 			name = PLaceholders;
 			sourceTree = "<group>";
 		};
+		647D9AFC196241CC00319938 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				647D9AFD1962422300319938 /* ContactAddressSearchClient.h */,
+				647D9AFE1962422300319938 /* ContactAddressSearchClient.m */,
+				647D9B00196243FC00319938 /* ContactAddressSearchController.h */,
+				647D9B01196243FC00319938 /* ContactAddressSearchController.m */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
 		6484D1411940FD8600D8A0A3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -1010,6 +1035,7 @@
 		648DD94C194A38A40034872B /* Addresses */ = {
 			isa = PBXGroup;
 			children = (
+				647D9AFC196241CC00319938 /* Controller */,
 				648DD977194F84150034872B /* Model */,
 				648DD976194F84110034872B /* View */,
 			);
@@ -1133,6 +1159,9 @@
 				648DDA15195C69F80034872B /* AddressEditorViewController.h */,
 				648DDA16195C69F80034872B /* AddressEditorViewController.m */,
 				648DDA17195C69F80034872B /* AddressEditorViewController.xib */,
+				647D9B06196257AF00319938 /* ContactAddressSearchViewController.h */,
+				647D9B07196257AF00319938 /* ContactAddressSearchViewController.m */,
+				647D9B08196257AF00319938 /* ContactAddressSearchViewController.xib */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -1144,6 +1173,8 @@
 				648DD94E194A38B60034872B /* AddressModel.m */,
 				648DD9E619507E660034872B /* AddressHistoryModel.h */,
 				648DD9E719507E660034872B /* AddressHistoryModel.m */,
+				647D9B03196249E900319938 /* AddressSearchModel.h */,
+				647D9B04196249E900319938 /* AddressSearchModel.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -1793,6 +1824,7 @@
 				648DD93D194A2CA50034872B /* bigl.png in Resources */,
 				643773B319230C4900DAFA80 /* will.png in Resources */,
 				64C9BA9519106A7B0008C83B /* ColabBol.otf in Resources */,
+				647D9B0A196257AF00319938 /* ContactAddressSearchViewController.xib in Resources */,
 				648DD914194A2A470034872B /* z.png in Resources */,
 				648E6E1C192E57D700E46C1A /* Icon_58.png in Resources */,
 				64000D2D192FC636001FC2EC /* plusWhite.png in Resources */,
@@ -1937,12 +1969,14 @@
 				6484D15F1948BB0D00D8A0A3 /* ToDoListViewController.m in Sources */,
 				643773601922F40D00DAFA80 /* NSObject+PersonModel.m in Sources */,
 				648DD9DC195079920034872B /* FacebookAccountHistoryModel.m in Sources */,
+				647D9AFF1962422300319938 /* ContactAddressSearchClient.m in Sources */,
 				64C9BAD71911E74D0008C83B /* TodosViewController.m in Sources */,
 				64C9BA77190F2CB80008C83B /* TodayViewController.m in Sources */,
 				6437736E192308D700DAFA80 /* SearchButton.m in Sources */,
 				648DD9B8194FD6F30034872B /* PhoneNumberModel.m in Sources */,
 				6484D1501941746C00D8A0A3 /* ToDoModel.m in Sources */,
 				64C9BA9E19109B190008C83B /* NSObject+TodaySummaryItems.m in Sources */,
+				647D9B05196249E900319938 /* AddressSearchModel.m in Sources */,
 				64C9BAAF1911091A0008C83B /* NSObject+UserUtil.m in Sources */,
 				643773721923092300DAFA80 /* MoreOptionsViewController.m in Sources */,
 				648DD9CA194FE8990034872B /* TwitterAccountModel.m in Sources */,
@@ -1987,6 +2021,7 @@
 				6437735B1922F35C00DAFA80 /* ContactGridPictureViewController.m in Sources */,
 				64C9BA8F190FD4D40008C83B /* WeatherCondition+DailyForecastModel.m in Sources */,
 				64C9BA86190FD44D0008C83B /* NSObject+WeatherController.m in Sources */,
+				647D9B09196257AF00319938 /* ContactAddressSearchViewController.m in Sources */,
 				648DD96A194F83960034872B /* ContactAddressListViewController.m in Sources */,
 				648DD9C1194FE1070034872B /* FacebookAccountModel.m in Sources */,
 				6484D14D19415E4C00D8A0A3 /* MeetingsController.m in Sources */,
@@ -2003,6 +2038,7 @@
 				640DAAAB190F1A2800F6545D /* main.m in Sources */,
 				648DD9E519507CD10034872B /* PhoneNumberHistoryModel.m in Sources */,
 				648DD9A5194F850E0034872B /* ContactLinkedInAccountListViewController.m in Sources */,
+				647D9B02196243FC00319938 /* ContactAddressSearchController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
