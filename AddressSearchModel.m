@@ -12,11 +12,14 @@
 
 +(NSDictionary *) JSONKeyPathsByPropertyKey {
     return @{
-             @"addressLine1": @"addressLine1",
-             @"addressLine2": @"addressLine2",
-             @"city": @"city",
-             @"state": @"state",
-             @"zipcode": @"zipcode"
+             @"addressLine1": @"street",
+             @"city": @"adminArea5",
+             @"county": @"adminArea4",
+             @"state": @"adminArea3",
+             @"zipcode": @"postalCode",
+             @"country" : @"adminArea1",
+             @"latitude" : @"latLng.lat",
+             @"longitude" : @"latLng.lng"
              };
 }
 @end

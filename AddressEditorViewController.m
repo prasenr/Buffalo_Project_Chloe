@@ -77,6 +77,8 @@
         
         NSDictionary *userInfo =[NSDictionary dictionaryWithObject:self.accountInput.text forKey:@"searchText"];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"searchForContactAddress" object:nil userInfo:userInfo];
+        
+        [self.accountInput resignFirstResponder];
     }
     return YES;
 }

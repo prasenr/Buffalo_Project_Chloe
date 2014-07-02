@@ -15,6 +15,7 @@
 @interface ContactProfileConversationViewController ()
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIImageView *blurredImageView;
+@property (nonatomic, strong) UIView *tableParentContainer;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, assign) CGFloat screenHeight;
 @property (nonatomic, strong) UILabel *profileSectionLabel;
@@ -70,11 +71,14 @@ static NSDateFormatter *dateFormatter = nil;
    // [self.blurredImageView setImageToBlur:background blurRadius:10 completionBlock:nil];
     [self.view addSubview:self.blurredImageView];
     
+    self.tableParentContainer = [[UIView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:self.tableParentContainer];
+    
     self.tableView = [[UITableView alloc] init];
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    [self.view addSubview:self.tableView];
+    [self.tableParentContainer addSubview:self.tableView];
     
     CGRect headerFrame = self.view.bounds;
     self.header = [[UIView alloc] initWithFrame:headerFrame];
@@ -179,7 +183,7 @@ static NSDateFormatter *dateFormatter = nil;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactAddressEditorView:) name:@"showContactAddressEditor" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactAddressEditorView:) name:@"cancelAddressEditor" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowAddressSearchResults:) name:@"searchForContactAddress" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddAddress:) name:@"addAddress" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddContactAddress:) name:@"addContactAddress" object:nil];
 }
 
 
@@ -219,10 +223,10 @@ static NSDateFormatter *dateFormatter = nil;
     CGRect addressListTo = CGRectMake(0, 0, addressListFrame.size.width, addressListFrame.size.height);
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:.5];
+    [UIView setAnimationDuration:.25];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
     self.cancelButton.alpha = 0;
-    self.tableView.contentOffset = CGPointMake(self.view.bounds.size.width, self.tableView.contentOffset.y);
+    self.tableParentContainer.frame = profileListTo;
     contactAddressListView.view.frame = addressListTo;
     
     [UIView commitAnimations];
@@ -236,7 +240,7 @@ static NSDateFormatter *dateFormatter = nil;
     [UIView setAnimationDidStopSelector:@selector(removeAddressListView:finished:context:)];
     [UIView setAnimationDuration:.5];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
-    self.tableView.contentOffset = CGPointMake(0, self.tableView.contentOffset.y);
+    self.tableParentContainer.frame = profileListTo;
     contactAddressListView.view.frame = addressListTo;
     self.cancelButton.alpha = 1;
     [UIView commitAnimations];
@@ -248,13 +252,39 @@ static NSDateFormatter *dateFormatter = nil;
 
 -(void) onShowContactAddressEditorView:(NSNotification *)notification {
     contactAddressEditorView = [[AddressEditorViewController alloc] init];
-    
+    CGRect editorFrame = contactAddressEditorView.view.frame;
+    editorFrame.origin.x = self.view.bounds.size.width;
+    contactAddressEditorView.view.frame = editorFrame;
     [self.view addSubview:contactAddressEditorView.view];
+    
+    CGRect addressEditorTo = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    CGRect addressListTo = CGRectMake(-self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:.25];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
+    contactAddressEditorView.view.frame = addressEditorTo;
+    contactAddressListView.view.frame = addressListTo;
+    [UIView commitAnimations];
 }
 
 -(void) onCancelContactAddressEditorView:(NSNotification *)notification {
+    CGRect addressEditorTo = CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    CGRect addressListTo = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDidStopSelector:@selector(removeAddressEditorView:finished:context:)];
+    [UIView setAnimationDuration:.5];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
+    contactAddressEditorView.view.frame = addressEditorTo;
+    contactAddressListView.view.frame = addressListTo;
+    [UIView commitAnimations];
+}
+
+-(void)removeAddressEditorView:(NSString *)animationId finished:(NSNumber *)finished context:(void *)context {
     [contactAddressEditorView.view removeFromSuperview];
 }
+
 
 -(void)onShowAddressSearchResults:(NSNotification *)notification {
     NSString *searchText = [[notification userInfo] valueForKey:@"searchText"];
@@ -262,24 +292,41 @@ static NSDateFormatter *dateFormatter = nil;
     
     CGRect initalFrame = self.addressSearchResults.view.frame;
     initalFrame.origin.x = self.view.bounds.size.width;
-    
     self.addressSearchResults.view.frame = initalFrame;
+    [self.view addSubview:self.addressSearchResults.view];
     
     CGRect editorTo = CGRectMake(-self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height);
     CGRect resultsTo = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDelegate:self];
-    [UIView setAnimationDidStopSelector:@selector(removeAddressListView:finished:context:)];
-    [UIView setAnimationDuration:.5];
+    [UIView setAnimationDuration:.25];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
     contactAddressEditorView.view.frame = editorTo;
     self.addressSearchResults.view.frame = resultsTo;
     [UIView commitAnimations];
 }
 
--(void)onAddAddress:(NSNotification *)notification {
+-(void)onAddContactAddress:(NSNotification *)notification {
     
+    AddressHistoryModel *addressHistory = [[notification userInfo] valueForKey:@"addressHistory"];
+    
+    CGRect resultsTo = CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    CGRect listTo = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+
+    [UIView animateWithDuration:0.25
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         contactAddressListView.view.frame = listTo;
+                         self.addressSearchResults.view.frame = resultsTo;
+                     }
+                     completion:^(BOOL finished){
+                         [contactAddressListView addAddress:addressHistory];
+                         [contactAddressListView.view removeFromSuperview];
+                         [contactAddressEditorView.view removeFromSuperview];
+                     }];
 }
+
 
 
 

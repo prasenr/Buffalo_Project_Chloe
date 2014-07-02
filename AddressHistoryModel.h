@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <Mantle.h>
 #import "AddressModel.h"
+#import "AddressSearchModel.h"
 
 @interface AddressHistoryModel : MTLModel <MTLJSONSerializing>
 @property (nonatomic, strong) NSDate *startDate;
@@ -16,4 +17,5 @@
 @property (nonatomic, strong) AddressModel *account;
 
 -(void) initWithAddress:(AddressModel *)address;
+-(void) convertFromAddressSearch:(AddressSearchModel *)addressSearch;
 @end

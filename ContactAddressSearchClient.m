@@ -33,7 +33,8 @@
             
             if(!error) {
                 NSError *jsonError = nil;
-                id json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
+                
+                id json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions  error:&jsonError];
                 
                 if(!jsonError) {
                     [subscriber sendNext:json];
@@ -59,13 +60,26 @@
 
 -(RACSignal *)fetchAddressSearchResults:(NSString *)searchText{
 
-    NSMutableString *urlString = [NSMutableString stringWithString:@"http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluur20622h%2Cb2%3Do5-9ats5z&callback=renderOptions&inFormat=kvp&outFormat=json&location="];
-    [urlString appendString:searchText];
+    NSMutableString *urlString = [NSMutableString stringWithString:@"http://open.mapquestapi.com/geocoding/v1/address?key=Fmjtd%7Cluur20622h%2Cb2%3Do5-9ats5z&inFormat=kvp&outFormat=json&location="];
+    NSArray *searchTextArray = [searchText componentsSeparatedByString:@" "];
+    for(int i=0; i<[searchTextArray count]; i++) {
+        [urlString appendString:[searchTextArray objectAtIndex:i]];
+        if(i!= [searchTextArray count]-1) {
+            [urlString appendString:@"+"];
+        }
+    }
+    NSLog(@"url string %@", urlString);
     NSURL *url = [NSURL URLWithString:urlString];
     
     return [[self fetchJSONFromURL:url] map:^(NSDictionary *json) {
-        RACSequence *list = [json[@"results"] rac_sequence];
         
+        NSArray *firstDict = [json objectForKey:@"results"];
+        NSDictionary *newObject = [firstDict objectAtIndex:0];
+        
+
+        
+        RACSequence *list = [newObject[@"locations"] rac_sequence];
+
         return [[list map:^(NSDictionary *item) {
             return [MTLJSONAdapter modelOfClass: [AddressSearchModel class] fromJSONDictionary:item error:nil];
         }] array];

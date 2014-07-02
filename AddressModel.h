@@ -14,5 +14,7 @@
 @property (nonatomic, strong) NSMutableString *addressLine2;
 @property (nonatomic, strong) NSMutableString *city;
 @property (nonatomic, strong) NSMutableString *state;
+@property (nonatomic, strong) NSMutableString *county;
 @property (nonatomic, strong) NSMutableString *zipcode;
+@property (nonatomic, strong) NSMutableString *country;
 @end

@@ -38,4 +38,15 @@
 +(NSValueTransformer *) endDateJSONTransformer {
     return [self dateJSONTransformer];
 }
+
+-(void) convertFromAddressSearch:(AddressSearchModel *)addressSearch {
+    AddressModel *aAddress = [[AddressModel alloc] init];
+    aAddress.addressLine1 = addressSearch.addressLine1;
+    aAddress.city = addressSearch.city;
+    aAddress.state = addressSearch.state;
+    aAddress.county = addressSearch.county;
+    aAddress.zipcode = addressSearch.zipcode;
+    aAddress.country = addressSearch.country;
+    self.account = aAddress;
+}
 @end
