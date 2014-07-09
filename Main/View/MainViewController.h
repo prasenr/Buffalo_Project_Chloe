@@ -57,8 +57,6 @@
     InstantMessengerEditorViewController *contactInstantMessengerEditorView;
     ContactEmailAddressListViewController *contactEmailListView;
     EmailAddressEditorViewController    *contactEmailAddressEditor;
-    ContactPhoneNumberListViewViewController *contactPhoneNumberListView;
-    PhoneNumberEditorViewController *contactPhoneNumberEditorView;
     
     ContactRelationshipsListViewController *contactRelationshipListView;
     ContactBirthdayEditorViewController *contactBirthdayEditor;

@@ -10,10 +10,22 @@
 #import "NSObject+PersonModel.h"
 #import "ContactAddressListViewController.h"
 #import "AddressEditorViewController.h"
+#import "ContactPhoneNumberListViewViewController.h"
+#import "PhoneNumberEditorViewController.h"
+#import "ContactEmailAddressListViewController.h"
+#import "EmailAddressEditorViewController.h"
+#import "ContactInstantMessengerListViewController.h"
+#import "InstantMessengerEditorViewController.h"
 
 @interface ContactProfileConversationViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate> {
     ContactAddressListViewController *contactAddressListView;
     AddressEditorViewController *contactAddressEditorView;
+    ContactPhoneNumberListViewViewController *contactPhoneNumberListView;
+    PhoneNumberEditorViewController *contactPhoneNumberEditorView;
+    ContactEmailAddressListViewController *contactEmailListView;
+    EmailAddressEditorViewController *contactEmailAddressEditor;
+    ContactInstantMessengerListViewController *contactInstantMessengerListView;
+    InstantMessengerEditorViewController *contactInstantMessengerEditorView;
 }
 
 -(id)initWithPerson:(PersonModel *)person initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;

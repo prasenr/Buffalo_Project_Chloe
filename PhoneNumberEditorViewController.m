@@ -12,6 +12,11 @@
 
 @interface PhoneNumberEditorViewController ()
 @property (nonatomic, strong) PhoneNumberHistoryModel *account;
+@property (nonatomic, strong) UIView *inputView;
+@property (nonatomic, strong) UIView *confirmationView;
+@property (nonatomic, strong) UIView *confirmationLabel;
+@property (nonatomic, strong) UIButton *confirmationYesButton;
+@property (nonatomic, strong) UIButton *confirmationNoButton;
 @property (nonatomic, strong) UITextField *accountInput;
 @end
 
@@ -51,6 +56,9 @@
     background.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:background];
     
+    self.inputView = [[UIView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:self.inputView];
+    
     self.accountInput = [[UITextField alloc] initWithFrame:CGRectMake(10, 60, self.view.bounds.size.width - 20, 30)];
     self.accountInput.delegate = self;
     self.accountInput.placeholder = @"phone number";
@@ -61,7 +69,7 @@
     self.accountInput.backgroundColor = [UIColor whiteColor];
     self.accountInput.autocapitalizationType = UITextAutocorrectionTypeNo;
     self.accountInput.autocorrectionType = UITextAutocorrectionTypeNo;
-    [self.view addSubview:self.accountInput];
+    [self.inputView addSubview:self.accountInput];
     
     [self.accountInput becomeFirstResponder];
 }
@@ -69,15 +77,63 @@
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
     
     if([self.accountInput.text length] > 0) {
-        PhoneNumberHistoryModel *phoneNumberHistory = [[PhoneNumberHistoryModel alloc] init];
-        PhoneNumberModel *phoneNumber = [[PhoneNumberModel alloc] init];
-        phoneNumber.phoneNumber = [NSMutableString stringWithString:self.accountInput.text];
-        phoneNumberHistory.account = phoneNumber;
+        if(!self.confirmationView) {
+            self.confirmationView = [[UIView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+            [self.view addSubview:self.confirmationView];
+            
+            self.confirmationLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 70, self.view.bounds.size.width - 40, 50)];
+            [self.confirmationView addSubview:self.confirmationLabel];
+            
+            self.confirmationYesButton = [[UIButton alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
+            [self.confirmationYesButton setBackgroundImage:[UIImage imageNamed:@"yesButton"] forState:UIControlStateNormal];
+            [self.confirmationYesButton addTarget:self action:@selector(onConfirmationYesClick:) forControlEvents:UIControlEventTouchUpInside];
+            [self.confirmationView addSubview:self.confirmationYesButton];
+            
+            
+            self.confirmationNoButton = [[UIButton alloc] initWithFrame:CGRectMake(175, 100, 100, 100)];
+            [self.confirmationNoButton setBackgroundImage:[UIImage imageNamed:@"noButton"] forState:UIControlStateNormal];
+            [self.confirmationNoButton addTarget:self action:@selector(onConfirmationNoClick:) forControlEvents:UIControlEventTouchUpInside];
+            [self.confirmationView addSubview:self.confirmationNoButton];
+        }
         
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:phoneNumberHistory forKey:@"phoneNumber"];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"addPhoneNumber" object:nil userInfo:userInfo];
+        CGRect inputTo = CGRectMake(-self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+        CGRect confirmationTo = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+        
+        [UIView animateWithDuration:0.25
+                              delay: 0.0
+                            options: UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             self.inputView.frame = inputTo;
+                             self.confirmationView.frame = confirmationTo;
+                         }completion:^(BOOL finished){}];
     }
     return YES;
+}
+
+-(IBAction)onConfirmationYesClick:(id)sender {
+    
+    PhoneNumberHistoryModel *phoneNumberHistory = [[PhoneNumberHistoryModel alloc] init];
+    PhoneNumberModel *phoneNumber = [[PhoneNumberModel alloc] init];
+    phoneNumber.phoneNumber = [NSMutableString stringWithString:self.accountInput.text];
+    phoneNumberHistory.account = phoneNumber;
+    
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:phoneNumberHistory forKey:@"phoneNumber"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"addPhoneNumber" object:nil userInfo:userInfo];
+}
+
+-(IBAction)onConfirmationNoClick:(id)sender {
+    CGRect inputTo = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    CGRect confirmationTo = CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    
+    [UIView animateWithDuration:0.25
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         self.inputView.frame = inputTo;
+                         self.confirmationView.frame = confirmationTo;
+                     }completion:^(BOOL finished){
+                     self.accountInput.text = @"";
+                     }];
 }
 
 -(IBAction)onCancelClicked:(id)sender {

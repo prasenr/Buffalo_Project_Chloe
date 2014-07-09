@@ -10,6 +10,8 @@
 #import <LBBlurredImage/UIImageView+LBBlurredImage.h>
 #import "AddressModel.h"
 #import "AddressHistoryModel.h"
+#import "PhoneNumberModel.h"
+#import "PhoneNumberHistoryModel.h"
 #import "ContactAddressSearchViewController.h"
 
 @interface ContactProfileConversationViewController ()
@@ -184,6 +186,25 @@ static NSDateFormatter *dateFormatter = nil;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactAddressEditorView:) name:@"cancelAddressEditor" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowAddressSearchResults:) name:@"searchForContactAddress" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddContactAddress:) name:@"addContactAddress" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactPhoneNumbersListView:) name:@"showContactPhoneNumbersList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactPhoneNumbersListView:) name:@"cancelContactPhoneNumbersList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactPhoneNumberEditorView:) name:@"showContactPhoneNumberEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactPhoneNumberEditorView:) name:@"cancelPhoneNumberEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddPhoneNumber:) name:@"addPhoneNumber" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactEmailAddressesListView:) name:@"showContactEmailAddressesList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactEmailAddressesListView:) name:@"cancelContactEmailAddressesList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactEmailAddressEditorView:) name:@"showContactEmailAddressEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactEmailAddressEditorView:) name:@"cancelEmailAddressEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddEmailAddressAccount:) name:@"addEmailAddress" object:nil];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactInstantMessengerAccountsListView:) name:@"showContactInstantMessengerAccountsList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactInstantMessengerAccountsListView:) name:@"cancelContactInstantMessengerAccountsList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactInstantMessengerEditorView:) name:@"showContactInstantMessengerEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactInstantMessengerEditorView:) name:@"cancelInstantMessengerEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddInstantMessengerAccount:) name:@"addInstantMessengerAccount" object:nil];
 }
 
 
@@ -311,8 +332,8 @@ static NSDateFormatter *dateFormatter = nil;
     AddressHistoryModel *addressHistory = [[notification userInfo] valueForKey:@"addressHistory"];
     
     CGRect resultsTo = CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height);
-    CGRect listTo = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
-
+    CGRect listTo = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)
+;
     [UIView animateWithDuration:0.25
                           delay: 0.0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -327,16 +348,116 @@ static NSDateFormatter *dateFormatter = nil;
                      }];
 }
 
-
-
-
-/*-(void) onShowAddedAddress:(NSNotification *)notification {
+-(void) onShowContactPhoneNumbersListView:(NSNotification *)notification {
+    PersonModel *person = [[notification userInfo] valueForKey:@"person"];
+    contactPhoneNumberListView = [[ContactPhoneNumberListViewViewController alloc] init];
+    [contactPhoneNumberListView person:person];
     
-    AddressHistoryModel *newAddress = [[notification userInfo] valueForKey:@"address"];
-    [contactAddressListView addAddress:newAddress];
+    [self.view addSubview:contactPhoneNumberListView.view];
+}
+
+-(void) onCancelContactPhoneNumbersListView:(NSNotification *)notification {
+    [contactPhoneNumberListView.view removeFromSuperview];
+}
+
+-(void) onShowContactPhoneNumberEditorView:(NSNotification *)notification {
+    contactPhoneNumberEditorView = [[PhoneNumberEditorViewController alloc] init];
     
-    [contactAddressEditorView.view removeFromSuperview];
-}*/
+    [self.view addSubview:contactPhoneNumberEditorView.view];
+}
+
+-(void) onCancelContactPhoneNumberEditorView:(NSNotification *)notification {
+    [contactPhoneNumberEditorView.view removeFromSuperview];
+}
+
+-(void) onAddPhoneNumber:(NSNotification *)notification {
+    
+    PhoneNumberHistoryModel *newPhoneNumber = [[notification userInfo] valueForKey:@"phoneNumber"];
+    
+    CGRect resultsTo = CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    CGRect listTo = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)
+    ;
+    [UIView animateWithDuration:0.25
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         contactAddressListView.view.frame = listTo;
+                         self.addressSearchResults.view.frame = resultsTo;
+                     }
+                     completion:^(BOOL finished){
+                         
+                         //[contactAddressListView addAddress:addressHistory];
+                         //[contactAddressListView.view removeFromSuperview];
+                         //[contactAddressEditorView.view removeFromSuperview];
+                     }];
+    
+    [contactPhoneNumberListView addPhoneNumber:newPhoneNumber];
+    
+    [contactPhoneNumberEditorView.view removeFromSuperview];
+}
+
+-(void)onShowContactEmailAddressesListView:(NSNotification *)notification {
+    PersonModel *person = [[notification userInfo] valueForKey:@"person"];
+    contactEmailListView = [[ContactEmailAddressListViewController alloc] init];
+    [contactEmailListView person:person];
+    
+    [self.view addSubview:contactEmailListView.view];
+}
+
+-(void) onCancelContactEmailAddressesListView:(NSNotification *)notification {
+    [contactEmailListView.view removeFromSuperview];
+}
+
+-(void) onShowContactEmailAddressEditorView:(NSNotification *)notification {
+    contactEmailAddressEditor = [[EmailAddressEditorViewController alloc] init];
+    
+    [self.view addSubview:contactEmailAddressEditor.view];
+}
+
+-(void) onCancelContactEmailAddressEditorView:(NSNotification *)notification {
+    [contactEmailAddressEditor.view removeFromSuperview];
+}
+
+-(void) onAddEmailAddressAccount:(NSNotification *)notification {
+    
+    EmailAddressHistoryModel *newEmailAddress = [[notification userInfo] valueForKey:@"emailAddress"];
+    [contactEmailListView addEmailAddress:newEmailAddress];
+    
+    [contactEmailAddressEditor.view removeFromSuperview];
+}
+
+-(void)onShowContactInstantMessengerAccountsListView:(NSNotification *)notification {
+    PersonModel *person = [[notification userInfo] valueForKey:@"person"];
+    contactInstantMessengerListView = [[ContactInstantMessengerListViewController alloc] init];
+    [contactInstantMessengerListView person:person];
+    
+    [self.view addSubview:contactInstantMessengerListView.view];
+}
+
+-(void) onCancelContactInstantMessengerAccountsListView:(NSNotification *)notification {
+    [contactInstantMessengerListView.view removeFromSuperview];
+}
+
+-(void) onShowContactInstantMessengerEditorView:(NSNotification *)notification {
+    contactInstantMessengerEditorView = [[InstantMessengerEditorViewController alloc] init];
+    
+    [self.view addSubview:contactInstantMessengerEditorView.view];
+}
+
+-(void) onCancelContactInstantMessengerEditorView:(NSNotification *)notification {
+    [contactInstantMessengerEditorView.view removeFromSuperview];
+}
+
+-(void) onAddInstantMessengerAccount:(NSNotification *)notification {
+    
+    InstantMessengerAccountHistoryModel *newInstantMessengerAccount = [[notification userInfo] valueForKey:@"instantMessengerAccount"];
+    [contactInstantMessengerListView addInstantMessengerAccount:newInstantMessengerAccount];
+    
+    [contactInstantMessengerEditorView.view removeFromSuperview];
+}
+
+
+//TOOD
 
 //GENERAL
 
