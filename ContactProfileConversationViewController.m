@@ -205,6 +205,36 @@ static NSDateFormatter *dateFormatter = nil;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactInstantMessengerEditorView:) name:@"showContactInstantMessengerEditor" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactInstantMessengerEditorView:) name:@"cancelInstantMessengerEditor" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddInstantMessengerAccount:) name:@"addInstantMessengerAccount" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowEditContactBirthdayView:) name:@"showContactBirthdayEditScreen" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactFacebookAccountsListView:) name:@"showContactFacebookAccountsList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactFacebookAccountsListView:) name:@"cancelContactFacebookAccountsList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactFacebookEditorView:) name:@"showContactFacebookEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactFacebookEditorView:) name:@"cancelFacebookEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddFacebookAccount:) name:@"addFacebookAccount" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactGooglePlusAccountsListView:) name:@"showContactGooglePlusAccountsList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactGooglePlusAccountsListView:) name:@"cancelContactGooglePlusAccountsList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactGooglePlusEditorView:) name:@"showContactGooglePlusEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactGooglePlusEditorView:) name:@"cancelGooglePlusEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddGooglePlusAccount:) name:@"addGooglePlusAccount" object:nil];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactLinkedInAccountsListView:) name:@"showContactLinkedInAccountsList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactLinkedInAccountsListView:) name:@"cancelContactLinkedInAccountsList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactLinkedInEditorView:) name:@"showContactLinkedInEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactLinkedInEditorView:) name:@"cancelLinkedInEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddLinkedInAccount:) name:@"addLinkedInAccount" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactTwitterAccountsListView:) name:@"showTwitterAccountsList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactTwitterAccountsListView:) name:@"cancelTwitterAccountsList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactTwitterEditorView:) name:@"showContactTwitterEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContacttwitterEditorView:) name:@"cancelTwitterEditor" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAddTwitterAccount:) name:@"addTwitterAccount" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onShowContactRelationshipsListView:) name:@"showRelationshipsList" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelContactRelationshipsListView:) name:@"cancelContactRelationshipsList" object:nil];
 }
 
 
@@ -456,6 +486,137 @@ static NSDateFormatter *dateFormatter = nil;
     [contactInstantMessengerEditorView.view removeFromSuperview];
 }
 
+-(void) onShowContactLinkedInAccountsListView:(NSNotification *)notification {
+    PersonModel *person = [[notification userInfo] valueForKey:@"person"];
+    contactLinkedInListView = [[ContactLinkedInAccountListViewController alloc] init];
+    [contactLinkedInListView person:person];
+    
+    [self.view addSubview:contactLinkedInListView.view];
+}
+
+-(void) onCancelContactLinkedInAccountsListView:(NSNotification *)notification {
+    [contactLinkedInListView.view removeFromSuperview];
+}
+
+-(void) onShowContactLinkedInEditorView:(NSNotification *)notification {
+    contactLinkedInEditorView = [[LinkedInEditorViewController alloc] init];
+    
+    [self.view addSubview:contactLinkedInEditorView.view];
+}
+
+-(void) onCancelContactLinkedInEditorView:(NSNotification *)notification {
+    [contactLinkedInEditorView.view removeFromSuperview];
+}
+
+-(void) onAddLinkedInAccount:(NSNotification *)notification {
+    LinkedInAccountHistoryModel *newLinkedInAccount = [[notification userInfo] valueForKey:@"linkedInAccount"];
+    [contactLinkedInListView addLinkedInAccount:newLinkedInAccount];
+    
+    [contactLinkedInEditorView.view removeFromSuperview];
+}
+
+-(void) onShowContactGooglePlusAccountsListView:(NSNotification *)notification {
+    PersonModel *person = [[notification userInfo] valueForKey:@"person"];
+    contactGooglePlusListView = [[ContactGooglePlusAccountListViewController alloc] init];
+    [contactGooglePlusListView person:person];
+    
+    [self.view addSubview:contactGooglePlusListView.view];
+}
+
+-(void) onCancelContactGooglePlusAccountsListView:(NSNotification *)notification {
+    [contactGooglePlusListView.view removeFromSuperview];
+}
+
+-(void) onShowContactGooglePlusEditorView:(NSNotification *)notification {
+    contactGooglePlusEditorView = [[GooglePlusEditorViewController alloc] init];
+    
+    [self.view addSubview:contactGooglePlusEditorView.view];
+}
+
+-(void) onCancelContactGooglePlusEditorView:(NSNotification *)notification {
+    [contactGooglePlusEditorView.view removeFromSuperview];
+}
+
+-(void) onAddGooglePlusAccount:(NSNotification *)notification {
+    
+    GooglePlusAccountHistoryModel *newGooglePlusAccount = [[notification userInfo] valueForKey:@"googlePlusAccount"];
+    [contactGooglePlusListView addGooglePlusAccount:newGooglePlusAccount];
+    
+    [contactGooglePlusEditorView.view removeFromSuperview];
+}
+
+-(void) onShowContactFacebookAccountsListView:(NSNotification *)notification {
+    PersonModel *person = [[notification userInfo] valueForKey:@"person"];
+    contactFacebookListView = [[ContactFacebookAccountListViewController alloc] init];
+    [contactFacebookListView person:person];
+    
+    [self.view addSubview:contactFacebookListView.view];
+}
+
+-(void) onCancelContactFacebookAccountsListView:(NSNotification *)notification {
+    [contactFacebookListView.view removeFromSuperview];
+}
+
+-(void) onShowContactFacebookEditorView:(NSNotification *)notification {
+    contactFacebookEditorView = [[FacebookEditorViewController alloc] init];
+    
+    [self.view addSubview:contactFacebookEditorView.view];
+}
+
+-(void) onCancelContactFacebookEditorView:(NSNotification *)notification {
+    [contactFacebookEditorView.view removeFromSuperview];
+}
+
+-(void) onAddFacebookAccount:(NSNotification *)notification {
+    
+    FacebookAccountHistoryModel *newFacebookAccount = [[notification userInfo] valueForKey:@"facebookAccount"];
+    [contactFacebookListView addFacebookAccount:newFacebookAccount];
+    
+    [contactFacebookEditorView.view removeFromSuperview];
+}
+
+-(void)onShowContactTwitterAccountsListView:(NSNotification *)notification {
+    PersonModel *person = [[notification userInfo] valueForKey:@"person"];
+    contactTwitterListView = [[ContactTwitterAccountListViewController alloc] init];
+    [contactTwitterListView person:person];
+    
+    [self.view addSubview:contactTwitterListView.view];
+}
+
+-(void) onCancelContactTwitterAccountsListView:(NSNotification *)notification {
+    [contactTwitterListView.view removeFromSuperview];
+}
+
+-(void) onShowContactTwitterEditorView:(NSNotification *)notification {
+    contactTwitterEditorView = [[TwitterEditorViewController alloc] init];
+    
+    [self.view addSubview:contactTwitterEditorView.view];
+}
+
+-(void) onCancelContacttwitterEditorView:(NSNotification *)notification {
+    [contactTwitterEditorView.view removeFromSuperview];
+}
+
+-(void) onAddTwitterAccount:(NSNotification *)notification {
+    TwitterAccountHistoryModel *newTwitterAccount = [[notification userInfo] valueForKey:@"twitterAccount"];
+    [contactTwitterListView addTwitterAccount:newTwitterAccount];
+    
+    [contactTwitterEditorView.view removeFromSuperview];
+}
+
+-(void)onShowContactRelationshipsListView:(NSNotification *)notification {
+    PersonModel *person = [[notification userInfo] valueForKey:@"person"];
+    contactRelationshipsListView = [[ContactRelationshipsListViewController alloc] init];
+    [contactRelationshipListView person:person];
+    
+    [self.view addSubview:contactRelationshipListView.view];
+}
+
+-(void) onCancelContactRelationshipsListView:(NSNotification *)notification {
+    [contactRelationshipListView.view removeFromSuperview];
+}
+
+
 
 //TOOD
 
@@ -568,7 +729,7 @@ static NSDateFormatter *dateFormatter = nil;
         [self.nameLabelArray addObject:nameLabel];
     }
     
-    UILabel *aLabel = [self.nameLabelArray objectAtIndex:0];
+   // UILabel *aLabel = [self.nameLabelArray objectAtIndex:0];
     
     CGRect nameFrame = self.nameContent.frame;
     nameHeight = nameHeight + 27;
