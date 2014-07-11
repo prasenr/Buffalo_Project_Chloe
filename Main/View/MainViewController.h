@@ -15,6 +15,7 @@
 #import "ProfileViewController.h"
 #import "ConversationsViewController.h"
 #import "ContactProfileConversationViewController.h"
+#import "UserProfileViewController.h"
 
 @interface MainViewController : UIViewController <UIScrollViewDelegate> {
     TodayViewController *todayView;
@@ -23,7 +24,7 @@
     MeetingsViewController *meetingView;
     TodosViewController *toDoView;
     ConversationsViewController *conversationsView;
-    ProfileViewController *profileView;
+    UserProfileViewController *profileView;
    
     UISwipeGestureRecognizer *todayGestureLeft;
     UISwipeGestureRecognizer *todayGestureRight;

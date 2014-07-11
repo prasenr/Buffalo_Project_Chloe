@@ -17,6 +17,7 @@
 #import "ContactProfileConversationViewController.h"
 #import "NSObject+PersonModel.h"
 #import "GooglePlusAccountHistoryModel.h"
+#import "RelationshipHistoryModel.h"
 
 @interface MainViewController ()
 @property (nonatomic, retain) ToDoEditorViewController *toDoEditor;
@@ -118,7 +119,7 @@
     toDoView.view.frame = todoFrame;
     [self.view addSubview:toDoView.view];
     
-    profileView = [[ProfileViewController alloc] init];
+    profileView = [[UserProfileViewController alloc] initWithPerson:[self getPlaceholderUserProfile] initWithNibName:@"UserProfileViewController" bundle:nil];
     CGRect profileFrame = profileView.view.frame;
     profileFrame.origin = CGPointMake(-self.view.frame.size.width, 0);
     profileView.view.frame = profileFrame;
@@ -591,6 +592,137 @@
      toDo1.toDoSummary = @"To Do Number 4";
      
      self.toDos = [[NSMutableArray alloc] initWithObjects:toDo1, toDo2, toDo3, toDo4, nil];*/
+}
+
+-(PersonModel *) getPlaceholderUserProfile {
+    PersonModel *UserModel = [[PersonModel alloc] init];
+    UserModel.firstName = [NSMutableString stringWithString: @"Christopher"];
+    UserModel.lastName = @"Fisher";
+    UserModel.personImage = @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/adrienne.png";
+    UserModel.personBigImage = @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/chris.png";
+    UserModel.birthday = [[NSDate alloc] initWithTimeIntervalSince1970:0];
+    UserModel.addresses = [[NSMutableArray alloc] init];
+    
+    AddressModel *aAddress = [[AddressModel alloc] init];
+    aAddress.addressLine1 = [NSMutableString stringWithString: @"616 Dartmouth"];
+    aAddress.city = [NSMutableString stringWithString: @"Kansas City"];
+    aAddress.state = [NSMutableString stringWithString: @"Missouri"];
+    aAddress.zipcode = [NSMutableString stringWithString: @"64114"];
+    
+    AddressHistoryModel *aAddressHistory = [[AddressHistoryModel alloc] init];
+    aAddressHistory.account = aAddress;
+    
+    [UserModel.addresses addObject:aAddressHistory];
+    
+    
+    AddressModel *aAddress1 = [[AddressModel alloc] init];
+    aAddress1.addressLine1 = [NSMutableString stringWithString: @"7228 Belleview"];
+    aAddress1.city = [NSMutableString stringWithString: @"Kansas City"];
+    aAddress1.state = [NSMutableString stringWithString: @"Missouri"];
+    aAddress1.zipcode = [NSMutableString stringWithString: @"64113"];
+    
+    AddressHistoryModel *aAddressHistory1 = [[AddressHistoryModel alloc] init];
+    aAddressHistory1.account = aAddress1;
+    
+    [UserModel.addresses addObject:aAddressHistory1];
+    
+    
+    AddressModel *aAddress3 = [[AddressModel alloc] init];
+    aAddress3.addressLine1 = [NSMutableString stringWithString: @"702 S. Longfellow"];
+    aAddress3.city = [NSMutableString stringWithString: @"Wichita"];
+    aAddress3.state = [NSMutableString stringWithString: @"Kansas"];
+    aAddress3.zipcode = [NSMutableString stringWithString: @"67207"];
+    
+    AddressHistoryModel *aAddressHistory3 = [[AddressHistoryModel alloc] init];
+    aAddressHistory3.account = aAddress3;
+    
+    [UserModel.addresses addObject:aAddressHistory3];
+    
+    //PHONE NUMBERS
+    PhoneNumberModel *aPhoneNumber = [[PhoneNumberModel alloc] init];
+    aPhoneNumber.country = [NSMutableString stringWithString:@"01"];
+    aPhoneNumber.areaCode = [NSMutableString stringWithString:@"816"];
+    aPhoneNumber.prefix = [NSMutableString stringWithString:@"738"];
+    aPhoneNumber.phoneNumber = [NSMutableString stringWithString:@"5554"];
+    aPhoneNumber.extension = [NSMutableString stringWithString:@""];
+    
+    PhoneNumberHistoryModel *aPhoneHistory = [[PhoneNumberHistoryModel alloc] init];
+    aPhoneHistory.account = aPhoneNumber;
+    
+    UserModel.phoneNumbers = [[NSMutableArray alloc] init];
+    [UserModel.phoneNumbers addObject:aPhoneHistory];
+    
+    
+    //EMAIL ACCOUNTS
+    EmailAddressModel *aEmailAddress = [[EmailAddressModel alloc] init];
+    aEmailAddress.emailAddress = [NSMutableString stringWithString:@"adrienne.f.hill@gmail.com"];
+    aEmailAddress.emailType = [NSMutableString stringWithString:@"personal"];
+    
+    EmailAddressHistoryModel *aEmailAddressHistory = [[EmailAddressHistoryModel alloc] init];
+    aEmailAddressHistory.account = aEmailAddress;
+    
+    UserModel.emailAddresses= [[NSMutableArray alloc] init];
+    [UserModel.emailAddresses addObject:aEmailAddressHistory];
+    
+    
+    //INSTANT MESSENGER ACCOUNTS
+    InstantMessengerModel *aInstantMessageAccount = [[InstantMessengerModel alloc] init];
+    aInstantMessageAccount.username = [NSMutableString stringWithString:@"adrienne.f.hill@gmail.com"];
+    aInstantMessageAccount.serverType = [NSMutableString stringWithString:@"gmail.com"];
+    aInstantMessageAccount.type = [NSMutableString stringWithString:@"personal"];
+    
+    InstantMessengerAccountHistoryModel *aInstantMessengerHistory = [[InstantMessengerAccountHistoryModel alloc] init];
+    aInstantMessengerHistory.account = aInstantMessageAccount;
+    
+    UserModel.instantMessengerAccounts = [[NSMutableArray alloc] init];
+    [UserModel.instantMessengerAccounts addObject:aInstantMessengerHistory];
+    
+    //FACEBOOK ACCOUNTS
+    FacebookAccountModel *aFacebookAccount = [[FacebookAccountModel alloc] init];
+    aFacebookAccount.username = [NSMutableString stringWithString:@"123456"];
+    aFacebookAccount.type = [NSMutableString stringWithString:@"personal"];
+    
+    FacebookAccountHistoryModel *aFacebookHistory = [[FacebookAccountHistoryModel alloc] init];
+    aFacebookHistory.account = aFacebookAccount;
+    
+    UserModel.facebookAccounts = [[NSMutableArray alloc] init];
+    [UserModel.facebookAccounts addObject:aFacebookHistory];
+    
+    //GOOGLE PLUS ACCOUNTS
+    GooglePlusAccountModel *aGooglePlusAccount = [[GooglePlusAccountModel alloc] init];
+    aGooglePlusAccount.username = [NSMutableString stringWithString:@"1234567"];
+    aGooglePlusAccount.type = [NSMutableString stringWithString:@"personal"];
+    
+    GooglePlusAccountHistoryModel *aGooglePlusHistory = [[GooglePlusAccountHistoryModel alloc] init];
+    aGooglePlusHistory.account = aGooglePlusAccount;
+    
+    UserModel.googlePlusAccounts = [[NSMutableArray alloc] init];
+    [UserModel.googlePlusAccounts addObject:aGooglePlusHistory];
+    
+    //LINKED IN ACCOUNTS
+    LinkedInAccountModel *aLinkedInAccount = [[LinkedInAccountModel alloc] init];
+    aLinkedInAccount.username = [NSMutableString stringWithString:@"12345678"];
+    aLinkedInAccount.type = [NSMutableString stringWithString:@"persona"];
+    
+    LinkedInAccountHistoryModel *aLinkedInHistory = [[LinkedInAccountHistoryModel alloc] init];
+    aLinkedInHistory.account = aLinkedInAccount;
+    
+    UserModel.linkedInAccounts = [[NSMutableArray alloc] init];
+    [UserModel.linkedInAccounts addObject:aLinkedInHistory];
+    
+    //TWITTER ACCOUNTS
+    TwitterAccountModel *aTwitterAccount = [[TwitterAccountModel alloc] init];
+    aTwitterAccount.username = [NSMutableString stringWithString:@"afhill"];
+    aTwitterAccount.type = [NSMutableString stringWithString:@"personal"];
+    
+    TwitterAccountHistoryModel *aTwitterHistory = [[TwitterAccountHistoryModel alloc] init];
+    aTwitterHistory.id = [NSMutableString stringWithString:@"1234"];
+    aTwitterHistory.account = aTwitterAccount;
+    
+    UserModel.twitterAccounts = [[NSMutableArray alloc] init];
+    [UserModel.twitterAccounts addObject:aTwitterHistory];
+    
+    return UserModel;
 }
 -(UITableViewCell *)tableView:(UITableView *)tv cellForRowAtIndexPath:(NSIndexPath *)indexPath {UITableViewCell *cell = [tv dequeueReusableCellWithIdentifier:@"cell"];
     if(nil == cell) {

@@ -256,6 +256,8 @@
 		648E6E1E192E57D700E46C1A /* Icon_80.png in Resources */ = {isa = PBXBuildFile; fileRef = 648E6E13192E57D700E46C1A /* Icon_80.png */; };
 		648E6E1F192E57D700E46C1A /* Icon_114.png in Resources */ = {isa = PBXBuildFile; fileRef = 648E6E14192E57D700E46C1A /* Icon_114.png */; };
 		648E6E20192E57D700E46C1A /* Icon_120.png in Resources */ = {isa = PBXBuildFile; fileRef = 648E6E15192E57D700E46C1A /* Icon_120.png */; };
+		64BD73B3196F64D600D8016A /* UserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64BD73B1196F64D600D8016A /* UserProfileViewController.m */; };
+		64BD73B4196F64D600D8016A /* UserProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 64BD73B2196F64D600D8016A /* UserProfileViewController.xib */; };
 		64C9BA72190F2BAC0008C83B /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64C9BA70190F2BAC0008C83B /* MainViewController.m */; };
 		64C9BA73190F2BAC0008C83B /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 64C9BA71190F2BAC0008C83B /* MainViewController.xib */; };
 		64C9BA77190F2CB80008C83B /* TodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64C9BA75190F2CB80008C83B /* TodayViewController.m */; };
@@ -616,6 +618,9 @@
 		648E6E13192E57D700E46C1A /* Icon_80.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_80.png; sourceTree = "<group>"; };
 		648E6E14192E57D700E46C1A /* Icon_114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_114.png; sourceTree = "<group>"; };
 		648E6E15192E57D700E46C1A /* Icon_120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_120.png; sourceTree = "<group>"; };
+		64BD73B0196F64D600D8016A /* UserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileViewController.h; sourceTree = "<group>"; };
+		64BD73B1196F64D600D8016A /* UserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileViewController.m; sourceTree = "<group>"; };
+		64BD73B2196F64D600D8016A /* UserProfileViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserProfileViewController.xib; sourceTree = "<group>"; };
 		64C9BA6F190F2BAC0008C83B /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainViewController.h; path = Main/View/MainViewController.h; sourceTree = "<group>"; };
 		64C9BA70190F2BAC0008C83B /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainViewController.m; path = Main/View/MainViewController.m; sourceTree = "<group>"; };
 		64C9BA71190F2BAC0008C83B /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainViewController.xib; path = Main/View/MainViewController.xib; sourceTree = "<group>"; };
@@ -1377,6 +1382,16 @@
 			name = View;
 			sourceTree = "<group>";
 		};
+		64BD73AF196F64A700D8016A /* View */ = {
+			isa = PBXGroup;
+			children = (
+				64BD73B0196F64D600D8016A /* UserProfileViewController.h */,
+				64BD73B1196F64D600D8016A /* UserProfileViewController.m */,
+				64BD73B2196F64D600D8016A /* UserProfileViewController.xib */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
 		64C9BA9F191107E00008C83B /* TodaySummary */ = {
 			isa = PBXGroup;
 			children = (
@@ -1473,6 +1488,7 @@
 		64C9BAAB191108F40008C83B /* User */ = {
 			isa = PBXGroup;
 			children = (
+				64BD73AF196F64A700D8016A /* View */,
 				64C9BAAC191108FD0008C83B /* Util */,
 			);
 			name = User;
@@ -1761,6 +1777,7 @@
 				643773B219230C4900DAFA80 /* watkins.jpg in Resources */,
 				64000D67193687A3001FC2EC /* blackBackground.png in Resources */,
 				648DD9AB194F85250034872B /* ContactTwitterAccountListViewController.xib in Resources */,
+				64BD73B4196F64D600D8016A /* UserProfileViewController.xib in Resources */,
 				64000D5919337C6C001FC2EC /* shower_wind.png in Resources */,
 				64000D22192FC3AF001FC2EC /* searchBarBlackBackground.png in Resources */,
 				6484D1601948BB0D00D8A0A3 /* ToDoListViewController.xib in Resources */,
@@ -1961,6 +1978,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64BD73B3196F64D600D8016A /* UserProfileViewController.m in Sources */,
 				648DD9A0194F84F20034872B /* ContactGooglePlusAccountListViewController.m in Sources */,
 				648DD9D0195077C50034872B /* RelationshipHistoryModel.m in Sources */,
 				648DD9D3195078B20034872B /* TwitterAccountHistoryModel.m in Sources */,
