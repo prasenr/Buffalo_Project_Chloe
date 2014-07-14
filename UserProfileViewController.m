@@ -35,8 +35,7 @@
 static NSDateFormatter *dateFormatter = nil;
 @implementation UserProfileViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
@@ -44,14 +43,12 @@ static NSDateFormatter *dateFormatter = nil;
     return self;
 }
 
--(id)initWithPerson:(PersonModel *)person initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        self.personModel = person;
-        
-    }
-    return self;
+-(void)addPerson:(PersonModel *)person {
+    self.personModel = person;
+}
+
+-(void)createNewProfile {
+    self.personModel = [[PersonModel alloc] init];
 }
 
 - (void)viewDidLoad

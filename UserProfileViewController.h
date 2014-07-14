@@ -48,7 +48,8 @@
     ContactRelationshipsListViewController *contactRelationshipListView;
     ContactBirthdayEditorViewController *contactBirthdayEditor;
 }
--(id)initWithPerson:(PersonModel *)person initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
+-(void)addPerson:(PersonModel *)person;
+-(void)createNewProfile;
 -(void)createNameLabels;
 -(void)createAddressLabel;
 -(void)createButtons;
