@@ -27,4 +27,6 @@
 @property (nonatomic, strong) NSMutableArray *relationships;
 @property (nonatomic, strong) NSString *personImage;
 @property (nonatomic, strong) NSString *personBigImage;
+@property (nonatomic, strong) NSString *userName;
+@property (nonatomic, strong) NSString *password;
 @end

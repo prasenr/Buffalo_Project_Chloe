@@ -156,7 +156,7 @@
     [self.view addSubview:toDoView.view];
     
     profileView = [[UserProfileViewController alloc] init];
-    [profileView addPerson:[self getPlaceholderUserProfile]];
+    [profileView addProfile:[self getPlaceholderUserProfile]];
     CGRect profileFrame = profileView.view.frame;
     profileFrame.origin = CGPointMake(-self.view.frame.size.width, 0);
     profileView.view.frame = profileFrame;

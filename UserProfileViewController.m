@@ -19,6 +19,9 @@
 @property (nonatomic, strong) UIView *profileContainer;
 @property (nonatomic, strong) UIView *welcomeContainer;
 @property (nonatomic, strong) UIView *createUserPassword;
+@property (nonatomic, strong) UIView *accessContacts;
+@property (nonatomic, strong) UIView *whoAreYou;
+@property (nonatomic, strong) NSArray *missingInformationScreensArray;
 
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIImageView *blurredImageView;
@@ -61,8 +64,11 @@ static NSDateFormatter *dateFormatter = nil;
     [self.view addSubview:self.profileContainer];
     [self.profileContainer setBackgroundColor:[UIColor blackColor]];
     
+    self.welcomeContainer = [[UIView alloc] initWithFrame:self.view.bounds];
+    [self.profileContainer addSubview:self.welcomeContainer];
     
-    NSString *welcomeTitleText = @"";
+    
+    NSString *welcomeTitleText = @"Hello";
     
     CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
     UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
@@ -70,7 +76,7 @@ static NSDateFormatter *dateFormatter = nil;
     [justSoYouKnowLabel setText:welcomeTitleText];
     [justSoYouKnowLabel setTextColor:[UIColor whiteColor]];
     [justSoYouKnowLabel setBackgroundColor:[UIColor clearColor]];
-    [self.profileContainer addSubview:justSoYouKnowLabel];
+    [self.welcomeContainer addSubview:justSoYouKnowLabel];
     
     NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it. Minim ad direct trade est nostrud, keytar duis. Adipisicing Carles Blue Bottle, distillery Etsy lo-fi messenger bag selvage meggings magna sint skateboard.";
     unichar chr[1] = {'\n'};
@@ -83,7 +89,7 @@ static NSDateFormatter *dateFormatter = nil;
     [justSoYouKnowDetails setBackgroundColor:[UIColor clearColor]];
     [justSoYouKnowDetails setLineBreakMode:NSLineBreakByWordWrapping];
     [justSoYouKnowDetails setNumberOfLines:0];
-    [self.profileContainer addSubview:justSoYouKnowDetails];
+    [self.welcomeContainer addSubview:justSoYouKnowDetails];
     
     UIButton *loginButton = [[UIButton alloc] init];
     loginButton.titleLabel.text = @"Login";
@@ -91,7 +97,7 @@ static NSDateFormatter *dateFormatter = nil;
     loginFrame.origin.y = justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 10;
     loginButton.frame = loginFrame;
     [loginButton addTarget:self action:@selector(onLoginTouch:) forControlEvents:UIControlEventTouchUpInside];
-    [self.profileContainer addSubview:loginButton];
+    [self.welcomeContainer addSubview:loginButton];
     
     UIButton *createNewProfileButton = [[UIButton alloc] init];
     createNewProfileButton.titleLabel.text = @"Create Profile";
@@ -99,7 +105,7 @@ static NSDateFormatter *dateFormatter = nil;
     newButtonFrame.origin.y = loginButton.frame.origin.y + loginButton.frame.size.height + 5;
     createNewProfileButton.frame = newButtonFrame;
     [createNewProfileButton addTarget:self action:@selector(onCreateNewProfileTouch:) forControlEvents:UIControlEventTouchUpInside];
-    [self.profileContainer addSubview:createNewProfileButton];
+    [self.welcomeContainer addSubview:createNewProfileButton];
 }
 
 -(IBAction)onLoginTouch:(id)sender {
@@ -107,8 +113,61 @@ static NSDateFormatter *dateFormatter = nil;
 }
 
 -(IBAction)onCreateNewProfileTouch:(id)sender {
-
     
+    self.createUserPassword = [[UIView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+    NSString *welcomeTitleText = @"Credititals";
+    
+    CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
+    UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
+    [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Colaborate-Medium" size:18]];
+    [justSoYouKnowLabel setText:welcomeTitleText];
+    [justSoYouKnowLabel setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowLabel setBackgroundColor:[UIColor clearColor]];
+    [self.createUserPassword addSubview:justSoYouKnowLabel];
+    
+    NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it. Minim ad direct trade est nostrud, keytar duis. Adipisicing Carles Blue Bottle, distillery Etsy lo-fi messenger bag selvage meggings magna sint skateboard.";
+    unichar chr[1] = {'\n'};
+    NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
+    CGRect labelFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
+    UILabel *justSoYouKnowDetails = [[UILabel alloc] initWithFrame:labelFrame];
+    [justSoYouKnowDetails setFont:[UIFont fontWithName:@"Colaborate-Thin" size:17]];
+    [justSoYouKnowDetails setText: [NSString stringWithFormat:welcomeText, cr]];
+    [justSoYouKnowDetails setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowDetails setBackgroundColor:[UIColor clearColor]];
+    [justSoYouKnowDetails setLineBreakMode:NSLineBreakByWordWrapping];
+    [justSoYouKnowDetails setNumberOfLines:0];
+    [self.createUserPassword addSubview:justSoYouKnowDetails];
+    
+    UIButton *loginButton = [[UIButton alloc] init];
+    loginButton.titleLabel.text = @"Create Profile";
+    CGRect loginFrame = loginButton.frame;
+    loginFrame.origin.y = justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 10;
+    loginButton.frame = loginFrame;
+    [loginButton addTarget:self action:@selector(onCreateCreditalsTouch:) forControlEvents:UIControlEventTouchUpInside];
+    [self.createUserPassword addSubview:loginButton];
+    [self.profileContainer addSubview:self.createUserPassword];
+    
+    CGRect welcomeTo = self.welcomeContainer.frame;
+    welcomeTo.origin.x = -self.view.bounds.size.width;
+    CGRect userNamePasswordTo = self.createUserPassword.frame;
+    userNamePasswordTo.origin.x = 0;
+    
+    [UIView animateWithDuration:0.25
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         self.welcomeContainer.frame = welcomeTo;
+                         self.createUserPassword.frame = userNamePasswordTo;
+                     }completion:^(BOOL finished){}];
+}
+
+-(IBAction)onCreateCredtialsTouch:(id)sender {
+    
+}
+
+-(IBAction)onSubmitProfileTouch:(id)sender {
+
+
     NSURL *url = [NSURL URLWithString:@"http://api.buffalop.com/profiles/"];
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
