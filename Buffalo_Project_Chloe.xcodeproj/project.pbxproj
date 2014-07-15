@@ -56,6 +56,9 @@
 		640DAABA190F1A2800F6545D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 640DAAA2190F1A2800F6545D /* UIKit.framework */; };
 		640DAAC2190F1A2800F6545D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 640DAAC0190F1A2800F6545D /* InfoPlist.strings */; };
 		640DAAC4190F1A2800F6545D /* Buffalo_Project_ChloeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 640DAAC3190F1A2800F6545D /* Buffalo_Project_ChloeTests.m */; };
+		642279A0197443490012B28C /* UserProfileClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 6422799F197443490012B28C /* UserProfileClient.m */; };
+		642279A3197443600012B28C /* UserProfileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 642279A2197443600012B28C /* UserProfileController.m */; };
+		642279A81974C97C0012B28C /* UserProfileModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 642279A71974C97C0012B28C /* UserProfileModel.m */; };
 		643773561914003200DAFA80 /* WeeklyDateItemRendererViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 643773541914003200DAFA80 /* WeeklyDateItemRendererViewController.m */; };
 		643773571914003200DAFA80 /* WeeklyDateItemRendererViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 643773551914003200DAFA80 /* WeeklyDateItemRendererViewController.xib */; };
 		6437735B1922F35C00DAFA80 /* ContactGridPictureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 643773591922F35C00DAFA80 /* ContactGridPictureViewController.m */; };
@@ -360,6 +363,12 @@
 		640DAABF190F1A2800F6545D /* Buffalo_Project_ChloeTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Buffalo_Project_ChloeTests-Info.plist"; sourceTree = "<group>"; };
 		640DAAC1190F1A2800F6545D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		640DAAC3190F1A2800F6545D /* Buffalo_Project_ChloeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Buffalo_Project_ChloeTests.m; sourceTree = "<group>"; };
+		6422799E197443490012B28C /* UserProfileClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileClient.h; sourceTree = "<group>"; };
+		6422799F197443490012B28C /* UserProfileClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileClient.m; sourceTree = "<group>"; };
+		642279A1197443600012B28C /* UserProfileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileController.h; sourceTree = "<group>"; };
+		642279A2197443600012B28C /* UserProfileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileController.m; sourceTree = "<group>"; };
+		642279A61974C97C0012B28C /* UserProfileModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileModel.h; sourceTree = "<group>"; };
+		642279A71974C97C0012B28C /* UserProfileModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileModel.m; sourceTree = "<group>"; };
 		643773531914003200DAFA80 /* WeeklyDateItemRendererViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeeklyDateItemRendererViewController.h; sourceTree = "<group>"; };
 		643773541914003200DAFA80 /* WeeklyDateItemRendererViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeeklyDateItemRendererViewController.m; sourceTree = "<group>"; };
 		643773551914003200DAFA80 /* WeeklyDateItemRendererViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WeeklyDateItemRendererViewController.xib; sourceTree = "<group>"; };
@@ -869,6 +878,26 @@
 				640DAAC0190F1A2800F6545D /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		642279991974342A0012B28C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				642279A61974C97C0012B28C /* UserProfileModel.h */,
+				642279A71974C97C0012B28C /* UserProfileModel.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		6422799D19743D950012B28C /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6422799E197443490012B28C /* UserProfileClient.h */,
+				6422799F197443490012B28C /* UserProfileClient.m */,
+				642279A1197443600012B28C /* UserProfileController.h */,
+				642279A2197443600012B28C /* UserProfileController.m */,
+			);
+			name = Controller;
 			sourceTree = "<group>";
 		};
 		6437735D1922F3E100DAFA80 /* Model */ = {
@@ -1488,6 +1517,8 @@
 		64C9BAAB191108F40008C83B /* User */ = {
 			isa = PBXGroup;
 			children = (
+				6422799D19743D950012B28C /* Controller */,
+				642279991974342A0012B28C /* Model */,
 				64BD73AF196F64A700D8016A /* View */,
 				64C9BAAC191108FD0008C83B /* Util */,
 			);
@@ -1980,6 +2011,7 @@
 			files = (
 				64BD73B3196F64D600D8016A /* UserProfileViewController.m in Sources */,
 				648DD9A0194F84F20034872B /* ContactGooglePlusAccountListViewController.m in Sources */,
+				642279A0197443490012B28C /* UserProfileClient.m in Sources */,
 				648DD9D0195077C50034872B /* RelationshipHistoryModel.m in Sources */,
 				648DD9D3195078B20034872B /* TwitterAccountHistoryModel.m in Sources */,
 				648DD9F41959D73E0034872B /* NSString+URLEncoding.m in Sources */,
@@ -1989,6 +2021,7 @@
 				648DD9DC195079920034872B /* FacebookAccountHistoryModel.m in Sources */,
 				647D9AFF1962422300319938 /* ContactAddressSearchClient.m in Sources */,
 				64C9BAD71911E74D0008C83B /* TodosViewController.m in Sources */,
+				642279A3197443600012B28C /* UserProfileController.m in Sources */,
 				64C9BA77190F2CB80008C83B /* TodayViewController.m in Sources */,
 				6437736E192308D700DAFA80 /* SearchButton.m in Sources */,
 				648DD9B8194FD6F30034872B /* PhoneNumberModel.m in Sources */,
@@ -1996,6 +2029,7 @@
 				64C9BA9E19109B190008C83B /* NSObject+TodaySummaryItems.m in Sources */,
 				647D9B05196249E900319938 /* AddressSearchModel.m in Sources */,
 				64C9BAAF1911091A0008C83B /* NSObject+UserUtil.m in Sources */,
+				642279A81974C97C0012B28C /* UserProfileModel.m in Sources */,
 				643773721923092300DAFA80 /* MoreOptionsViewController.m in Sources */,
 				648DD9CA194FE8990034872B /* TwitterAccountModel.m in Sources */,
 				648DDA0E195C5D560034872B /* InstantMessengerEditorViewController.m in Sources */,

@@ -8,6 +8,7 @@ PODS:
     - JRSwizzle (~> 1.0)
   - HexColors (2.2.1)
   - JRSwizzle (1.0)
+  - JSONModel (0.13.0)
   - LBBlurredImage (0.2.0)
   - Mantle (1.4.1):
     - Mantle/extobjc
@@ -30,6 +31,7 @@ PODS:
     - HexColors
 
 DEPENDENCIES:
+  - JSONModel
   - LBBlurredImage
   - Mantle
   - MapBox
@@ -43,6 +45,7 @@ SPEC CHECKSUMS:
   GRMustache: ab96109b7ba4b9568425bea40d6cd2cdc7582b6c
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
   JRSwizzle: 30da7a2c539a4ebf954b16d15f6dd8221c9f6fa5
+  JSONModel: 62ea96b49ea18a8b91ef89c249dba291d8601d82
   LBBlurredImage: 30cc42be977bbcece286d26d2d9c08b8be7f05e8
   Mantle: 1ca9c0fa84d3d3fc98524e7229f30489b6dd44e5
   MapBox: 01bd6999838d8dfbe8b48d33cae01ffcec8a7ab7

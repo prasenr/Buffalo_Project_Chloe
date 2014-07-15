@@ -69,7 +69,8 @@
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if(![defaults objectForKey:@"profileId"]) {
-        profileView = [[UserProfileViewController alloc] initWithPerson:[self getPlaceholderUserProfile] initWithNibName:@"UserProfileViewController" bundle:nil];
+        profileView = [[UserProfileViewController alloc] init];
+        [profileView createNewProfile];
         CGRect profileFrame = profileView.view.frame;
         profileFrame.origin = CGPointMake(0, 0);
         profileView.view.frame = profileFrame;
@@ -154,7 +155,8 @@
     toDoView.view.frame = todoFrame;
     [self.view addSubview:toDoView.view];
     
-    profileView = [[UserProfileViewController alloc] initWithPerson:[self getPlaceholderUserProfile] initWithNibName:@"UserProfileViewController" bundle:nil];
+    profileView = [[UserProfileViewController alloc] init];
+    [profileView addPerson:[self getPlaceholderUserProfile]];
     CGRect profileFrame = profileView.view.frame;
     profileFrame.origin = CGPointMake(-self.view.frame.size.width, 0);
     profileView.view.frame = profileFrame;

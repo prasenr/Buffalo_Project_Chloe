@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "NSObject+PersonModel.h"
+#import "UserProfileModel.h"
 #import "ContactAddressListViewController.h"
 #import "AddressEditorViewController.h"
 #import "ContactPhoneNumberListViewViewController.h"
@@ -48,7 +48,7 @@
     ContactRelationshipsListViewController *contactRelationshipListView;
     ContactBirthdayEditorViewController *contactBirthdayEditor;
 }
--(void)addPerson:(PersonModel *)person;
+-(void)addProfile:(UserProfileModel *)userProfile;
 -(void)createNewProfile;
 -(void)createNameLabels;
 -(void)createAddressLabel;

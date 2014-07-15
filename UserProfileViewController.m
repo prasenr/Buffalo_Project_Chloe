@@ -15,6 +15,11 @@
 #import "ContactAddressSearchViewController.h"
 
 @interface UserProfileViewController ()
+@property (nonatomic, strong) UIView *profileWizardContainer;
+@property (nonatomic, strong) UIView *profileContainer;
+@property (nonatomic, strong) UIView *welcomeContainer;
+@property (nonatomic, strong) UIView *createUserPassword;
+
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIImageView *blurredImageView;
 @property (nonatomic, strong) UIView *tableParentContainer;
@@ -22,7 +27,7 @@
 @property (nonatomic, assign) CGFloat screenHeight;
 @property (nonatomic, strong) UILabel *profileSectionLabel;
 @property (nonatomic, strong) UIImageView *profileSectionIcon;
-@property (nonatomic, strong) PersonModel *personModel;
+@property (nonatomic, strong) UserProfileModel *userProfileModel;
 @property (nonatomic, strong) NSMutableArray *nameLabelArray;
 @property (nonatomic, strong) UIView *header;
 @property (nonatomic, strong) UIView *nameContent;
@@ -43,17 +48,102 @@ static NSDateFormatter *dateFormatter = nil;
     return self;
 }
 
--(void)addPerson:(PersonModel *)person {
-    self.personModel = person;
+-(void)addProfile:(UserProfileModel *)userProfile{
+    self.userProfileModel = userProfile;
 }
 
+
 -(void)createNewProfile {
-    self.personModel = [[PersonModel alloc] init];
+    
+    self.userProfileModel = [[UserProfileModel alloc] init];
+    
+    self.profileContainer = [[UIView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:self.profileContainer];
+    [self.profileContainer setBackgroundColor:[UIColor blackColor]];
+    
+    
+    NSString *welcomeTitleText = @"";
+    
+    CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
+    UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
+    [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Colaborate-Medium" size:18]];
+    [justSoYouKnowLabel setText:welcomeTitleText];
+    [justSoYouKnowLabel setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowLabel setBackgroundColor:[UIColor clearColor]];
+    [self.profileContainer addSubview:justSoYouKnowLabel];
+    
+    NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it. Minim ad direct trade est nostrud, keytar duis. Adipisicing Carles Blue Bottle, distillery Etsy lo-fi messenger bag selvage meggings magna sint skateboard.";
+    unichar chr[1] = {'\n'};
+    NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
+    CGRect labelFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
+    UILabel *justSoYouKnowDetails = [[UILabel alloc] initWithFrame:labelFrame];
+    [justSoYouKnowDetails setFont:[UIFont fontWithName:@"Colaborate-Thin" size:17]];
+    [justSoYouKnowDetails setText: [NSString stringWithFormat:welcomeText, cr]];
+    [justSoYouKnowDetails setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowDetails setBackgroundColor:[UIColor clearColor]];
+    [justSoYouKnowDetails setLineBreakMode:NSLineBreakByWordWrapping];
+    [justSoYouKnowDetails setNumberOfLines:0];
+    [self.profileContainer addSubview:justSoYouKnowDetails];
+    
+    UIButton *loginButton = [[UIButton alloc] init];
+    loginButton.titleLabel.text = @"Login";
+    CGRect loginFrame = loginButton.frame;
+    loginFrame.origin.y = justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 10;
+    loginButton.frame = loginFrame;
+    [loginButton addTarget:self action:@selector(onLoginTouch:) forControlEvents:UIControlEventTouchUpInside];
+    [self.profileContainer addSubview:loginButton];
+    
+    UIButton *createNewProfileButton = [[UIButton alloc] init];
+    createNewProfileButton.titleLabel.text = @"Create Profile";
+    CGRect newButtonFrame = createNewProfileButton.frame;
+    newButtonFrame.origin.y = loginButton.frame.origin.y + loginButton.frame.size.height + 5;
+    createNewProfileButton.frame = newButtonFrame;
+    [createNewProfileButton addTarget:self action:@selector(onCreateNewProfileTouch:) forControlEvents:UIControlEventTouchUpInside];
+    [self.profileContainer addSubview:createNewProfileButton];
+}
+
+-(IBAction)onLoginTouch:(id)sender {
+    
+}
+
+-(IBAction)onCreateNewProfileTouch:(id)sender {
+
+    
+    NSURL *url = [NSURL URLWithString:@"http://api.buffalop.com/profiles/"];
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+    request.HTTPMethod = @"POST";
+    
+    NSDictionary *dictionary = @{@"profile": self.userProfileModel};
+    NSError *error = nil;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                   options:kNilOptions error:&error];
+    
+    if (!error) {
+        // 4
+        NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
+                                                                   fromData:data completionHandler:^(NSData *data,NSURLResponse *response,NSError *error) {
+                                                                       self.userProfileModel = [[UserProfileModel alloc] initWithData:data error:nil];
+                                                                   }];
+        
+        // 5
+        [uploadTask resume];
+    }
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+}
+
+-(void) showProfileWizard {
+    
+}
+
+-(void) showProfileView {
     self.screenHeight = [UIScreen mainScreen].bounds.size.height;
     
     //UIImage *background = [UIImage imageNamed:@"fall.jpg"];
@@ -91,7 +181,7 @@ static NSDateFormatter *dateFormatter = nil;
     [self createNameLabels];
     yPos = self.nameContent.frame.size.height;
     
-    if([self.personModel.addresses count]>0) {
+    if([self.userProfileModel.addresses count]>0) {
         self.addressContent = [[UIView alloc] init];
         [self createAddressLabel];
         NSLog(@"ypos intial old %d", yPos);
@@ -112,7 +202,7 @@ static NSDateFormatter *dateFormatter = nil;
     newFrame.origin.y = yPos;
     self.nameContent.frame = newFrame;
     
-    if([self.personModel.addresses count]>0) {
+    if([self.userProfileModel.addresses count]>0) {
         yPos = yPos + self.nameContent.frame.size.height;
         yPos = yPos - 10;
         
@@ -134,7 +224,7 @@ static NSDateFormatter *dateFormatter = nil;
     
     NSMutableString *filePath = [[NSMutableString alloc] init];
     [filePath appendString:@"big"];
-    [filePath appendString:[self.personModel.firstName substringToIndex:1].lowercaseString];
+    [filePath appendString:[self.userProfileModel.firstName substringToIndex:1].lowercaseString];
     [filePath appendString:@".png"];
     
     self.loaderImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:filePath]];
@@ -147,7 +237,7 @@ static NSDateFormatter *dateFormatter = nil;
     dispatch_queue_t backgroundQueue  = dispatch_queue_create("com.buffaloproject.profileImageBGqueue", NULL);
     
     dispatch_async(backgroundQueue, ^(void) {
-        imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:self.personModel.personBigImage]];
+        imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:self.userProfileModel.personBigImage]];
         UIImage *imageLoad;
         imageLoad = [[UIImage alloc] initWithData:imageData];
         
@@ -635,7 +725,7 @@ static NSDateFormatter *dateFormatter = nil;
                 dateFormatter = [[NSDateFormatter alloc] init];
                 [dateFormatter setDateFormat:@"MMMM d, yyyy"];
             }
-            self.profileSectionLabel.text = [dateFormatter stringFromDate: self.personModel.birthday];
+            self.profileSectionLabel.text = [dateFormatter stringFromDate: self.userProfileModel.birthday];
             [self.profileSectionIcon setImage:[UIImage imageNamed:@"birthdayIcon.png"]];
             break;
         case 1:
@@ -683,7 +773,7 @@ static NSDateFormatter *dateFormatter = nil;
 
 -(void)createNameLabels {
     
-    NSArray *names = [[NSArray alloc] initWithObjects:self.personModel.firstName, self.personModel.lastName, nil];
+    NSArray *names = [[NSArray alloc] initWithObjects:self.userProfileModel.firstName, self.userProfileModel.lastName, nil];
     self.nameLabelArray = [[NSMutableArray alloc] init];
     int nameHeight = 0;
     for(NSString *aName in names) {
@@ -732,7 +822,7 @@ static NSDateFormatter *dateFormatter = nil;
 -(void) createAddressLabel {
     
     int totalHeight = 0;
-    AddressHistoryModel *aAddressHistory = [self.personModel.addresses objectAtIndex:0];
+    AddressHistoryModel *aAddressHistory = [self.userProfileModel.addresses objectAtIndex:0];
     AddressModel *aAddress = aAddressHistory.account;
     
     if([aAddress.addressLine1 length]>0) {
@@ -848,7 +938,7 @@ static NSDateFormatter *dateFormatter = nil;
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self.personModel forKey:@"person"];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self.userProfileModel forKey:@"person"];
     switch (indexPath.row) {
         case 0:
             [[NSNotificationCenter defaultCenter] postNotificationName:@"showContactBirthdayEditScreen" object:nil userInfo:userInfo];
