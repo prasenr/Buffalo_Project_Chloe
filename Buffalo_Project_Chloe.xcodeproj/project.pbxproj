@@ -59,6 +59,9 @@
 		642279A0197443490012B28C /* UserProfileClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 6422799F197443490012B28C /* UserProfileClient.m */; };
 		642279A3197443600012B28C /* UserProfileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 642279A2197443600012B28C /* UserProfileController.m */; };
 		642279A81974C97C0012B28C /* UserProfileModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 642279A71974C97C0012B28C /* UserProfileModel.m */; };
+		642279AC19760A8E0012B28C /* WhoAreYouContactListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 642279AA19760A8E0012B28C /* WhoAreYouContactListViewController.m */; };
+		642279AD19760A8E0012B28C /* WhoAreYouContactListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 642279AB19760A8E0012B28C /* WhoAreYouContactListViewController.xib */; };
+		642279B019761C200012B28C /* WhoAreYouPersonModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 642279AF19761C200012B28C /* WhoAreYouPersonModel.m */; };
 		643773561914003200DAFA80 /* WeeklyDateItemRendererViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 643773541914003200DAFA80 /* WeeklyDateItemRendererViewController.m */; };
 		643773571914003200DAFA80 /* WeeklyDateItemRendererViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 643773551914003200DAFA80 /* WeeklyDateItemRendererViewController.xib */; };
 		6437735B1922F35C00DAFA80 /* ContactGridPictureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 643773591922F35C00DAFA80 /* ContactGridPictureViewController.m */; };
@@ -369,6 +372,11 @@
 		642279A2197443600012B28C /* UserProfileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileController.m; sourceTree = "<group>"; };
 		642279A61974C97C0012B28C /* UserProfileModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileModel.h; sourceTree = "<group>"; };
 		642279A71974C97C0012B28C /* UserProfileModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileModel.m; sourceTree = "<group>"; };
+		642279A919760A8E0012B28C /* WhoAreYouContactListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhoAreYouContactListViewController.h; sourceTree = "<group>"; };
+		642279AA19760A8E0012B28C /* WhoAreYouContactListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WhoAreYouContactListViewController.m; sourceTree = "<group>"; };
+		642279AB19760A8E0012B28C /* WhoAreYouContactListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WhoAreYouContactListViewController.xib; sourceTree = "<group>"; };
+		642279AE19761C200012B28C /* WhoAreYouPersonModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhoAreYouPersonModel.h; sourceTree = "<group>"; };
+		642279AF19761C200012B28C /* WhoAreYouPersonModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WhoAreYouPersonModel.m; sourceTree = "<group>"; };
 		643773531914003200DAFA80 /* WeeklyDateItemRendererViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeeklyDateItemRendererViewController.h; sourceTree = "<group>"; };
 		643773541914003200DAFA80 /* WeeklyDateItemRendererViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeeklyDateItemRendererViewController.m; sourceTree = "<group>"; };
 		643773551914003200DAFA80 /* WeeklyDateItemRendererViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WeeklyDateItemRendererViewController.xib; sourceTree = "<group>"; };
@@ -885,6 +893,8 @@
 			children = (
 				642279A61974C97C0012B28C /* UserProfileModel.h */,
 				642279A71974C97C0012B28C /* UserProfileModel.m */,
+				642279AE19761C200012B28C /* WhoAreYouPersonModel.h */,
+				642279AF19761C200012B28C /* WhoAreYouPersonModel.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -1417,6 +1427,9 @@
 				64BD73B0196F64D600D8016A /* UserProfileViewController.h */,
 				64BD73B1196F64D600D8016A /* UserProfileViewController.m */,
 				64BD73B2196F64D600D8016A /* UserProfileViewController.xib */,
+				642279A919760A8E0012B28C /* WhoAreYouContactListViewController.h */,
+				642279AA19760A8E0012B28C /* WhoAreYouContactListViewController.m */,
+				642279AB19760A8E0012B28C /* WhoAreYouContactListViewController.xib */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -1924,6 +1937,7 @@
 				64000D6319337C6C001FC2EC /* windy.png in Resources */,
 				648DD905194A2A470034872B /* k.png in Resources */,
 				648DD9FB195BA9660034872B /* LinkedInEditorViewController.xib in Resources */,
+				642279AD19760A8E0012B28C /* WhoAreYouContactListViewController.xib in Resources */,
 				648DD95E194B5E520034872B /* birthdayIcon.png in Resources */,
 				64000D5D19337C6C001FC2EC /* sunny_possible_showers.png in Resources */,
 				640DAAA9190F1A2800F6545D /* InfoPlist.strings in Resources */,
@@ -2009,6 +2023,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				642279B019761C200012B28C /* WhoAreYouPersonModel.m in Sources */,
 				64BD73B3196F64D600D8016A /* UserProfileViewController.m in Sources */,
 				648DD9A0194F84F20034872B /* ContactGooglePlusAccountListViewController.m in Sources */,
 				642279A0197443490012B28C /* UserProfileClient.m in Sources */,
@@ -2050,6 +2065,7 @@
 				64C9BA89190FD4740008C83B /* NSObject+WeatherClient.m in Sources */,
 				64C9BADE1913274D0008C83B /* CalendarHeaderViewController.m in Sources */,
 				643773BE192B95E400DAFA80 /* NSObject+TodaySummaryListItems.m in Sources */,
+				642279AC19760A8E0012B28C /* WhoAreYouContactListViewController.m in Sources */,
 				64C9BA72190F2BAC0008C83B /* MainViewController.m in Sources */,
 				64000D6B1938D099001FC2EC /* ToDoEditorViewController.m in Sources */,
 				648DD9C4194FE46F0034872B /* GooglePlusAccountModel.m in Sources */,

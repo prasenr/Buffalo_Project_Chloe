@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AddressBook/AddressBook.h>
 #import "UserProfileModel.h"
 #import "ContactAddressListViewController.h"
 #import "AddressEditorViewController.h"
@@ -27,7 +28,7 @@
 #import "FacebookEditorViewController.h"
 #import "ContactBirthdayEditorViewController.h"
 
-@interface UserProfileViewController : UIViewController  <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate> {
+@interface UserProfileViewController : UIViewController  <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UITextFieldDelegate> {
     ContactAddressListViewController *contactAddressListView;
     AddressEditorViewController *contactAddressEditorView;
     ContactPhoneNumberListViewViewController *contactPhoneNumberListView;

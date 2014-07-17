@@ -20,4 +20,7 @@
              };
 }
 
+-(void)setRawPhoneNumber:(NSString *)phoneNumber {
+    //TODO add logic to parse a raw phone number
+}
 @end

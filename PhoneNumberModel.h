@@ -16,4 +16,6 @@
 @property (nonatomic, strong) NSMutableString *prefix;
 @property (nonatomic, strong) NSMutableString *phoneNumber;
 @property (nonatomic, strong) NSMutableString *extension;
+
+-(void)setRawPhoneNumber:(NSString *)phoneNumber;
 @end

@@ -70,13 +70,14 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if(![defaults objectForKey:@"profileId"]) {
         profileView = [[UserProfileViewController alloc] init];
-        [profileView createNewProfile];
         CGRect profileFrame = profileView.view.frame;
         profileFrame.origin = CGPointMake(0, 0);
+        profileFrame.size = CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height);
         profileView.view.frame = profileFrame;
+        [profileView createNewProfile];
         [self.view addSubview:profileView.view];
         
-        meetingView = [[MeetingsViewController alloc] init];
+        /*meetingView = [[MeetingsViewController alloc] init];
         CGRect meetingFrame = meetingView.view.frame;
         meetingFrame.origin = CGPointMake(self.view.frame.size.width, 0);
         meetingView.view.frame = meetingFrame;
@@ -95,7 +96,7 @@
         todayGestureRight.direction = UISwipeGestureRecognizerDirectionRight;
         [self.view addGestureRecognizer:todayGestureRight];
         [self.view addGestureRecognizer:todayGestureLeft];
-        [self.view addSubview:todayView.view];
+        [self.view addSubview:todayView.view];*/
         
     } else {
         NSString *userId = [defaults objectForKey:@"profileId"];
@@ -108,8 +109,9 @@
         [self.view addGestureRecognizer:todayGestureRight];
         [self.view addGestureRecognizer:todayGestureLeft];
         [self.view addSubview:todayView.view];
+        [self.view addSubview:self.loaderScreen];
     }
-    [self.view addSubview:self.loaderScreen];
+    
 }
 
 -(void) hideMainLoaderScreen {

@@ -13,14 +13,17 @@
 #import "PhoneNumberModel.h"
 #import "PhoneNumberHistoryModel.h"
 #import "ContactAddressSearchViewController.h"
+#import "WhoAreYouContactListViewController.h"
 
 @interface UserProfileViewController ()
 @property (nonatomic, strong) UIView *profileWizardContainer;
 @property (nonatomic, strong) UIView *profileContainer;
 @property (nonatomic, strong) UIView *welcomeContainer;
 @property (nonatomic, strong) UIView *createUserPassword;
+@property (nonatomic, strong) UITextField *usernameInput;
+@property (nonatomic, strong) UITextField *passwordInput;
 @property (nonatomic, strong) UIView *accessContacts;
-@property (nonatomic, strong) UIView *whoAreYou;
+@property (nonatomic, strong) WhoAreYouContactListViewController *whoAreYou;
 @property (nonatomic, strong) NSArray *missingInformationScreensArray;
 
 @property (nonatomic, strong) UIImageView *backgroundImageView;
@@ -65,6 +68,7 @@ static NSDateFormatter *dateFormatter = nil;
     [self.profileContainer setBackgroundColor:[UIColor blackColor]];
     
     self.welcomeContainer = [[UIView alloc] initWithFrame:self.view.bounds];
+    self.welcomeContainer.backgroundColor = [UIColor whiteColor];
     [self.profileContainer addSubview:self.welcomeContainer];
     
     
@@ -72,39 +76,75 @@ static NSDateFormatter *dateFormatter = nil;
     
     CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
     UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
-    [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Colaborate-Medium" size:18]];
+    [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Didot" size:45]];
     [justSoYouKnowLabel setText:welcomeTitleText];
-    [justSoYouKnowLabel setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowLabel setTextColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0]];
     [justSoYouKnowLabel setBackgroundColor:[UIColor clearColor]];
     [self.welcomeContainer addSubview:justSoYouKnowLabel];
+    
+    CGSize maxiToDoMeetingSummaryLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
+    CGRect expectedLabelSize = [justSoYouKnowLabel.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowLabel.font} context:nil ];
+    
+    CGRect newFrame = justSoYouKnowLabel.frame;
+    newFrame.size.height = expectedLabelSize.size.height;
+    newFrame.size.width = expectedLabelSize.size.width;
+    newFrame.origin.x = 20;
+    newFrame.origin.y = 250;
+    justSoYouKnowLabel.frame = newFrame;
     
     NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it. Minim ad direct trade est nostrud, keytar duis. Adipisicing Carles Blue Bottle, distillery Etsy lo-fi messenger bag selvage meggings magna sint skateboard.";
     unichar chr[1] = {'\n'};
     NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
     CGRect labelFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
     UILabel *justSoYouKnowDetails = [[UILabel alloc] initWithFrame:labelFrame];
-    [justSoYouKnowDetails setFont:[UIFont fontWithName:@"Colaborate-Thin" size:17]];
+    [justSoYouKnowDetails setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
     [justSoYouKnowDetails setText: [NSString stringWithFormat:welcomeText, cr]];
-    [justSoYouKnowDetails setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowDetails setTextColor:[UIColor colorWithRed:110.0/255.0 green:110.0/255.0 blue:110.0/255.0 alpha:1.0]];
     [justSoYouKnowDetails setBackgroundColor:[UIColor clearColor]];
     [justSoYouKnowDetails setLineBreakMode:NSLineBreakByWordWrapping];
     [justSoYouKnowDetails setNumberOfLines:0];
+    
+    CGRect expectedLabelSize1 = [justSoYouKnowDetails.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowDetails.font} context:nil ];
+    CGRect newFrame1 = justSoYouKnowDetails.frame;
+    newFrame1.origin.x = 20;
+    newFrame1.origin.y = (justSoYouKnowLabel.frame.size.height + justSoYouKnowLabel.frame.origin.y) - 5;
+    newFrame1.size.width = expectedLabelSize1.size.width;
+    newFrame1.size.height = expectedLabelSize1.size.height;
+    justSoYouKnowDetails.frame = newFrame1;
     [self.welcomeContainer addSubview:justSoYouKnowDetails];
     
     UIButton *loginButton = [[UIButton alloc] init];
-    loginButton.titleLabel.text = @"Login";
-    CGRect loginFrame = loginButton.frame;
-    loginFrame.origin.y = justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 10;
-    loginButton.frame = loginFrame;
+    [loginButton setTitle:@"Login" forState:UIControlStateNormal];
+    loginButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [loginButton setBackgroundColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0]];
+    loginButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [loginButton sizeToFit];
     [loginButton addTarget:self action:@selector(onLoginTouch:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect loginFrame = loginButton.frame;
+    loginFrame.origin.y = self.view.bounds.size.height - 50;
+    loginFrame.origin.x = self.view.bounds.size.width/2;
+    loginFrame.size.width = self.view.bounds.size.width/2;
+    loginFrame.size.height = 50;
+    loginButton.frame = loginFrame;
+    
     [self.welcomeContainer addSubview:loginButton];
     
     UIButton *createNewProfileButton = [[UIButton alloc] init];
-    createNewProfileButton.titleLabel.text = @"Create Profile";
-    CGRect newButtonFrame = createNewProfileButton.frame;
-    newButtonFrame.origin.y = loginButton.frame.origin.y + loginButton.frame.size.height + 5;
-    createNewProfileButton.frame = newButtonFrame;
+    [createNewProfileButton setTitle:@"Create Profile" forState:UIControlStateNormal];
+    createNewProfileButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    createNewProfileButton.titleLabel.textColor = [UIColor whiteColor];
+    createNewProfileButton.backgroundColor = [UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0];
+    createNewProfileButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [createNewProfileButton sizeToFit];
     [createNewProfileButton addTarget:self action:@selector(onCreateNewProfileTouch:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect newButtonFrame = createNewProfileButton.frame;
+    newButtonFrame.origin.y = loginButton.frame.origin.y;
+    newButtonFrame.origin.x = 0;
+    newButtonFrame.size.width = self.view.bounds.size.width/2;
+    newButtonFrame.size.height = 50;
+    createNewProfileButton.frame = newButtonFrame;
+    
     [self.welcomeContainer addSubview:createNewProfileButton];
 }
 
@@ -115,35 +155,117 @@ static NSDateFormatter *dateFormatter = nil;
 -(IBAction)onCreateNewProfileTouch:(id)sender {
     
     self.createUserPassword = [[UIView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
-    NSString *welcomeTitleText = @"Credititals";
-    
     CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
     UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
-    [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Colaborate-Medium" size:18]];
-    [justSoYouKnowLabel setText:welcomeTitleText];
+    [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Didot" size:30]];
+    [justSoYouKnowLabel setText:@"Creditials"];
     [justSoYouKnowLabel setTextColor:[UIColor whiteColor]];
     [justSoYouKnowLabel setBackgroundColor:[UIColor clearColor]];
     [self.createUserPassword addSubview:justSoYouKnowLabel];
     
-    NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it. Minim ad direct trade est nostrud, keytar duis. Adipisicing Carles Blue Bottle, distillery Etsy lo-fi messenger bag selvage meggings magna sint skateboard.";
+    CGSize maxiToDoMeetingSummaryLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
+    CGRect expectedLabelSize = [justSoYouKnowLabel.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowLabel.font} context:nil ];
+    
+    CGRect newFrame = justSoYouKnowLabel.frame;
+    newFrame.size.height = expectedLabelSize.size.height;
+    newFrame.size.width = expectedLabelSize.size.width;
+    newFrame.origin.x = 20;
+    newFrame.origin.y = 20;
+    justSoYouKnowLabel.frame = newFrame;
+    
+    NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it.";
     unichar chr[1] = {'\n'};
     NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
     CGRect labelFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
     UILabel *justSoYouKnowDetails = [[UILabel alloc] initWithFrame:labelFrame];
-    [justSoYouKnowDetails setFont:[UIFont fontWithName:@"Colaborate-Thin" size:17]];
+    [justSoYouKnowDetails setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
     [justSoYouKnowDetails setText: [NSString stringWithFormat:welcomeText, cr]];
     [justSoYouKnowDetails setTextColor:[UIColor whiteColor]];
     [justSoYouKnowDetails setBackgroundColor:[UIColor clearColor]];
     [justSoYouKnowDetails setLineBreakMode:NSLineBreakByWordWrapping];
     [justSoYouKnowDetails setNumberOfLines:0];
+    
+    CGRect expectedLabelSize1 = [justSoYouKnowDetails.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowDetails.font} context:nil ];
+    CGRect newFrame1 = justSoYouKnowDetails.frame;
+    newFrame1.origin.x = 20;
+    newFrame1.origin.y = justSoYouKnowLabel.frame.size.height + justSoYouKnowLabel.frame.origin.y - 5;
+    newFrame1.size.width = expectedLabelSize1.size.width;
+    newFrame1.size.height = expectedLabelSize1.size.height;
+    justSoYouKnowDetails.frame = newFrame1;
     [self.createUserPassword addSubview:justSoYouKnowDetails];
     
+    UILabel *usernameTitle = [[UILabel alloc] initWithFrame:self.view.bounds];
+    [usernameTitle setFont: [UIFont fontWithName:@"HelveticaNeue" size:16]];
+    [usernameTitle setText:@"Username"];
+    [usernameTitle setTextColor:[UIColor whiteColor]];
+    [usernameTitle setBackgroundColor:[UIColor clearColor]];
+    [self.createUserPassword addSubview:usernameTitle];
+    
+    CGRect expectedLabelSize2 = [usernameTitle.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:usernameTitle.font} context:nil ];
+    CGRect usernameTitleFrame = usernameTitle.frame;
+    usernameTitleFrame.origin.x = 20;
+    usernameTitleFrame.origin.y = justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 30;
+    usernameTitleFrame.size = expectedLabelSize2.size;
+    usernameTitle.frame = usernameTitleFrame;
+    
+    
+    self.usernameInput = [[UITextField alloc] initWithFrame:CGRectMake(20, usernameTitleFrame.origin.y + usernameTitleFrame.size.height + 2, self.view.bounds.size.width - 40, 50)];
+    self.usernameInput.tag = 100;
+    self.usernameInput.delegate = self;
+    self.usernameInput.placeholder = @"your username";
+    self.usernameInput.keyboardType = UIKeyboardTypeDefault;
+    self.usernameInput.returnKeyType = UIReturnKeyNext;
+    self.usernameInput.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    self.usernameInput.textColor = [UIColor blackColor];
+    self.usernameInput.backgroundColor = [UIColor whiteColor];
+    self.usernameInput.autocapitalizationType = UITextAutocorrectionTypeNo;
+    self.usernameInput.autocorrectionType = UITextAutocorrectionTypeNo;
+    [self.createUserPassword addSubview:self.usernameInput];
+    
+    UILabel *passwordTitle = [[UILabel alloc] initWithFrame:self.view.bounds];
+    [passwordTitle setFont: [UIFont fontWithName:@"HelveticaNeue" size:16]];
+    [passwordTitle setText:@"Password"];
+    [passwordTitle setTextColor:[UIColor whiteColor]];
+    [usernameTitle setBackgroundColor:[UIColor clearColor]];
+    [self.createUserPassword addSubview:passwordTitle];
+    
+    CGRect expectedLabelSize3 = [passwordTitle.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:passwordTitle.font} context:nil ];
+    
+    CGRect passwordTitleFrame = passwordTitle.frame;
+    passwordTitleFrame.origin.x = 20;
+    passwordTitleFrame.origin.y = self.usernameInput.frame.size.height + self.usernameInput.frame.origin.y + 20;
+    passwordTitleFrame.size = expectedLabelSize3.size;
+    passwordTitle.frame = passwordTitleFrame;
+    
+    self.passwordInput = [[UITextField alloc] initWithFrame:CGRectMake(20, passwordTitleFrame.origin.y + passwordTitleFrame.size.height + 2, self.view.bounds.size.width - 40, 50)];
+    self.passwordInput.placeholder = @"your password";
+    self.passwordInput.tag = 101;
+    self.passwordInput.delegate = self;
+    self.passwordInput.keyboardType = UIKeyboardTypeDefault;
+    self.passwordInput.returnKeyType = UIReturnKeyDone;
+    self.passwordInput.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    self.passwordInput.textColor = [UIColor blackColor];
+    self.passwordInput.backgroundColor = [UIColor whiteColor];
+    self.passwordInput.autocapitalizationType = UITextAutocorrectionTypeNo;
+    self.passwordInput.autocorrectionType = UITextAutocorrectionTypeNo;
+    self.passwordInput.secureTextEntry = YES;
+    [self.createUserPassword addSubview:self.passwordInput];
+    
     UIButton *loginButton = [[UIButton alloc] init];
-    loginButton.titleLabel.text = @"Create Profile";
-    CGRect loginFrame = loginButton.frame;
-    loginFrame.origin.y = justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 10;
-    loginButton.frame = loginFrame;
+    [loginButton setTitle:@"Create my creditials" forState:UIControlStateNormal];
+    loginButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [loginButton setBackgroundColor:[UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0]];
+    loginButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [loginButton sizeToFit];
     [loginButton addTarget:self action:@selector(onCreateCreditalsTouch:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect loginFrame = loginButton.frame;
+    loginFrame.origin.y =self.passwordInput.frame.origin.y + self.passwordInput.frame.size.height + 30;
+    loginFrame.origin.x = 20;
+    loginFrame.size.width = self.view.bounds.size.width - 40 ;
+    loginFrame.size.height = 50;
+    loginButton.frame = loginFrame;
+
     [self.createUserPassword addSubview:loginButton];
     [self.profileContainer addSubview:self.createUserPassword];
     
@@ -161,8 +283,168 @@ static NSDateFormatter *dateFormatter = nil;
                      }completion:^(BOOL finished){}];
 }
 
--(IBAction)onCreateCredtialsTouch:(id)sender {
+-(BOOL)textFieldShouldReturn:(UITextField *)textField {
     
+    if(textField.tag == 100) {
+        [self.usernameInput resignFirstResponder];
+        [self.passwordInput becomeFirstResponder];
+    }
+    
+    if(textField.tag == 101) {
+        [self.passwordInput resignFirstResponder];
+    }
+    
+    return YES;
+}
+
+-(IBAction)onCreateCreditalsTouch:(id)sender {
+    
+    self.accessContacts = [[UIView alloc] initWithFrame:self.view.bounds];
+    CGRect accessContactFrame = self.accessContacts.frame;
+    accessContactFrame.origin.x = self.view.bounds.size.width;
+    self.accessContacts.frame = accessContactFrame;
+    [self.view addSubview:self.accessContacts];
+    
+    CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
+    UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
+    [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Didot" size:30]];
+    [justSoYouKnowLabel setText:@"Who are you?"];
+    [justSoYouKnowLabel setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowLabel setBackgroundColor:[UIColor clearColor]];
+    [self.accessContacts addSubview:justSoYouKnowLabel];
+    
+    CGSize maxiToDoMeetingSummaryLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
+    CGRect expectedLabelSize = [justSoYouKnowLabel.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowLabel.font} context:nil ];
+    
+    CGRect newFrame = justSoYouKnowLabel.frame;
+    newFrame.size.height = expectedLabelSize.size.height;
+    newFrame.size.width = expectedLabelSize.size.width;
+    newFrame.origin.x = 20;
+    newFrame.origin.y = 50;
+    justSoYouKnowLabel.frame = newFrame;
+    
+    NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it.";
+    unichar chr[1] = {'\n'};
+    NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
+    CGRect labelFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
+    UILabel *justSoYouKnowDetails = [[UILabel alloc] initWithFrame:labelFrame];
+    [justSoYouKnowDetails setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
+    [justSoYouKnowDetails setText: [NSString stringWithFormat:welcomeText, cr]];
+    [justSoYouKnowDetails setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowDetails setBackgroundColor:[UIColor clearColor]];
+    [justSoYouKnowDetails setLineBreakMode:NSLineBreakByWordWrapping];
+    [justSoYouKnowDetails setNumberOfLines:0];
+    
+    CGRect expectedLabelSize1 = [justSoYouKnowDetails.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowDetails.font} context:nil ];
+    CGRect newFrame1 = justSoYouKnowDetails.frame;
+    newFrame1.origin.x = 10;
+    newFrame1.origin.y = justSoYouKnowLabel.frame.size.height + justSoYouKnowLabel.frame.origin.y - 5;
+    newFrame1.size.width = expectedLabelSize1.size.width;
+    newFrame1.size.height = expectedLabelSize1.size.height;
+    justSoYouKnowDetails.frame = newFrame1;
+    [self.accessContacts addSubview:justSoYouKnowDetails];
+    
+    UIButton *loginButton = [[UIButton alloc] init];
+    [loginButton setTitle:@"Let's find me" forState:UIControlStateNormal];
+    loginButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [loginButton setBackgroundColor:[UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0]];
+    loginButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [loginButton sizeToFit];
+    [loginButton addTarget:self action:@selector(onContactAccessClicked:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect loginFrame = loginButton.frame;
+    loginFrame.origin.y =justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 30;
+    loginFrame.origin.x = 0;
+    loginFrame.size.width = self.view.bounds.size.width/2;
+    loginFrame.size.height = 50;
+    loginButton.frame = loginFrame;
+    [self.accessContacts addSubview:loginButton];
+    
+    UIButton *goOldSchool = [[UIButton alloc] init];
+    [goOldSchool setTitle:@"Do it manually" forState:UIControlStateNormal];
+    goOldSchool.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [goOldSchool setTitleColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0] forState:UIControlStateNormal];
+    [goOldSchool setBackgroundColor: [UIColor whiteColor]];
+    goOldSchool.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [goOldSchool addTarget:self action:@selector(onGoOldSchool:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect oldSchoolFrame = goOldSchool.frame;
+    oldSchoolFrame.origin.y = loginFrame.origin.y;
+    oldSchoolFrame.origin.x = self.view.bounds.size.width/2;
+    oldSchoolFrame.size.width = self.view.bounds.size.width/2;
+    oldSchoolFrame.size.height = 50;
+    goOldSchool.frame = oldSchoolFrame;
+    [self.accessContacts addSubview:goOldSchool];
+    
+    
+    
+    CGRect userNamePasswordTo = self.createUserPassword.frame;
+    userNamePasswordTo.origin.x = -self.view.bounds.size.width;
+    CGRect accessContactsTo = self.accessContacts.frame;
+    accessContactsTo.origin.x = 0;
+    
+    [UIView animateWithDuration:0.25
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         self.createUserPassword.frame = userNamePasswordTo;
+                         self.accessContacts.frame = accessContactsTo;
+                         
+                     }completion:^(BOOL finished){}];
+}
+
+-(IBAction)onContactAccessClicked:(id)sender {
+    ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, NULL);
+    
+    if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusNotDetermined) {
+        ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) {
+            if (granted) {
+                // First time access has been granted, add the contact
+                [self showContactToPick];
+            } else {
+                // User denied access
+                // Display an alert telling user the contact could not be added
+            }
+        });
+    }
+    else if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized) {
+        // The user has previously given access, add the contact
+        [self showContactToPick];
+        
+    }
+    else {
+        // The user has previously denied access
+        // Send an alert telling user to change privacy setting in settings app
+    }
+}
+
+-(void) showContactToPick {
+    
+    self.whoAreYou = [[WhoAreYouContactListViewController alloc] init];
+    CGRect whoAreFrame = self.whoAreYou.view.frame;
+    whoAreFrame.origin.x = self.view.bounds.size.width;
+    whoAreFrame.origin.y = 0;
+    whoAreFrame.size.width = self.view.bounds.size.width;
+    whoAreFrame.size.height = self.view.bounds.size.height;
+    self.whoAreYou.view.frame = whoAreFrame;
+    
+    [self.view addSubview:self.whoAreYou.view];
+    
+    
+    
+    
+    CGRect accessContactTo = self.accessContacts.frame;
+    accessContactTo.origin.x = -self.view.bounds.size.width;
+    CGRect whoAreTo = self.whoAreYou.view.frame;
+    whoAreTo.origin.x = 0;
+    
+    [UIView animateWithDuration:0.25
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         self.whoAreYou.view.frame = whoAreTo;
+                         self.accessContacts.frame = accessContactTo;
+                         
+                     }completion:^(BOOL finished){}];
 }
 
 -(IBAction)onSubmitProfileTouch:(id)sender {
@@ -765,7 +1047,7 @@ static NSDateFormatter *dateFormatter = nil;
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.backgroundColor = [UIColor clearColor];
-        
+
         self.profileSectionIcon = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, 30, 30)];
         [cell.contentView addSubview:self.profileSectionIcon];
         

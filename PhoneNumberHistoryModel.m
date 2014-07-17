@@ -32,4 +32,6 @@
 +(NSValueTransformer *) endDateJSONTransformer {
     return [self dateJSONTransformer];
 }
+
+
 @end
