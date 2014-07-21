@@ -22,6 +22,7 @@
 @property(nonatomic, strong, readwrite)NSMutableDictionary *allMeetingsSorted;
 @property(nonatomic, strong, readwrite)NSMutableArray *rawToDos;
 @property(nonatomic, strong, readwrite)NSMutableDictionary *allToDosSorted;
+@property(nonatomic, strong, readwrite)NSMutableArray *contacts;
 
 @property (nonatomic, strong) TodaySummaryClient *client;
 @property (nonatomic, strong) UserUtil *userUtil;
@@ -93,9 +94,9 @@ static NSDateFormatter *timeFormatter = nil;
     self.rawToDos = todos;
     
     /*NSSortDescriptor *startDateSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"startDate" ascending:YES];
-    NSSortDescriptor *endDateSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"endDate" ascending:YES];
-    NSArray *sortArray = [[NSArray alloc] initWithObjects:startDateSortDescriptor, nil];
-    [self.rawToDos sortUsingDescriptors:sortArray];*/
+     NSSortDescriptor *endDateSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"endDate" ascending:YES];
+     NSArray *sortArray = [[NSArray alloc] initWithObjects:startDateSortDescriptor, nil];
+     [self.rawToDos sortUsingDescriptors:sortArray];*/
     
     NSSortDescriptor *sortDescriptor;
     sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"startDate"
@@ -104,7 +105,7 @@ static NSDateFormatter *timeFormatter = nil;
     //NSArray *sortedArray;
     
     self.rawToDos = [[NSMutableArray alloc] initWithArray:[self.rawToDos sortedArrayUsingDescriptors:sortDescriptors] copyItems:YES];
-   // NSArray *reverseToDos = [[self.rawToDos reverseObjectEnumerator] allObjects];
+    // NSArray *reverseToDos = [[self.rawToDos reverseObjectEnumerator] allObjects];
     
     //self.rawToDos = [[NSMutableArray alloc] initWithArray:reverseToDos copyItems:NO];
     
@@ -117,24 +118,24 @@ static NSDateFormatter *timeFormatter = nil;
     NSArray *keySortDescriptors = [[NSArray alloc] initWithObjects:keySortDescriptor, nil];
     
     NSMutableDictionary *tempDict = [[NSMutableDictionary alloc] init];
-
+    
     for(NSString *aKey in [self.allToDosSorted allKeys]) {
         NSDictionary *aDateDict = [self.allToDosSorted valueForKey:aKey];
         /*keySortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES comparator:^(id obj1, id obj2) {
-            
-            if (obj1 > obj2) {
-                return (NSComparisonResult)NSOrderedDescending;
-            }
-            if (obj1 < obj2) {
-                return (NSComparisonResult)NSOrderedAscending;
-            }
-            return (NSComparisonResult)NSOrderedSame;
-        }];*/
-
+         
+         if (obj1 > obj2) {
+         return (NSComparisonResult)NSOrderedDescending;
+         }
+         if (obj1 < obj2) {
+         return (NSComparisonResult)NSOrderedAscending;
+         }
+         return (NSComparisonResult)NSOrderedSame;
+         }];*/
+        
         
         NSArray *allTimeKeys = [aDateDict allKeys];
         
-       // sortedArray = [anArray sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
+        // sortedArray = [anArray sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)]
         NSArray *sortedKeys = [allTimeKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         
         NSMutableDictionary *orderedDictionary = [NSMutableDictionary dictionary];
@@ -146,7 +147,7 @@ static NSDateFormatter *timeFormatter = nil;
         [tempDict setObject:orderedDictionary forKey:aKey];
         //[self.allToDosSorted setObject:orderedDictionary forKey:aKey];
     }
-
+    
     NSLog(@"Hello");
 }
 
@@ -257,12 +258,12 @@ static NSDateFormatter *timeFormatter = nil;
     
     NSDate *today = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
     NSDate *beginningOfTime = [[NSDate alloc] initWithTimeIntervalSince1970:0];
-
+    
     for (MeetingModel *possibleMeeting in self.rawMeetings) {
         NSString *todayFormatted = [dateFormatter stringFromDate:today];
         NSString *startDateFormatted = [dateFormatter stringFromDate:possibleMeeting.startDate];
         NSString *begininngOfTimeFormatted = [dateFormatter stringFromDate:beginningOfTime];
-
+        
         if([todayFormatted isEqualToString: startDateFormatted] || [startDateFormatted isEqualToString:begininngOfTimeFormatted]){
             [self.todaySummaryListItems addObject:possibleMeeting];
         }
@@ -305,7 +306,7 @@ static NSDateFormatter *timeFormatter = nil;
         dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"MM/dd/yyy"];
     }
-
+    
     for(ToDoModel *newToDo in self.rawToDos) {
         [self aToDoStartDate:[dateFormatter stringFromDate:newToDo.startDate] aToDoStartTime:[timeFormatter stringFromDate:newToDo.startDate] aNewTodo:newToDo];
     }
@@ -349,6 +350,203 @@ static NSDateFormatter *timeFormatter = nil;
         [[self.allMeetingsSorted valueForKey:aDate] setObject:[[NSMutableArray alloc] init] forKey:aTime];
     }
     [[[self.allMeetingsSorted valueForKey:aDate] valueForKey:aTime] addObject:newMeeting];
+}
+
+-(void)processContacts:(WhoAreYouPersonModel *)userProfile {
+    ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, nil);
+    NSArray *allContacts = [[NSArray alloc] init];
+    allContacts = (__bridge NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBookRef);
+    
+    dispatch_queue_t backgroundQueue  = dispatch_queue_create("com.buffaloproject.contactsBGqueue", NULL);
+    
+    dispatch_async(backgroundQueue, ^(void) {
+        NSUInteger i = 0;
+        for (i = 0; i < [allContacts count]; i++) {
+            //ABRecordRef contactPerson = ABAddressBookGetPersonWithRecordID(addressBookRef,recordId);
+            ABRecordRef contactPerson = (__bridge ABRecordRef)allContacts[i];
+            ABRecordID recordID = ABRecordGetRecordID(contactPerson);
+            if(recordID != userProfile.contactId) {
+                PersonModel *profile = [[PersonModel alloc] init];
+                
+                NSString *firstName = (__bridge_transfer NSString *)ABRecordCopyValue(contactPerson, kABPersonFirstNameProperty);
+                NSString *lastName =  (__bridge_transfer NSString *)ABRecordCopyValue(contactPerson, kABPersonLastNameProperty);
+                
+                profile.firstName = firstName;
+                profile.lastName = lastName;
+                
+
+                profile.personBigImage = [self getBigImage:[NSString stringWithFormat:@"%@ %@", profile.firstName, profile.lastName]];
+                profile.personImage = [self getImage:[NSString stringWithFormat:@"%@ %@", profile.firstName, profile.lastName]];
+                
+                profile.emailAddresses = [[NSMutableArray alloc] init];
+                ABMultiValueRef emails = ABRecordCopyValue(contactPerson, kABPersonEmailProperty);
+                
+                //6
+                NSUInteger j = 0;
+                for (j = 0; j < ABMultiValueGetCount(emails); j++) {
+                    NSString *email = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(emails, j);
+                    EmailAddressHistoryModel *emailHistory = [[EmailAddressHistoryModel alloc] init];
+                    EmailAddressModel *emailAddress = [[EmailAddressModel alloc] init];
+                    emailAddress.emailAddress = email;
+                    emailHistory.account = emailAddress;
+                    [profile.emailAddresses addObject:emailHistory];
+                }
+                
+                profile.addresses = [[NSMutableArray alloc] init];
+                ABMultiValueRef addressProperty = ABRecordCopyValue(contactPerson, kABPersonAddressProperty);
+                NSArray *addresses = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(addressProperty);
+                NSUInteger p = 0;
+                for(;p< [addresses count]; p++)
+                {
+                    AddressHistoryModel *aAddressHistory = [[AddressHistoryModel alloc] init];
+                    AddressModel *aAddress = [[AddressModel alloc] init];
+                    
+                    NSDictionary *aPotentialAddress = (__bridge NSDictionary *)((__bridge ABRecordRef)([addresses objectAtIndex:p]));
+                    NSString *aAddressType = (__bridge NSString*) ABMultiValueCopyLabelAtIndex(addressProperty,p);
+                    
+                    for (NSString* key in aPotentialAddress) {
+                        
+                        NSString *value = [aPotentialAddress objectForKey:key];
+                        if([key isEqual: @"Country"]) {
+                            aAddress.country = [aPotentialAddress objectForKey:key];
+                        }
+                        
+                        if([key isEqual: @"Street"]) {
+                            aAddress.addressLine1 = [aPotentialAddress objectForKey:key];
+                        }
+                        
+                        if([key isEqual:@"ZIP"]) {
+                            aAddress.zipcode = [aPotentialAddress objectForKey:key];
+                        }
+                        
+                        if([key isEqual:@"City"]) {
+                            aAddress.city = [aPotentialAddress objectForKey:key];
+                        }
+                        if([key isEqual:@"State"]) {
+                            aAddress.state = [aPotentialAddress objectForKey:key];
+                        }
+                    }
+                    aAddressHistory.account = aAddress;
+                    [profile.addresses addObject:aAddressHistory];
+                }
+                
+                profile.phoneNumbers = [[NSMutableArray alloc] init];
+                ABMultiValueRef phoneProperty = ABRecordCopyValue(contactPerson, kABPersonPhoneProperty);
+                NSArray *phoneNumberArray = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(phoneProperty);
+                p = 0;
+                for(;p< [phoneNumberArray count]; p++) {
+                    
+                    NSString *aPhoneType = (__bridge NSString*) ABMultiValueCopyLabelAtIndex(phoneProperty,p);
+                    PhoneNumberHistoryModel *aPhoneHistory = [[PhoneNumberHistoryModel alloc] init];
+                    PhoneNumberModel *aPhoneNumber = [[PhoneNumberModel alloc] init];
+                    [aPhoneNumber setRawPhoneNumber:[phoneNumberArray objectAtIndex:p]];
+                    aPhoneHistory.account = aPhoneNumber;
+                    aPhoneNumber.type = aPhoneType;
+                    [profile.phoneNumbers addObject:aPhoneHistory];
+                }
+                
+                profile.instantMessengerAccounts = [[NSMutableArray alloc] init];
+                ABMultiValueRef instantMessengerProperty = ABRecordCopyValue(contactPerson, kABPersonInstantMessageProperty);
+                NSArray *instantMessengerArray = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(instantMessengerProperty);
+                p = 0;
+                for(;p<[instantMessengerArray count];p++) {
+                    NSString *aInstantMessengerType = (__bridge NSString*) ABMultiValueCopyLabelAtIndex(instantMessengerProperty,p);
+                    InstantMessengerAccountHistoryModel *aInstantMessengerHistory = [[InstantMessengerAccountHistoryModel alloc] init];
+                    InstantMessengerModel *aInstantMessenger = [[InstantMessengerModel alloc] init];
+                    aInstantMessenger.username = [instantMessengerArray objectAtIndex:p];
+                    aInstantMessenger.type = aInstantMessengerType;
+                    aInstantMessengerHistory.account = aInstantMessenger;
+                    
+                    [profile.instantMessengerAccounts addObject:aInstantMessengerHistory];
+                }
+                [self.contacts addObject:profile];
+            }
+        }
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            [TSMessage showNotificationWithTitle:@"Contact Done" subtitle:@"We have all of your contacts.  We are working on getting you their up-to-date information." type:TSMessageNotificationTypeMessage];
+        });
+    });
+}
+
+-(NSString *)getBigImage:(NSString *)name {
+    if([name  isEqual: @"Shane Landry"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/shane.png";
+    } else if([name  isEqual: @"Adrienne Fisher"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/adrienne.png";
+    } else if([name  isEqual: @"Claire Cunningham"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/claire.png";
+    } else if([name  isEqual: @"Darrell Simien"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/darrell.png";
+    } else if ([name  isEqual: @"Kelley Bogden"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/kelley.png";
+    } else if ([name  isEqual: @"Maddie Hill"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/maddie.png";
+    } else if ([name  isEqual: @"Allisno DiMartino"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/allison.png";
+    } else if([name  isEqual: @"Matt Smith"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/matt.png";
+    } else if([name  isEqual: @"Leslie Simien"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/leslie.png";
+    } else if([name  isEqual: @"Justin Watkins"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/justin.png";
+    } else if([name  isEqual: @"Jessica Cox"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/jessica.png";
+    } else if([name  isEqual: @"Paul Gordon"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/paul.png";
+    } else if([name  isEqual: @"Zach Frank"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/zach.png";
+    } else if([name  isEqual: @" JT"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/jt.png";
+    } else if([name  isEqual: @"Megan Voepel"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/megan.png";
+    } else {
+        NSMutableString *filePath = [[NSMutableString alloc] init];
+        [filePath appendString:@"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/profiledetail/"];
+        [filePath appendString:[name substringToIndex:1].lowercaseString];
+        [filePath appendString:@".png"];
+        return filePath;
+    }
+}
+
+-(NSString *)getImage:(NSString *)name {
+    
+    if([name  isEqual: @"Shane Landry"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/shane.png";
+    } else if([name  isEqual: @"Adrienne Fisher"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/adrienne.png";
+    } else if([name  isEqual: @"Claire Cunningham"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/claire.png";
+    } else if([name  isEqual: @"Darrell Simien"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/darrell.png";
+    } else if ([name  isEqual: @"Kelley Bogden"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/kelley.png";
+    } else if ([name  isEqual: @"Maddie Hill"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/maddie.png";
+    } else if ([name  isEqual: @"Allisno DiMartino"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/allison.png";
+    } else if([name  isEqual: @"Matt Smith"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/matt.png";
+    } else if([name  isEqual: @"Leslie Simien"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/leslie.png";
+    } else if([name  isEqual: @"Justin Watkins"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/justin.png";
+    } else if([name  isEqual: @"Jessica Cox"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/jessica.png";
+    } else if([name  isEqual: @"Paul Gordon"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/paul.png";
+    } else if([name  isEqual: @"Zach Frank"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/zach.png";
+    } else if([name  isEqual: @" JT"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/jt.png";
+    } else if([name  isEqual: @"Megan Voepel"]) {
+        return @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/megan.png";
+    } else {
+        NSMutableString *filePath = [[NSMutableString alloc] init];
+        [filePath appendString:@"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/"];
+        [filePath appendString:[name substringToIndex:1].lowercaseString];
+        [filePath appendString:@".png"];
+        return filePath;
+    }
 }
 
 @end

@@ -27,8 +27,11 @@
 #import "ContactFacebookAccountListViewController.h"
 #import "FacebookEditorViewController.h"
 #import "ContactBirthdayEditorViewController.h"
+#import "UserProfileModel.h"
+#import "ProfileStartEmailCreditialsEditorViewController.h"
+#import "ProfileStartInstantMessengerCreditialsEditorViewController.h"
 
-@interface UserProfileViewController : UIViewController  <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UITextFieldDelegate> {
+@interface UserProfileViewController : UIViewController  <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate> {
     ContactAddressListViewController *contactAddressListView;
     AddressEditorViewController *contactAddressEditorView;
     ContactPhoneNumberListViewViewController *contactPhoneNumberListView;

@@ -24,7 +24,13 @@
 @property (nonatomic, strong) UITextField *passwordInput;
 @property (nonatomic, strong) UIView *accessContacts;
 @property (nonatomic, strong) WhoAreYouContactListViewController *whoAreYou;
-@property (nonatomic, strong) NSArray *missingInformationScreensArray;
+@property (nonatomic, strong) UIView *pickAPicture;
+@property (nonatomic, strong) UIView *confirmPicture;
+@property (nonatomic, strong) UIImageView *profilePicture;
+@property (nonatomic, assign) int *currentMissingInformationScreen;
+@property (nonatomic, strong) NSMutableArray *missingInformationScreensArray;
+@property (nonatomic, strong) UIView *missingInformationWelcome;
+@property (nonatomic, strong) UserProfileModel *profile;
 
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIImageView *blurredImageView;
@@ -49,7 +55,7 @@ static NSDateFormatter *dateFormatter = nil;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onProfileSelected:) name:@"profileSelected" object:nil];
     }
     return self;
 }
@@ -60,7 +66,6 @@ static NSDateFormatter *dateFormatter = nil;
 
 
 -(void)createNewProfile {
-    
     self.userProfileModel = [[UserProfileModel alloc] init];
     
     self.profileContainer = [[UIView alloc] initWithFrame:self.view.bounds];
@@ -155,6 +160,8 @@ static NSDateFormatter *dateFormatter = nil;
 -(IBAction)onCreateNewProfileTouch:(id)sender {
     
     self.createUserPassword = [[UIView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+
+    [self.profileContainer addSubview:self.createUserPassword];
     CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
     UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
     [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Didot" size:30]];
@@ -208,6 +215,7 @@ static NSDateFormatter *dateFormatter = nil;
     usernameTitleFrame.size = expectedLabelSize2.size;
     usernameTitle.frame = usernameTitleFrame;
     
+    UIView *spacerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
     
     self.usernameInput = [[UITextField alloc] initWithFrame:CGRectMake(20, usernameTitleFrame.origin.y + usernameTitleFrame.size.height + 2, self.view.bounds.size.width - 40, 50)];
     self.usernameInput.tag = 100;
@@ -220,6 +228,8 @@ static NSDateFormatter *dateFormatter = nil;
     self.usernameInput.backgroundColor = [UIColor whiteColor];
     self.usernameInput.autocapitalizationType = UITextAutocorrectionTypeNo;
     self.usernameInput.autocorrectionType = UITextAutocorrectionTypeNo;
+   // [self.usernameInput setLeftViewMode:UITextFieldViewModeAlways];
+    //[self.usernameInput setLeftView:spacerView];
     [self.createUserPassword addSubview:self.usernameInput];
     
     UILabel *passwordTitle = [[UILabel alloc] initWithFrame:self.view.bounds];
@@ -248,6 +258,8 @@ static NSDateFormatter *dateFormatter = nil;
     self.passwordInput.backgroundColor = [UIColor whiteColor];
     self.passwordInput.autocapitalizationType = UITextAutocorrectionTypeNo;
     self.passwordInput.autocorrectionType = UITextAutocorrectionTypeNo;
+    //[self.passwordInput setLeftViewMode:UITextFieldViewModeAlways];
+    //[self.passwordInput setLeftView:spacerView];
     self.passwordInput.secureTextEntry = YES;
     [self.createUserPassword addSubview:self.passwordInput];
     
@@ -267,20 +279,25 @@ static NSDateFormatter *dateFormatter = nil;
     loginButton.frame = loginFrame;
 
     [self.createUserPassword addSubview:loginButton];
-    [self.profileContainer addSubview:self.createUserPassword];
+    
     
     CGRect welcomeTo = self.welcomeContainer.frame;
     welcomeTo.origin.x = -self.view.bounds.size.width;
     CGRect userNamePasswordTo = self.createUserPassword.frame;
     userNamePasswordTo.origin.x = 0;
     
+    
     [UIView animateWithDuration:0.25
                           delay: 0.0
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
-                         self.welcomeContainer.frame = welcomeTo;
                          self.createUserPassword.frame = userNamePasswordTo;
-                     }completion:^(BOOL finished){}];
+                         self.welcomeContainer.frame = welcomeTo;
+                         
+                     }completion:^(BOOL finished){
+                         NSLog(@"yada");
+                     }];
+
 }
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -299,11 +316,41 @@ static NSDateFormatter *dateFormatter = nil;
 
 -(IBAction)onCreateCreditalsTouch:(id)sender {
     
-    self.accessContacts = [[UIView alloc] initWithFrame:self.view.bounds];
-    CGRect accessContactFrame = self.accessContacts.frame;
-    accessContactFrame.origin.x = self.view.bounds.size.width;
-    self.accessContacts.frame = accessContactFrame;
-    [self.view addSubview:self.accessContacts];
+    NSDictionary *jsonDictionary = [NSDictionary dictionaryWithObjectsAndKeys:self.usernameInput.text,@"username", self.passwordInput.text, @"password", nil];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDictionary options:NSJSONWritingPrettyPrinted error:nil];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+    NSLog(@"request: %@", jsonString);
+    
+    
+    NSURL *url = [NSURL URLWithString:@"http://api.buffalop.com/profiles/"];
+    
+    NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://api.buffalop.com/profiles/"] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
+    
+    [postRequest setHTTPMethod:@"POST"];
+    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [postRequest setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[jsonData length]] forHTTPHeaderField:@"Content-Length"];
+    [postRequest setHTTPBody:jsonData];
+    
+    NSURLResponse *response = nil;
+    NSError *requestError = nil;
+    NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
+    
+    if (requestError == nil) {
+        NSString *returnString = [[NSString alloc] initWithBytes:[returnData bytes] length:[returnData length] encoding:NSUTF8StringEncoding];
+        NSLog(@"returnString: %@", returnString);
+        [self onCredititalsCreated];
+    } else {
+        NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
+    }
+}
+
+-(void)onCredititalsCreated {
+
+    
+    self.accessContacts = [[UIView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+    [self.profileContainer addSubview:self.accessContacts];
     
     CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
     UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
@@ -427,10 +474,7 @@ static NSDateFormatter *dateFormatter = nil;
     whoAreFrame.size.height = self.view.bounds.size.height;
     self.whoAreYou.view.frame = whoAreFrame;
     
-    [self.view addSubview:self.whoAreYou.view];
-    
-    
-    
+    [self.profileContainer addSubview:self.whoAreYou.view];
     
     CGRect accessContactTo = self.accessContacts.frame;
     accessContactTo.origin.x = -self.view.bounds.size.width;
@@ -472,6 +516,288 @@ static NSDateFormatter *dateFormatter = nil;
         // 5
         [uploadTask resume];
     }
+}
+
+-(void) onProfileSelected:(NSNotification *)notification {
+    self.profile = [[notification userInfo] valueForKey:@"profile"];
+    
+    self.pickAPicture = [[UIView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+    [self.profileContainer addSubview:self.pickAPicture];
+    
+    CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
+    UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
+    [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Didot" size:30]];
+    [justSoYouKnowLabel setText:@"Say cheese!"];
+    [justSoYouKnowLabel setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowLabel setBackgroundColor:[UIColor clearColor]];
+    [self.pickAPicture addSubview:justSoYouKnowLabel];
+    
+    CGSize maxiToDoMeetingSummaryLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
+    CGRect expectedLabelSize = [justSoYouKnowLabel.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowLabel.font} context:nil ];
+    
+    CGRect newFrame = justSoYouKnowLabel.frame;
+    newFrame.size.height = expectedLabelSize.size.height;
+    newFrame.size.width = expectedLabelSize.size.width;
+    newFrame.origin.x = 20;
+    newFrame.origin.y = 50;
+    justSoYouKnowLabel.frame = newFrame;
+    
+    NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it.";
+    unichar chr[1] = {'\n'};
+    NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
+    CGRect labelFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
+    UILabel *justSoYouKnowDetails = [[UILabel alloc] initWithFrame:labelFrame];
+    [justSoYouKnowDetails setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
+    [justSoYouKnowDetails setText: [NSString stringWithFormat:welcomeText, cr]];
+    [justSoYouKnowDetails setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowDetails setBackgroundColor:[UIColor clearColor]];
+    [justSoYouKnowDetails setLineBreakMode:NSLineBreakByWordWrapping];
+    [justSoYouKnowDetails setNumberOfLines:0];
+    
+    CGRect expectedLabelSize1 = [justSoYouKnowDetails.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowDetails.font} context:nil ];
+    CGRect newFrame1 = justSoYouKnowDetails.frame;
+    newFrame1.origin.x = 10;
+    newFrame1.origin.y = justSoYouKnowLabel.frame.size.height + justSoYouKnowLabel.frame.origin.y - 5;
+    newFrame1.size.width = expectedLabelSize1.size.width;
+    newFrame1.size.height = expectedLabelSize1.size.height;
+    justSoYouKnowDetails.frame = newFrame1;
+    [self.pickAPicture addSubview:justSoYouKnowDetails];
+    
+    UIButton *loginButton = [[UIButton alloc] init];
+    [loginButton setTitle:@"Let's picture" forState:UIControlStateNormal];
+    loginButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [loginButton setBackgroundColor:[UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0]];
+    loginButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [loginButton sizeToFit];
+    [loginButton addTarget:self action:@selector(onPickProfilePicture:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect loginFrame = loginButton.frame;
+    loginFrame.origin.y =justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 30;
+    loginFrame.origin.x = 0;
+    loginFrame.size.width = self.view.bounds.size.width/2;
+    loginFrame.size.height = 50;
+    loginButton.frame = loginFrame;
+    [self.pickAPicture addSubview:loginButton];
+    
+    UIButton *goOldSchool = [[UIButton alloc] init];
+    [goOldSchool setTitle:@"Skip this" forState:UIControlStateNormal];
+    goOldSchool.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [goOldSchool setTitleColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0] forState:UIControlStateNormal];
+    [goOldSchool setBackgroundColor: [UIColor whiteColor]];
+    goOldSchool.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [goOldSchool addTarget:self action:@selector(onSkipProfilePicture:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect oldSchoolFrame = goOldSchool.frame;
+    oldSchoolFrame.origin.y = loginFrame.origin.y;
+    oldSchoolFrame.origin.x = self.view.bounds.size.width/2;
+    oldSchoolFrame.size.width = self.view.bounds.size.width/2;
+    oldSchoolFrame.size.height = 50;
+    goOldSchool.frame = oldSchoolFrame;
+    [self.pickAPicture addSubview:goOldSchool];
+    
+    CGRect whoAreTo = self.whoAreYou.view.frame;
+    whoAreTo.origin.x = -self.view.bounds.size.width;
+    CGRect sayCheeseTo = self.pickAPicture.frame;
+    sayCheeseTo.origin.x = 0;
+    
+    
+    [UIView animateWithDuration:0.25
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         self.whoAreYou.view.frame = whoAreTo;
+                         self.pickAPicture.frame = sayCheeseTo;
+                         
+                     }completion:^(BOOL finished){}];
+}
+
+-(IBAction)onPickProfilePicture:(id)sender {
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = YES;
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    
+    [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    
+    UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
+    
+    CGRect sayCheeseFrame = self.pickAPicture.frame;
+    sayCheeseFrame.origin.x = -self.view.frame.size.width;
+    self.pickAPicture.frame = sayCheeseFrame;
+    
+    self.confirmPicture = [[UIView alloc] initWithFrame:self.view.bounds];
+    self.profilePicture = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    self.profilePicture.image = chosenImage;
+    self.profilePicture.contentMode = UIViewContentModeScaleAspectFill;
+    [self.confirmPicture addSubview:self.profilePicture];
+    [self.profileContainer addSubview:self.confirmPicture];
+
+    [picker dismissViewControllerAnimated:YES completion:NULL];
+    
+    self.currentMissingInformationScreen = -1;
+    
+    NSUInteger p = 0;
+    for(;p< [self.profile.emailAddresses count]; p++) {
+        ProfileStartEmailCreditialsEditorViewController *tempEmailCreditialsEditor = [[ProfileStartEmailCreditialsEditorViewController alloc] init];
+        [tempEmailCreditialsEditor addAccount:[self.profile.emailAddresses objectAtIndex:p]];
+        [self.missingInformationScreensArray addObject:tempEmailCreditialsEditor];
+    }
+    
+    for(;p< [self.profile.instantMessengerAccounts count]; p++) {
+        ProfileStartInstantMessengerCreditialsEditorViewController *tempInstantMessengerCreditialsEditor =[[ProfileStartInstantMessengerCreditialsEditorViewController alloc] init];
+        [tempInstantMessengerCreditialsEditor addAccount:[self.profile.instantMessengerAccounts objectAtIndex:p]];
+        [self.missingInformationScreensArray addObject:tempInstantMessengerCreditialsEditor];
+    }
+
+    self.missingInformationWelcome = [[UIView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:self.missingInformationWelcome];
+    
+    CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
+    UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
+    [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Didot" size:30]];
+    [justSoYouKnowLabel setText:@"Lets get started"];
+    [justSoYouKnowLabel setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowLabel setBackgroundColor:[UIColor clearColor]];
+    [self.missingInformationWelcome addSubview:justSoYouKnowLabel];
+    
+    CGSize maxiToDoMeetingSummaryLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
+    CGRect expectedLabelSize = [justSoYouKnowLabel.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowLabel.font} context:nil ];
+    
+    CGRect newFrame = justSoYouKnowLabel.frame;
+    newFrame.size.height = expectedLabelSize.size.height;
+    newFrame.size.width = expectedLabelSize.size.width;
+    newFrame.origin.x = 20;
+    newFrame.origin.y = 50;
+    justSoYouKnowLabel.frame = newFrame;
+    
+    NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it.";
+    unichar chr[1] = {'\n'};
+    NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
+    CGRect labelFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
+    UILabel *justSoYouKnowDetails = [[UILabel alloc] initWithFrame:labelFrame];
+    [justSoYouKnowDetails setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
+    [justSoYouKnowDetails setText: [NSString stringWithFormat:welcomeText, cr]];
+    [justSoYouKnowDetails setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowDetails setBackgroundColor:[UIColor clearColor]];
+    [justSoYouKnowDetails setLineBreakMode:NSLineBreakByWordWrapping];
+    [justSoYouKnowDetails setNumberOfLines:0];
+    
+    CGRect expectedLabelSize1 = [justSoYouKnowDetails.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowDetails.font} context:nil ];
+    CGRect newFrame1 = justSoYouKnowDetails.frame;
+    newFrame1.origin.x = 10;
+    newFrame1.origin.y = justSoYouKnowLabel.frame.size.height + justSoYouKnowLabel.frame.origin.y - 5;
+    newFrame1.size.width = expectedLabelSize1.size.width;
+    newFrame1.size.height = expectedLabelSize1.size.height;
+    justSoYouKnowDetails.frame = newFrame1;
+    [self.missingInformationWelcome addSubview:justSoYouKnowDetails];
+    
+    UIButton *loginButton = [[UIButton alloc] init];
+    [loginButton setTitle:@"Lets do it" forState:UIControlStateNormal];
+    loginButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [loginButton setBackgroundColor:[UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0]];
+    loginButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [loginButton sizeToFit];
+    [loginButton addTarget:self action:@selector(onStartMissingInformation:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect loginFrame = loginButton.frame;
+    loginFrame.origin.y =self.passwordInput.frame.origin.y + self.passwordInput.frame.size.height + 30;
+    loginFrame.origin.x = 20;
+    loginFrame.size.width = self.view.bounds.size.width - 40 ;
+    loginFrame.size.height = 50;
+    loginButton.frame = loginFrame;
+    
+    [self.missingInformationWelcome addSubview:loginButton];
+    
+    CGRect profilePictureTo = self.whoAreYou.view.frame;
+    profilePictureTo.origin.x = -self.view.bounds.size.width;
+    CGRect missingWelcomeTo = self.pickAPicture.frame;
+    missingWelcomeTo.origin.x = 0;
+    
+    
+    [UIView animateWithDuration:0.25
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         self.confirmPicture.frame = profilePictureTo;
+                         self.missingInformationWelcome.frame = missingWelcomeTo;
+                     }completion:^(BOOL finished){}];
+}
+
+-(IBAction)onStartMissingInformation:(id)sender {
+    [self showNextMissingInformationScreen];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAccountFixed:) name:@"accountFixed" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAccountSkipped:) name:@"accountSkipped" object:nil];
+}
+
+-(void) onAccountFixed:(NSNotification *)notification {
+    [self showNextMissingInformationScreen];
+}
+
+-(void) onAccountSkipped:(NSNotification *)notification {
+    [self showNextMissingInformationScreen];
+}
+
+-(void)showNextMissingInformationScreen {
+    self.currentMissingInformationScreen++;
+    
+    if(self.currentMissingInformationScreen != ([self.missingInformationScreensArray count]-1)) {
+        [self.profileContainer addSubview:[self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen]];
+        if(self.currentMissingInformationScreen == 0) {
+            
+            CGRect missingWelcomeTo = self.missingInformationWelcome.frame;
+            missingWelcomeTo.origin.x = self.view.bounds.size.width;
+            missingWelcomeTo.origin.x = -self.view.bounds.size.width;
+            EmailAddressEditorViewController *tempAccountEditor = [self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen];
+            CGRect missingScreenTo = tempAccountEditor.view.frame;
+            missingScreenTo.origin.x = self.view.bounds.size.width;
+            [self.profileContainer addSubview:tempAccountEditor.view];
+            missingScreenTo.origin.x = 0;
+            
+            [UIView animateWithDuration:0.25
+                                  delay: 0.0
+                                options: UIViewAnimationOptionCurveEaseOut
+                             animations:^{
+                                 self.missingInformationWelcome.frame = missingWelcomeTo;
+                                 tempAccountEditor.view.frame = missingScreenTo;
+                             }completion:^(BOOL finished){}];
+        } else {
+            EmailAddressEditorViewController *tempAccountEditor1 = [self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen-1];
+            CGRect missingScreen1To = tempAccountEditor1.view.frame;
+            missingScreen1To.origin.x = -self.view.bounds.size.width;
+            
+            EmailAddressEditorViewController *tempAccountEditor2 = [self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen];
+            CGRect missingScreen2To = tempAccountEditor2.view.frame;
+            missingScreen2To.origin.x = self.view.bounds.size.width;
+            [self.profileContainer addSubview:tempAccountEditor2.view];
+            missingScreen2To.origin.x = 0;
+            
+            [UIView animateWithDuration:0.25
+                                  delay: 0.0
+                                options: UIViewAnimationOptionCurveEaseOut
+                             animations:^{
+                                 tempAccountEditor1.view.frame = missingScreen1To;
+                                 tempAccountEditor2.view.frame = missingScreen2To;
+                             }completion:^(BOOL finished){}];
+        }
+        
+    } else {
+        [self doneWithProfile];
+    }
+}
+
+-(void)doneWithProfile {
+    EmailAddressEditorViewController *tempAccountEditor = [self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen];
+    CGRect missingScreenTo = tempAccountEditor.view.frame;
+    missingScreenTo.origin.x = -self.view.bounds.size.width;
+    
+    [UIView animateWithDuration:0.25
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         tempAccountEditor.view.frame = missingScreenTo;
+                     }completion:^(BOOL finished){}];
 }
 
 - (void)viewDidLoad
@@ -1327,6 +1653,8 @@ static NSDateFormatter *dateFormatter = nil;
     self.backgroundImageView.frame = bounds;
     self.blurredImageView.frame = bounds;
     self.tableView.frame = bounds;
+    self.welcomeContainer.frame = bounds;
+    self.createUserPassword.frame = bounds;
 }
 
 - (void)didReceiveMemoryWarning

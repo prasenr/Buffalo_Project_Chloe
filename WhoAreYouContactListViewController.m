@@ -136,8 +136,7 @@
     ABMultiValueRef addressProperty = ABRecordCopyValue(contactPerson, kABPersonAddressProperty);
     NSArray *addresses = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(addressProperty);
     NSUInteger p = 0;
-    for(;p< [addresses count]; p++)
-    {
+    for(;p< [addresses count]; p++) {
         AddressHistoryModel *aAddressHistory = [[AddressHistoryModel alloc] init];
         AddressModel *aAddress = [[AddressModel alloc] init];
         
@@ -199,6 +198,12 @@
         
         [profile.instantMessengerAccounts addObject:aInstantMessengerHistory];
     }
+    
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:profile forKey:@"profile"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"profileSelected" object:nil userInfo:userInfo];
+    
+    NSDictionary *userInfo1 = [NSDictionary dictionaryWithObject:selectedContact forKey:@"contactId"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"processContacts" object:nil userInfo:userInfo1];
 }
 
 -(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

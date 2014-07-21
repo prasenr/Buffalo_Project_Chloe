@@ -8,3 +8,5 @@ pod 'pop'
 pod 'MapBox'
 pod 'STTwitter'
 pod 'JSONModel'
+pod "AWSiOSSDKv2"
+pod "AWSCognitoSync"

@@ -1,4 +1,142 @@
 PODS:
+  - AWSCognitoSync (1.0.1):
+    - AWSCognitoSync/CognitoSyncClient
+    - AWSCognitoSync/CognitoSyncService
+    - AWSiOSSDKv2
+  - AWSCognitoSync/CognitoSyncClient (1.0.1):
+    - AWSCognitoSync/CognitoSyncService
+    - AWSiOSSDKv2
+  - AWSCognitoSync/CognitoSyncService (1.0.1):
+    - AWSiOSSDKv2
+  - AWSiOSSDKv2 (2.0.4):
+    - AWSiOSSDKv2/AutoScaling
+    - AWSiOSSDKv2/AWSCore
+    - AWSiOSSDKv2/CloudWatch
+    - AWSiOSSDKv2/DynamoDB
+    - AWSiOSSDKv2/EC2
+    - AWSiOSSDKv2/ElasticLoadBalancing
+    - AWSiOSSDKv2/Kinesis
+    - AWSiOSSDKv2/S3
+    - AWSiOSSDKv2/SES
+    - AWSiOSSDKv2/SimpleDB
+    - AWSiOSSDKv2/SNS
+    - AWSiOSSDKv2/SQS
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/AutoScaling (2.0.4):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/AWSCore (2.0.4):
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/CloudWatch (2.0.4):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/DynamoDB (2.0.4):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/EC2 (2.0.4):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/ElasticLoadBalancing (2.0.4):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/Kinesis (2.0.4):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/S3 (2.0.4):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/SES (2.0.4):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/SimpleDB (2.0.4):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/SNS (2.0.4):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/SQS (2.0.4):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - CSURITemplate (~> 0.3.0)
+    - Mantle (~> 1.4.1)
+    - Reachability (~> 3.1.1)
+    - TMCache (~> 1.2.0)
+    - UICKeyChainStore (~> 1.0.5)
+    - XMLDictionary (~> 1.4.0)
+  - Bolts (1.1.0)
+  - CSURITemplate (0.3)
   - FMDB (2.0):
     - FMDB/standard
   - FMDB/common (2.0)
@@ -18,6 +156,7 @@ PODS:
     - GRMustache (= 6.8.3)
     - SMCalloutView (= 1.1)
   - pop (1.0.3)
+  - Reachability (3.1.1)
   - ReactiveCocoa (2.3):
     - ReactiveCocoa/UI
   - ReactiveCocoa/Core (2.3):
@@ -27,10 +166,15 @@ PODS:
     - ReactiveCocoa/Core
   - SMCalloutView (1.1)
   - STTwitter (0.1.3)
+  - TMCache (1.2.0)
   - TSMessages (0.9.7):
     - HexColors
+  - UICKeyChainStore (1.0.5)
+  - XMLDictionary (1.4)
 
 DEPENDENCIES:
+  - AWSCognitoSync
+  - AWSiOSSDKv2
   - JSONModel
   - LBBlurredImage
   - Mantle
@@ -41,6 +185,10 @@ DEPENDENCIES:
   - TSMessages
 
 SPEC CHECKSUMS:
+  AWSCognitoSync: 02a04cb3c66eef82abce39c013efa5b32cdd2023
+  AWSiOSSDKv2: 2f01e69a983bf04cb447865cc2694ccb111cada5
+  Bolts: 91c2af8eae1d44e1dd75946a5b0ae04a43ea43e4
+  CSURITemplate: a0708251b4453338dea48bf1ebdeee2bec6f6fe9
   FMDB: 51325701b48cc929ff967fa3047ebc893e798a23
   GRMustache: ab96109b7ba4b9568425bea40d6cd2cdc7582b6c
   HexColors: 01384d2bbe8dc4ffa43c3b4135db6e976952d153
@@ -50,9 +198,13 @@ SPEC CHECKSUMS:
   Mantle: 1ca9c0fa84d3d3fc98524e7229f30489b6dd44e5
   MapBox: 01bd6999838d8dfbe8b48d33cae01ffcec8a7ab7
   pop: 0aa6c37cbbeedfa2a52c972fdca1e43c79c1c579
+  Reachability: 8e9635e3cb4f98e7f825e51147f677ecc694d0e7
   ReactiveCocoa: 2066583826c17dde8e90c41e489f682048cc57c9
   SMCalloutView: b1c20930f57bc4470f5477979e2decf066397c82
   STTwitter: cbfe847b9dc263e6206fc1e92ce325764bbbc18b
+  TMCache: ea1c509badaf9a1245422aabf3c975b3277ab138
   TSMessages: 06ea11e48b9df3767757229fd2b4cf50f8692ce3
+  UICKeyChainStore: 4f9719600cc70025064e26f28f1210bcfc3b0c35
+  XMLDictionary: 735e81b9a043e220b0d24e9d4f16719606f2e0fc
 
 COCOAPODS: 0.33.1

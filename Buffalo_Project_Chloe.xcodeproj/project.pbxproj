@@ -262,6 +262,10 @@
 		648E6E1E192E57D700E46C1A /* Icon_80.png in Resources */ = {isa = PBXBuildFile; fileRef = 648E6E13192E57D700E46C1A /* Icon_80.png */; };
 		648E6E1F192E57D700E46C1A /* Icon_114.png in Resources */ = {isa = PBXBuildFile; fileRef = 648E6E14192E57D700E46C1A /* Icon_114.png */; };
 		648E6E20192E57D700E46C1A /* Icon_120.png in Resources */ = {isa = PBXBuildFile; fileRef = 648E6E15192E57D700E46C1A /* Icon_120.png */; };
+		6490F70B197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6490F709197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.m */; };
+		6490F70C197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6490F70A197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.xib */; };
+		6490F710197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6490F70E197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.m */; };
+		6490F711197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6490F70F197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.xib */; };
 		64BD73B3196F64D600D8016A /* UserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64BD73B1196F64D600D8016A /* UserProfileViewController.m */; };
 		64BD73B4196F64D600D8016A /* UserProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 64BD73B2196F64D600D8016A /* UserProfileViewController.xib */; };
 		64C9BA72190F2BAC0008C83B /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64C9BA70190F2BAC0008C83B /* MainViewController.m */; };
@@ -635,6 +639,12 @@
 		648E6E13192E57D700E46C1A /* Icon_80.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_80.png; sourceTree = "<group>"; };
 		648E6E14192E57D700E46C1A /* Icon_114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_114.png; sourceTree = "<group>"; };
 		648E6E15192E57D700E46C1A /* Icon_120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_120.png; sourceTree = "<group>"; };
+		6490F708197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileStartEmailCreditialsEditorViewController.h; sourceTree = "<group>"; };
+		6490F709197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileStartEmailCreditialsEditorViewController.m; sourceTree = "<group>"; };
+		6490F70A197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProfileStartEmailCreditialsEditorViewController.xib; sourceTree = "<group>"; };
+		6490F70D197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileStartInstantMessengerCreditialsEditorViewController.h; sourceTree = "<group>"; };
+		6490F70E197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileStartInstantMessengerCreditialsEditorViewController.m; sourceTree = "<group>"; };
+		6490F70F197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProfileStartInstantMessengerCreditialsEditorViewController.xib; sourceTree = "<group>"; };
 		64BD73B0196F64D600D8016A /* UserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileViewController.h; sourceTree = "<group>"; };
 		64BD73B1196F64D600D8016A /* UserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileViewController.m; sourceTree = "<group>"; };
 		64BD73B2196F64D600D8016A /* UserProfileViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserProfileViewController.xib; sourceTree = "<group>"; };
@@ -1421,9 +1431,23 @@
 			name = View;
 			sourceTree = "<group>";
 		};
+		6490F707197AD99900EC90E7 /* Editors */ = {
+			isa = PBXGroup;
+			children = (
+				6490F708197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.h */,
+				6490F709197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.m */,
+				6490F70A197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.xib */,
+				6490F70D197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.h */,
+				6490F70E197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.m */,
+				6490F70F197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.xib */,
+			);
+			name = Editors;
+			sourceTree = "<group>";
+		};
 		64BD73AF196F64A700D8016A /* View */ = {
 			isa = PBXGroup;
 			children = (
+				6490F707197AD99900EC90E7 /* Editors */,
 				64BD73B0196F64D600D8016A /* UserProfileViewController.h */,
 				64BD73B1196F64D600D8016A /* UserProfileViewController.m */,
 				64BD73B2196F64D600D8016A /* UserProfileViewController.xib */,
@@ -1869,6 +1893,7 @@
 				648DD941194A2CA50034872B /* bigp.png in Resources */,
 				648E6E1F192E57D700E46C1A /* Icon_114.png in Resources */,
 				648DD9A6194F850E0034872B /* ContactLinkedInAccountListViewController.xib in Resources */,
+				6490F70C197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.xib in Resources */,
 				648DD90E194A2A470034872B /* t.png in Resources */,
 				64000D5819337C6C001FC2EC /* shower_hail_thunder.png in Resources */,
 				6437739619230C4900DAFA80 /* adrienne.png in Resources */,
@@ -1911,6 +1936,7 @@
 				648DD907194A2A470034872B /* m.png in Resources */,
 				64000D5A19337C6C001FC2EC /* snow.png in Resources */,
 				64C9BA9B19108AA60008C83B /* windy.png in Resources */,
+				6490F711197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.xib in Resources */,
 				643773B619230CAD00DAFA80 /* watkins.png in Resources */,
 				648DDA14195C64720034872B /* PhoneNumberEditorViewController.xib in Resources */,
 				648DD96B194F83960034872B /* ContactAddressListViewController.xib in Resources */,
@@ -2030,6 +2056,7 @@
 				648DD9D0195077C50034872B /* RelationshipHistoryModel.m in Sources */,
 				648DD9D3195078B20034872B /* TwitterAccountHistoryModel.m in Sources */,
 				648DD9F41959D73E0034872B /* NSString+URLEncoding.m in Sources */,
+				6490F70B197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.m in Sources */,
 				648DD9E819507E660034872B /* AddressHistoryModel.m in Sources */,
 				6484D15F1948BB0D00D8A0A3 /* ToDoListViewController.m in Sources */,
 				643773601922F40D00DAFA80 /* NSObject+PersonModel.m in Sources */,
@@ -2104,6 +2131,7 @@
 				648DD99B194F84DF0034872B /* ContactFacebookAccountListViewController.m in Sources */,
 				6484D15A1947A1ED00D8A0A3 /* ToDoDateViewController.m in Sources */,
 				640DAAAB190F1A2800F6545D /* main.m in Sources */,
+				6490F710197ADE3800EC90E7 /* ProfileStartInstantMessengerCreditialsEditorViewController.m in Sources */,
 				648DD9E519507CD10034872B /* PhoneNumberHistoryModel.m in Sources */,
 				648DD9A5194F850E0034872B /* ContactLinkedInAccountListViewController.m in Sources */,
 				647D9B02196243FC00319938 /* ContactAddressSearchController.m in Sources */,

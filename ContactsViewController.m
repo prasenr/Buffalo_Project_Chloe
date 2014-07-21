@@ -330,7 +330,7 @@
     yPos[2] = 284;
     yPos[3] = 426;
     for(;a<b;a++) {
-        ContactGridPictureViewController *contact = [[ContactGridPictureViewController alloc] initWithPerson:[contacts objectAtIndex:a] initWithNibName:@"ContactGridPictureViewController" bundle:nil];
+        ContactGridPictureViewController *contact = [[ContactGridPictureViewController alloc] initWithPerson:[[TodaySummary_Controller sharedManager].contacts objectAtIndex:a] initWithNibName:@"ContactGridPictureViewController" bundle:nil];
         CGRect frame = contact.frame;
         frame.size = CGSizeMake(80, 110);
         frame.origin = CGPointMake(xPos[c], yPos[d]);

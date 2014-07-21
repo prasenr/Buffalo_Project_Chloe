@@ -16,6 +16,7 @@
 #import "ConversationsViewController.h"
 #import "ContactProfileConversationViewController.h"
 #import "UserProfileViewController.h"
+#import "UserProfileModel.h"
 
 @interface MainViewController : UIViewController <UIScrollViewDelegate> {
     TodayViewController *todayView;

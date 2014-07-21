@@ -1,0 +1,1 @@
+../../AWSCognitoSync/CognitoSyncService/AWSCognitoSyncServiceModel.h

@@ -11,6 +11,18 @@
 #import "ToDoModel.h"
 #import "NSObject+MeetingModel.h"
 #import <ReactiveCocoa/ReactiveCocoa/ReactiveCocoa.h>
+#import "UserProfileModel.h"
+#import <AddressBook/AddressBook.h>
+#import "EmailAddressHistoryModel.h"
+#import "EmailAddressModel.h"
+#import "AddressHistoryModel.h"
+#import "AddressModel.h"
+#import "PhoneNumberHistoryModel.h"
+#import "PhoneNumberModel.h"
+#import "InstantMessengerAccountHistoryModel.h"
+#import "InstantMessengerModel.h"
+#import "NSObject+PersonModel.h"
+#import "WhoAreYouPersonModel.h"
 
 @interface TodaySummary_Controller :NSObject
 +(instancetype)sharedManager;
@@ -22,6 +34,7 @@
 @property (nonatomic, strong, readonly) NSMutableDictionary *allMeetingsSorted;
 @property (nonatomic, strong, readonly) NSMutableArray *rawToDos;
 @property (nonatomic, strong, readonly) NSMutableDictionary *allToDosSorted;
+@property (nonatomic, strong, readonly) NSMutableArray *contacts;
 
 -(void)fetchTodaySummary;
 -(void)addMeetings:(NSMutableArray *)meetings;
@@ -34,4 +47,5 @@
 -(void)completeMeeting:(MeetingModel *)meeting;
 -(void)deleteMeeting:(MeetingModel *)meeting;
 -(void)helpMe;
+-(void)processContacts:(WhoAreYouPersonModel *)userProfile;
 @end

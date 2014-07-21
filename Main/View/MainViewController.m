@@ -66,6 +66,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onEditMeeting:) name:@"editMeeting" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactSelectedFromGrid:) name:@"contactClickedFromGrid" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactEditorBack:) name:@"contactEditCanceled" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onProcessContacts:) name:@"processContacts" object:nil];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if(![defaults objectForKey:@"profileId"]) {
@@ -74,9 +75,9 @@
         profileFrame.origin = CGPointMake(0, 0);
         profileFrame.size = CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height);
         profileView.view.frame = profileFrame;
-        [profileView createNewProfile];
-        [self.view addSubview:profileView.view];
         
+        [self.view addSubview:profileView.view];
+        [profileView createNewProfile];
         /*meetingView = [[MeetingsViewController alloc] init];
         CGRect meetingFrame = meetingView.view.frame;
         meetingFrame.origin = CGPointMake(self.view.frame.size.width, 0);
@@ -609,7 +610,10 @@
     
 }
 
-
+-(void) onProcessContacts:(NSNotification *)notification {
+    WhoAreYouPersonModel *tempUserProfile = [[notification userInfo] valueForKey:@"contactId"];
+    [[TodaySummary_Controller sharedManager] processContacts:tempUserProfile];
+}
 
 
 
@@ -633,8 +637,8 @@
      self.toDos = [[NSMutableArray alloc] initWithObjects:toDo1, toDo2, toDo3, toDo4, nil];*/
 }
 
--(PersonModel *) getPlaceholderUserProfile {
-    PersonModel *UserModel = [[PersonModel alloc] init];
+-(UserProfileModel *) getPlaceholderUserProfile {
+    UserProfileModel*UserModel = [[UserProfileModel alloc] init];
     UserModel.firstName = [NSMutableString stringWithString: @"Christopher"];
     UserModel.lastName = @"Fisher";
     UserModel.personImage = @"https://s3-us-west-2.amazonaws.com/buffaloprofileimages/grid/adrienne.png";

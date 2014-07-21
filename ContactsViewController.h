@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "MoreOptionsViewController.h"
 #import "SearchButton.h"
+#import "NSObject+TodaySummary_Controller.h"
+
 
 @interface ContactsViewController : UIViewController <UISearchBarDelegate, UISearchDisplayDelegate, UITableViewDataSource, UITableViewDelegate> {
     UIView *header;
