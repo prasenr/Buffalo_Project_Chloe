@@ -625,6 +625,13 @@ static NSDateFormatter *dateFormatter = nil;
     
     UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
     
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *savedImagePath = [documentsDirectory stringByAppendingPathComponent:@"tempProfilePicture.png"];
+    UIImage *image = chosenImage; // imageView is my image from camera
+    NSData *imageData = UIImagePNGRepresentation(image);
+    [imageData writeToFile:savedImagePath atomically:NO];
+    
     CGRect sayCheeseFrame = self.pickAPicture.frame;
     sayCheeseFrame.origin.x = -self.view.frame.size.width;
     self.pickAPicture.frame = sayCheeseFrame;
@@ -637,6 +644,15 @@ static NSDateFormatter *dateFormatter = nil;
     [self.profileContainer addSubview:self.confirmPicture];
 
     [picker dismissViewControllerAnimated:YES completion:NULL];
+    
+    //NSData *data = UIImageJPEGRepresentation(chosenImage, 1.0);
+    
+    //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,     NSUserDomainMask, YES);
+    //NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *getImagePath = [documentsDirectory stringByAppendingPathComponent:@"tempProfilePicture.png"];
+    NSURL *tempURL = [[NSURL alloc] initFileURLWithPath:getImagePath];
+    
+    
     
     
     BFTask *task = [BFTask taskWithResult:nil];
@@ -659,27 +675,37 @@ static NSDateFormatter *dateFormatter = nil;
     [AWSServiceManager defaultServiceManager].defaultServiceConfiguration = configuration;
     
     //AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
-    AWSS3 *transferManager = [[AWSS3 alloc] initWithConfiguration:configuration];
-    
-    //AWSS3PutObjectRequest *request =
-    
-    AWSS3PutObjectRequest *por = [AWSS3PutObjectRequest new];
+    AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
+    //AWSS3 *transferManager = [[AWSS3 alloc] initWithConfiguration:configuration];
+
+    /*AWSS3PutObjectRequest *por = [AWSS3PutObjectRequest new];
     por.contentType = @"image/jpeg";
     por.bucket = @"buffaloprofileimages";
-    por.body = chosenImage;
+    por.body = chosenImage;*/
 
-
-    [[transferManager putObject:por] continueWithExecutor:[BFExecutor mainThreadExecutor] withBlock:^id(BFTask *task) {
+    AWSS3TransferManagerUploadRequest *request = [AWSS3TransferManagerUploadRequest new];
+    request.bucket = @"buffaloimages";
+    request.contentType = @"image/png";
+    request.body = tempURL;
+    request.key =  self.profile.profileID;;
+    
+    
+    [[transferManager upload:request] continueWithExecutor:[BFExecutor mainThreadExecutor] withBlock:^id(BFTask *task) {
         if (task.error != nil) {
             NSLog(@"Error: [%@]", task.error);
             //self.uploadStatusLabel.text = StatusLabelFailed;
         } else {
-
+            NSLog(@"Success");
             //self.uploadStatusLabel.text = StatusLabelCompleted;
+            [self getMissingCreditials];
         }
         return nil;
     }];
     
+}
+
+-(void)getMissingCreditials {
+
     self.currentMissingInformationScreen = -1;
     
     NSUInteger p = 0;
