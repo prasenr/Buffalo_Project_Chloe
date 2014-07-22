@@ -339,7 +339,9 @@ static NSDateFormatter *dateFormatter = nil;
     
     if (requestError == nil) {
         NSString *returnString = [[NSString alloc] initWithBytes:[returnData bytes] length:[returnData length] encoding:NSUTF8StringEncoding];
+        id json = [NSJSONSerialization JSONObjectWithData:returnData options:kNilOptions error:nil];
         NSLog(@"returnString: %@", returnString);
+        self.profile =[MTLJSONAdapter modelOfClass: [UserProfileModel class] fromJSONDictionary:json error:nil];// [[UserProfileModel alloc] initWithString:returnString error:nil];
         [self onCredititalsCreated];
     } else {
         NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
@@ -510,7 +512,7 @@ static NSDateFormatter *dateFormatter = nil;
         // 4
         NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request
                                                                    fromData:data completionHandler:^(NSData *data,NSURLResponse *response,NSError *error) {
-                                                                       self.userProfileModel = [[UserProfileModel alloc] initWithData:data error:nil];
+                                                                      // self.userProfileModel = [[UserProfileModel alloc] initWithData:data error:nil];
                                                                    }];
         
         // 5
@@ -564,7 +566,7 @@ static NSDateFormatter *dateFormatter = nil;
     [self.pickAPicture addSubview:justSoYouKnowDetails];
     
     UIButton *loginButton = [[UIButton alloc] init];
-    [loginButton setTitle:@"Let's picture" forState:UIControlStateNormal];
+    [loginButton setTitle:@"Get a picture" forState:UIControlStateNormal];
     loginButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
     [loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [loginButton setBackgroundColor:[UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0]];
@@ -635,6 +637,48 @@ static NSDateFormatter *dateFormatter = nil;
     [self.profileContainer addSubview:self.confirmPicture];
 
     [picker dismissViewControllerAnimated:YES completion:NULL];
+    
+    
+    BFTask *task = [BFTask taskWithResult:nil];
+    
+    AWSCognitoCredentialsProvider *credentialsProvider = [AWSCognitoCredentialsProvider
+                                                          credentialsWithRegionType:AWSRegionUSEast1
+                                                          accountId:@"203816133875"
+                                                          identityPoolId:@"us-east-1:bbdd5ff5-0fe9-4978-b24f-ccc9db938244"
+                                                          unauthRoleArn:@"arn:aws:iam::203816133875:role/Cognito_BuffaloProjectYoUnauth_DefaultRole"
+                                                          authRoleArn:@"arn:aws:iam::203816133875:role/Cognito_BuffaloProjectYoAuth_DefaultRole"];
+    
+    [[credentialsProvider getIdentityId] continueWithSuccessBlock:^id(BFTask *task){
+        NSString* cognitoId = credentialsProvider.identityId;
+        return nil;
+    }];
+    
+    AWSServiceConfiguration *configuration = [AWSServiceConfiguration configurationWithRegion:AWSRegionUSEast1
+                                                                          credentialsProvider:credentialsProvider];
+    
+    [AWSServiceManager defaultServiceManager].defaultServiceConfiguration = configuration;
+    
+    //AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
+    AWSS3 *transferManager = [[AWSS3 alloc] initWithConfiguration:configuration];
+    
+    //AWSS3PutObjectRequest *request =
+    
+    AWSS3PutObjectRequest *por = [AWSS3PutObjectRequest new];
+    por.contentType = @"image/jpeg";
+    por.bucket = @"buffaloprofileimages";
+    por.body = chosenImage;
+
+
+    [[transferManager putObject:por] continueWithExecutor:[BFExecutor mainThreadExecutor] withBlock:^id(BFTask *task) {
+        if (task.error != nil) {
+            NSLog(@"Error: [%@]", task.error);
+            //self.uploadStatusLabel.text = StatusLabelFailed;
+        } else {
+
+            //self.uploadStatusLabel.text = StatusLabelCompleted;
+        }
+        return nil;
+    }];
     
     self.currentMissingInformationScreen = -1;
     

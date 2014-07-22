@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 Buffalo Project. All rights reserved.
 //
 
-#import "JSONModel.h"
+#import <Mantle.h>
 
-@interface UserProfileModel : JSONModel
-@property (assign, nonatomic) NSString* id;
+@interface UserProfileModel : MTLModel <MTLJSONSerializing>
+@property (assign, nonatomic) NSString* profileID;
 @property (nonatomic, strong) NSDate *birthday;
 @property (nonatomic, strong) NSMutableString *firstName;
 @property (nonatomic, strong) NSString *lastName;

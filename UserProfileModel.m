@@ -8,5 +8,11 @@
 
 #import "UserProfileModel.h"
 
-@implementation UserProfileModel : JSONModel
+@implementation UserProfileModel : MTLModel
+
++(NSDictionary *) JSONKeyPathsByPropertyKey {
+    return @{
+             @"profileID": @"profileID"
+             };
+}
 @end

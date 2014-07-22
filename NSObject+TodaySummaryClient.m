@@ -64,6 +64,7 @@
     NSURL *url = [NSURL URLWithString:urlString];
     
     return [[self fetchJSONFromURL:url] map:^(NSDictionary *json) {
+        
         return [MTLJSONAdapter modelOfClass: [TodaySummaryItems class] fromJSONDictionary:json error:nil];
     }];
 }

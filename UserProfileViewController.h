@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <AddressBook/AddressBook.h>
+#import "JSONModelLib.h"
 #import "UserProfileModel.h"
 #import "ContactAddressListViewController.h"
 #import "AddressEditorViewController.h"
@@ -30,6 +31,10 @@
 #import "UserProfileModel.h"
 #import "ProfileStartEmailCreditialsEditorViewController.h"
 #import "ProfileStartInstantMessengerCreditialsEditorViewController.h"
+#import <AWSiOSSDKv2/S3.h>
+#import <AWSiOSSDKv2/AWSCore.h>
+
+
 
 @interface UserProfileViewController : UIViewController  <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate> {
     ContactAddressListViewController *contactAddressListView;

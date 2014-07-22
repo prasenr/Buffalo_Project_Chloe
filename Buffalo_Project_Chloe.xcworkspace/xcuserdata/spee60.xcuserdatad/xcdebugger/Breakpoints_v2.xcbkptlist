@@ -1476,11 +1476,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UserProfileViewController.m"
-            timestampString = "427602192.289803"
+            timestampString = "427642644.788197"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "832"
-            endingLineNumber = "832"
+            startingLineNumber = "834"
+            endingLineNumber = "834"
             landmarkName = "-showProfileView"
             landmarkType = "5">
          </BreakpointContent>
@@ -1650,11 +1650,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UserProfileViewController.m"
-            timestampString = "427602192.289803"
+            timestampString = "427642644.788197"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "440"
-            endingLineNumber = "440"
+            startingLineNumber = "442"
+            endingLineNumber = "442"
             landmarkName = "-onCredititalsCreated"
             landmarkType = "5">
          </BreakpointContent>
@@ -1666,11 +1666,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UserProfileViewController.m"
-            timestampString = "427602192.289803"
+            timestampString = "427642644.788197"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "446"
-            endingLineNumber = "446"
+            startingLineNumber = "448"
+            endingLineNumber = "448"
             landmarkName = "-onContactAccessClicked:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1682,11 +1682,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UserProfileViewController.m"
-            timestampString = "427602192.289803"
+            timestampString = "427642644.788197"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "466"
-            endingLineNumber = "466"
+            startingLineNumber = "468"
+            endingLineNumber = "468"
             landmarkName = "@implementation UserProfileViewController"
             landmarkType = "3">
          </BreakpointContent>
@@ -1970,12 +1970,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UserProfileViewController.m"
-            timestampString = "427602192.289803"
+            timestampString = "427642644.788197"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "368"
-            endingLineNumber = "368"
+            startingLineNumber = "370"
+            endingLineNumber = "370"
             landmarkName = "-onCredititalsCreated"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "UserProfileViewController.m"
+            timestampString = "427642644.788197"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "345"
+            endingLineNumber = "345"
+            landmarkName = "-onCreateCreditalsTouch:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
