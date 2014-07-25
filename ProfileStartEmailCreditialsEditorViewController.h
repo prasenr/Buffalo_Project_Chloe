@@ -8,8 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "EmailAddressHistoryModel.h"
+#import "InstantMessengerAccountHistoryModel.h"
 
 @interface ProfileStartEmailCreditialsEditorViewController : UIViewController
 @property (nonatomic, strong) EmailAddressHistoryModel *emailAccount;
--(void)addAccount:(EmailAddressHistoryModel *)emailAccount;
+@property (nonatomic, strong) InstantMessengerAccountHistoryModel *instantMessengerAccount;
+-(void)addEmailAccount:(EmailAddressHistoryModel *)emailAccount;
+-(void)addIMAccount:(InstantMessengerAccountHistoryModel *)instantMessengerAccount;
 @end

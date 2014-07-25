@@ -9,7 +9,7 @@
 #import <Mantle.h>
 
 @interface UserProfileModel : MTLModel <MTLJSONSerializing>
-@property (assign, nonatomic) NSString* profileID;
+@property (nonatomic, nonatomic) NSString* profileID;
 @property (nonatomic, strong) NSDate *birthday;
 @property (nonatomic, strong) NSMutableString *firstName;
 @property (nonatomic, strong) NSString *lastName;

@@ -18,8 +18,9 @@
 #import "PhoneNumberModel.h"
 #import "InstantMessengerAccountHistoryModel.h"
 #import "InstantMessengerModel.h"
+#import "UserProfileModel.h"
 
 
 @interface WhoAreYouContactListViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
-
+-(void)addProfile:(UserProfileModel *)userProfile;
 @end

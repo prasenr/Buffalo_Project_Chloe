@@ -16,8 +16,8 @@
 #import "WhoAreYouContactListViewController.h"
 
 @interface UserProfileViewController ()
-@property (nonatomic, strong) UIView *profileWizardContainer;
 @property (nonatomic, strong) UIView *profileContainer;
+@property (nonatomic, strong) UIView *profileWizardContainer;
 @property (nonatomic, strong) UIView *welcomeContainer;
 @property (nonatomic, strong) UIView *createUserPassword;
 @property (nonatomic, strong) UITextField *usernameInput;
@@ -27,10 +27,12 @@
 @property (nonatomic, strong) UIView *pickAPicture;
 @property (nonatomic, strong) UIView *confirmPicture;
 @property (nonatomic, strong) UIImageView *profilePicture;
-@property (nonatomic, assign) int *currentMissingInformationScreen;
-@property (nonatomic, strong) NSMutableArray *missingInformationScreensArray;
+@property (nonatomic, assign) NSNumber *currentMissingInformationScreen;
+@property (nonatomic, retain) NSMutableArray *missingInformationScreensArray;
 @property (nonatomic, strong) UIView *missingInformationWelcome;
-@property (nonatomic, strong) UserProfileModel *profile;
+//@property (nonatomic, strong) UserProfileModel *profile;
+@property (nonatomic, strong) ProfileStartEmailCreditialsEditorViewController *tempAccountEditor1;
+@property (nonatomic, strong) ProfileStartEmailCreditialsEditorViewController *tempAccountEditor2;
 
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIImageView *blurredImageView;
@@ -68,13 +70,13 @@ static NSDateFormatter *dateFormatter = nil;
 -(void)createNewProfile {
     self.userProfileModel = [[UserProfileModel alloc] init];
     
-    self.profileContainer = [[UIView alloc] initWithFrame:self.view.bounds];
-    [self.view addSubview:self.profileContainer];
-    [self.profileContainer setBackgroundColor:[UIColor blackColor]];
+    self.profileWizardContainer = [[UIView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:self.profileWizardContainer];
+    [self.profileWizardContainer setBackgroundColor:[UIColor blackColor]];
     
     self.welcomeContainer = [[UIView alloc] initWithFrame:self.view.bounds];
     self.welcomeContainer.backgroundColor = [UIColor whiteColor];
-    [self.profileContainer addSubview:self.welcomeContainer];
+    [self.profileWizardContainer addSubview:self.welcomeContainer];
     
     
     NSString *welcomeTitleText = @"Hello";
@@ -161,7 +163,7 @@ static NSDateFormatter *dateFormatter = nil;
     
     self.createUserPassword = [[UIView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
 
-    [self.profileContainer addSubview:self.createUserPassword];
+    [self.profileWizardContainer addSubview:self.createUserPassword];
     CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
     UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
     [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Didot" size:30]];
@@ -215,7 +217,6 @@ static NSDateFormatter *dateFormatter = nil;
     usernameTitleFrame.size = expectedLabelSize2.size;
     usernameTitle.frame = usernameTitleFrame;
     
-    UIView *spacerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
     
     self.usernameInput = [[UITextField alloc] initWithFrame:CGRectMake(20, usernameTitleFrame.origin.y + usernameTitleFrame.size.height + 2, self.view.bounds.size.width - 40, 50)];
     self.usernameInput.tag = 100;
@@ -295,7 +296,8 @@ static NSDateFormatter *dateFormatter = nil;
                          self.welcomeContainer.frame = welcomeTo;
                          
                      }completion:^(BOOL finished){
-                         NSLog(@"yada");
+                         [self.welcomeContainer removeFromSuperview];
+                         self.welcomeContainer = nil;
                      }];
 
 }
@@ -316,14 +318,13 @@ static NSDateFormatter *dateFormatter = nil;
 
 -(IBAction)onCreateCreditalsTouch:(id)sender {
     
+    [self.usernameInput resignFirstResponder];
+    [self.passwordInput resignFirstResponder];
+    
     NSDictionary *jsonDictionary = [NSDictionary dictionaryWithObjectsAndKeys:self.usernameInput.text,@"username", self.passwordInput.text, @"password", nil];
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDictionary options:NSJSONWritingPrettyPrinted error:nil];
-    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    
-    NSLog(@"request: %@", jsonString);
-    
-    
-    NSURL *url = [NSURL URLWithString:@"http://api.buffalop.com/profiles/"];
+   // NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+
     
     NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://api.buffalop.com/profiles/"] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
     
@@ -338,10 +339,8 @@ static NSDateFormatter *dateFormatter = nil;
     NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
     
     if (requestError == nil) {
-        NSString *returnString = [[NSString alloc] initWithBytes:[returnData bytes] length:[returnData length] encoding:NSUTF8StringEncoding];
         id json = [NSJSONSerialization JSONObjectWithData:returnData options:kNilOptions error:nil];
-        NSLog(@"returnString: %@", returnString);
-        self.profile =[MTLJSONAdapter modelOfClass: [UserProfileModel class] fromJSONDictionary:json error:nil];// [[UserProfileModel alloc] initWithString:returnString error:nil];
+        self.userProfileModel =[MTLJSONAdapter modelOfClass: [UserProfileModel class] fromJSONDictionary:json error:nil];
         [self onCredititalsCreated];
     } else {
         NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
@@ -352,7 +351,7 @@ static NSDateFormatter *dateFormatter = nil;
 
     
     self.accessContacts = [[UIView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
-    [self.profileContainer addSubview:self.accessContacts];
+    [self.profileWizardContainer addSubview:self.accessContacts];
     
     CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
     UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
@@ -424,8 +423,6 @@ static NSDateFormatter *dateFormatter = nil;
     goOldSchool.frame = oldSchoolFrame;
     [self.accessContacts addSubview:goOldSchool];
     
-    
-    
     CGRect userNamePasswordTo = self.createUserPassword.frame;
     userNamePasswordTo.origin.x = -self.view.bounds.size.width;
     CGRect accessContactsTo = self.accessContacts.frame;
@@ -438,7 +435,10 @@ static NSDateFormatter *dateFormatter = nil;
                          self.createUserPassword.frame = userNamePasswordTo;
                          self.accessContacts.frame = accessContactsTo;
                          
-                     }completion:^(BOOL finished){}];
+                     }completion:^(BOOL finished){
+                         [self.createUserPassword removeFromSuperview];
+                         self.createUserPassword = nil;
+                     }];
 }
 
 -(IBAction)onContactAccessClicked:(id)sender {
@@ -469,6 +469,7 @@ static NSDateFormatter *dateFormatter = nil;
 -(void) showContactToPick {
     
     self.whoAreYou = [[WhoAreYouContactListViewController alloc] init];
+    [self.whoAreYou addProfile:self.userProfileModel];
     CGRect whoAreFrame = self.whoAreYou.view.frame;
     whoAreFrame.origin.x = self.view.bounds.size.width;
     whoAreFrame.origin.y = 0;
@@ -476,7 +477,7 @@ static NSDateFormatter *dateFormatter = nil;
     whoAreFrame.size.height = self.view.bounds.size.height;
     self.whoAreYou.view.frame = whoAreFrame;
     
-    [self.profileContainer addSubview:self.whoAreYou.view];
+    [self.profileWizardContainer addSubview:self.whoAreYou.view];
     
     CGRect accessContactTo = self.accessContacts.frame;
     accessContactTo.origin.x = -self.view.bounds.size.width;
@@ -490,7 +491,10 @@ static NSDateFormatter *dateFormatter = nil;
                          self.whoAreYou.view.frame = whoAreTo;
                          self.accessContacts.frame = accessContactTo;
                          
-                     }completion:^(BOOL finished){}];
+                     }completion:^(BOOL finished){
+                         [self.accessContacts removeFromSuperview];
+                         self.accessContacts = nil;
+                     }];
 }
 
 -(IBAction)onSubmitProfileTouch:(id)sender {
@@ -521,10 +525,10 @@ static NSDateFormatter *dateFormatter = nil;
 }
 
 -(void) onProfileSelected:(NSNotification *)notification {
-    self.profile = [[notification userInfo] valueForKey:@"profile"];
+    self.userProfileModel = [[notification userInfo] valueForKey:@"profile"];
     
     self.pickAPicture = [[UIView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
-    [self.profileContainer addSubview:self.pickAPicture];
+    [self.profileWizardContainer addSubview:self.pickAPicture];
     
     CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
     UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
@@ -565,36 +569,36 @@ static NSDateFormatter *dateFormatter = nil;
     justSoYouKnowDetails.frame = newFrame1;
     [self.pickAPicture addSubview:justSoYouKnowDetails];
     
-    UIButton *loginButton = [[UIButton alloc] init];
-    [loginButton setTitle:@"Get a picture" forState:UIControlStateNormal];
-    loginButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
-    [loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [loginButton setBackgroundColor:[UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0]];
-    loginButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
-    [loginButton sizeToFit];
-    [loginButton addTarget:self action:@selector(onPickProfilePicture:) forControlEvents:UIControlEventTouchUpInside];
-    CGRect loginFrame = loginButton.frame;
-    loginFrame.origin.y =justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 30;
-    loginFrame.origin.x = 0;
-    loginFrame.size.width = self.view.bounds.size.width/2;
-    loginFrame.size.height = 50;
-    loginButton.frame = loginFrame;
-    [self.pickAPicture addSubview:loginButton];
+    UIButton *getProfilePictureButton = [[UIButton alloc] init];
+    [getProfilePictureButton setTitle:@"Get a picture" forState:UIControlStateNormal];
+    getProfilePictureButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [getProfilePictureButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [getProfilePictureButton setBackgroundColor:[UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0]];
+    getProfilePictureButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [getProfilePictureButton sizeToFit];
+    [getProfilePictureButton addTarget:self action:@selector(onPickProfilePicture:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect getProfilePictureFrame = getProfilePictureButton.frame;
+    getProfilePictureFrame.origin.y =justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 30;
+    getProfilePictureFrame.origin.x = 0;
+    getProfilePictureFrame.size.width = self.view.bounds.size.width/2;
+    getProfilePictureFrame.size.height = 50;
+    getProfilePictureButton.frame = getProfilePictureFrame;
+    [self.pickAPicture addSubview:getProfilePictureButton];
     
-    UIButton *goOldSchool = [[UIButton alloc] init];
-    [goOldSchool setTitle:@"Skip this" forState:UIControlStateNormal];
-    goOldSchool.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
-    [goOldSchool setTitleColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0] forState:UIControlStateNormal];
-    [goOldSchool setBackgroundColor: [UIColor whiteColor]];
-    goOldSchool.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
-    [goOldSchool addTarget:self action:@selector(onSkipProfilePicture:) forControlEvents:UIControlEventTouchUpInside];
-    CGRect oldSchoolFrame = goOldSchool.frame;
-    oldSchoolFrame.origin.y = loginFrame.origin.y;
-    oldSchoolFrame.origin.x = self.view.bounds.size.width/2;
-    oldSchoolFrame.size.width = self.view.bounds.size.width/2;
-    oldSchoolFrame.size.height = 50;
-    goOldSchool.frame = oldSchoolFrame;
-    [self.pickAPicture addSubview:goOldSchool];
+    UIButton *skipPickProfilePicture = [[UIButton alloc] init];
+    [skipPickProfilePicture setTitle:@"Skip this" forState:UIControlStateNormal];
+    skipPickProfilePicture.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [skipPickProfilePicture setTitleColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0] forState:UIControlStateNormal];
+    [skipPickProfilePicture setBackgroundColor: [UIColor whiteColor]];
+    skipPickProfilePicture.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [skipPickProfilePicture addTarget:self action:@selector(onSkipProfilePicture:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect skipPickProfilePictureFrame = skipPickProfilePicture.frame;
+    skipPickProfilePictureFrame.origin.y = getProfilePictureFrame.origin.y;
+    skipPickProfilePictureFrame.origin.x = self.view.bounds.size.width/2;
+    skipPickProfilePictureFrame.size.width = self.view.bounds.size.width/2;
+    skipPickProfilePictureFrame.size.height = 50;
+    skipPickProfilePicture.frame = skipPickProfilePictureFrame;
+    [self.pickAPicture addSubview:skipPickProfilePicture];
     
     CGRect whoAreTo = self.whoAreYou.view.frame;
     whoAreTo.origin.x = -self.view.bounds.size.width;
@@ -609,7 +613,10 @@ static NSDateFormatter *dateFormatter = nil;
                          self.whoAreYou.view.frame = whoAreTo;
                          self.pickAPicture.frame = sayCheeseTo;
                          
-                     }completion:^(BOOL finished){}];
+                     }completion:^(BOOL finished){
+                         [self.whoAreYou removeFromParentViewController];
+                         self.whoAreYou = nil;
+                     }];
 }
 
 -(IBAction)onPickProfilePicture:(id)sender {
@@ -637,11 +644,19 @@ static NSDateFormatter *dateFormatter = nil;
     self.pickAPicture.frame = sayCheeseFrame;
     
     self.confirmPicture = [[UIView alloc] initWithFrame:self.view.bounds];
+    
+    /*CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    CGRect maskRect = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    CGPathRef path = CGPathCreateWithRect(maskRect, NULL);
+    maskLayer.path = path;
+    CGPathRelease(path);
+    self.confirmPicture.layer.mask = maskLayer;*/
+    
     self.profilePicture = [[UIImageView alloc] initWithFrame:self.view.bounds];
     self.profilePicture.image = chosenImage;
     self.profilePicture.contentMode = UIViewContentModeScaleAspectFill;
     [self.confirmPicture addSubview:self.profilePicture];
-    [self.profileContainer addSubview:self.confirmPicture];
+    [self.profileWizardContainer addSubview:self.confirmPicture];
 
     [picker dismissViewControllerAnimated:YES completion:NULL];
     
@@ -651,11 +666,7 @@ static NSDateFormatter *dateFormatter = nil;
     //NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *getImagePath = [documentsDirectory stringByAppendingPathComponent:@"tempProfilePicture.png"];
     NSURL *tempURL = [[NSURL alloc] initFileURLWithPath:getImagePath];
-    
-    
-    
-    
-    BFTask *task = [BFTask taskWithResult:nil];
+
     
     AWSCognitoCredentialsProvider *credentialsProvider = [AWSCognitoCredentialsProvider
                                                           credentialsWithRegionType:AWSRegionUSEast1
@@ -665,7 +676,6 @@ static NSDateFormatter *dateFormatter = nil;
                                                           authRoleArn:@"arn:aws:iam::203816133875:role/Cognito_BuffaloProjectYoAuth_DefaultRole"];
     
     [[credentialsProvider getIdentityId] continueWithSuccessBlock:^id(BFTask *task){
-        NSString* cognitoId = credentialsProvider.identityId;
         return nil;
     }];
     
@@ -673,30 +683,26 @@ static NSDateFormatter *dateFormatter = nil;
                                                                           credentialsProvider:credentialsProvider];
     
     [AWSServiceManager defaultServiceManager].defaultServiceConfiguration = configuration;
-    
-    //AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
-    //AWSS3 *transferManager = [[AWSS3 alloc] initWithConfiguration:configuration];
-
-    /*AWSS3PutObjectRequest *por = [AWSS3PutObjectRequest new];
-    por.contentType = @"image/jpeg";
-    por.bucket = @"buffaloprofileimages";
-    por.body = chosenImage;*/
 
     AWSS3TransferManagerUploadRequest *request = [AWSS3TransferManagerUploadRequest new];
     request.bucket = @"buffaloimages";
     request.contentType = @"image/png";
     request.body = tempURL;
-    request.key =  self.profile.profileID;;
+    NSMutableString *requestKey = [[NSMutableString alloc] initWithString:@""];
+    [requestKey appendString:self.userProfileModel.profileID];
+    [requestKey appendString:@".png"];
+    request.key =  requestKey;
     
     
     [[transferManager upload:request] continueWithExecutor:[BFExecutor mainThreadExecutor] withBlock:^id(BFTask *task) {
         if (task.error != nil) {
             NSLog(@"Error: [%@]", task.error);
-            //self.uploadStatusLabel.text = StatusLabelFailed;
+            //TODO Error uploading profile image
         } else {
             NSLog(@"Success");
-            //self.uploadStatusLabel.text = StatusLabelCompleted;
+            NSMutableString *profileBigImagePath = [[NSMutableString alloc] initWithString:@"https://s3.amazonaws.com/buffaloimages/"];
+            [profileBigImagePath appendString:request.key];
             [self getMissingCreditials];
         }
         return nil;
@@ -706,23 +712,19 @@ static NSDateFormatter *dateFormatter = nil;
 
 -(void)getMissingCreditials {
 
-    self.currentMissingInformationScreen = -1;
+    self.currentMissingInformationScreen = [NSNumber numberWithInt:-1];
     
     NSUInteger p = 0;
-    for(;p< [self.profile.emailAddresses count]; p++) {
-        ProfileStartEmailCreditialsEditorViewController *tempEmailCreditialsEditor = [[ProfileStartEmailCreditialsEditorViewController alloc] init];
-        [tempEmailCreditialsEditor addAccount:[self.profile.emailAddresses objectAtIndex:p]];
-        [self.missingInformationScreensArray addObject:tempEmailCreditialsEditor];
+    for(;p< [self.userProfileModel.emailAddresses count]; p++) {
+        [self.missingInformationScreensArray addObject:[self.userProfileModel.emailAddresses objectAtIndex:p]];
     }
     
-    for(;p< [self.profile.instantMessengerAccounts count]; p++) {
-        ProfileStartInstantMessengerCreditialsEditorViewController *tempInstantMessengerCreditialsEditor =[[ProfileStartInstantMessengerCreditialsEditorViewController alloc] init];
-        [tempInstantMessengerCreditialsEditor addAccount:[self.profile.instantMessengerAccounts objectAtIndex:p]];
-        [self.missingInformationScreensArray addObject:tempInstantMessengerCreditialsEditor];
+    for(;p< [self.userProfileModel.instantMessengerAccounts count]; p++) {
+        [self.missingInformationScreensArray addObject:[self.userProfileModel.instantMessengerAccounts objectAtIndex:p]];
     }
 
     self.missingInformationWelcome = [[UIView alloc] initWithFrame:self.view.bounds];
-    [self.view addSubview:self.missingInformationWelcome];
+    [self.profileWizardContainer addSubview:self.missingInformationWelcome];
     
     CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
     UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
@@ -780,9 +782,9 @@ static NSDateFormatter *dateFormatter = nil;
     
     [self.missingInformationWelcome addSubview:loginButton];
     
-    CGRect profilePictureTo = self.whoAreYou.view.frame;
+    CGRect profilePictureTo = self.pickAPicture.frame;
     profilePictureTo.origin.x = -self.view.bounds.size.width;
-    CGRect missingWelcomeTo = self.pickAPicture.frame;
+    CGRect missingWelcomeTo = self.missingInformationWelcome.frame;
     missingWelcomeTo.origin.x = 0;
     
     
@@ -792,7 +794,10 @@ static NSDateFormatter *dateFormatter = nil;
                      animations:^{
                          self.confirmPicture.frame = profilePictureTo;
                          self.missingInformationWelcome.frame = missingWelcomeTo;
-                     }completion:^(BOOL finished){}];
+                     }completion:^(BOOL finished){
+                         [self.confirmPicture removeFromSuperview];
+                         self.confirmPicture = nil;
+                     }];
 }
 
 -(IBAction)onStartMissingInformation:(id)sender {
@@ -806,23 +811,42 @@ static NSDateFormatter *dateFormatter = nil;
 }
 
 -(void) onAccountSkipped:(NSNotification *)notification {
-    [self showNextMissingInformationScreen];
+   [self showNextMissingInformationScreen];
+    NSLog(@"gotit");
 }
 
 -(void)showNextMissingInformationScreen {
-    self.currentMissingInformationScreen++;
+    int value = [self.currentMissingInformationScreen intValue];
+    self.currentMissingInformationScreen = [NSNumber numberWithInt:value + 1];
+    int minusOne = [self.missingInformationScreensArray count];
+    minusOne = minusOne -1;
+    NSLog(@"first one: %d", value);
+    NSLog(@"second one: %d", minusOne);
     
-    if(self.currentMissingInformationScreen != ([self.missingInformationScreensArray count]-1)) {
-        [self.profileContainer addSubview:[self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen]];
-        if(self.currentMissingInformationScreen == 0) {
+    if(value != minusOne  ) {
+       // [self.profileContainer addSubview:[self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen]];
+        if(self.currentMissingInformationScreen == [NSNumber numberWithInt:0]) {
             
             CGRect missingWelcomeTo = self.missingInformationWelcome.frame;
-            missingWelcomeTo.origin.x = self.view.bounds.size.width;
             missingWelcomeTo.origin.x = -self.view.bounds.size.width;
-            EmailAddressEditorViewController *tempAccountEditor = [self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen];
-            CGRect missingScreenTo = tempAccountEditor.view.frame;
-            missingScreenTo.origin.x = self.view.bounds.size.width;
-            [self.profileContainer addSubview:tempAccountEditor.view];
+            
+            NSString *className = NSStringFromClass([[self.missingInformationScreensArray objectAtIndex:[self.currentMissingInformationScreen intValue]] class]);
+            
+            self.tempAccountEditor2 = [[ProfileStartEmailCreditialsEditorViewController alloc] initWithNibName:@"ProfileStartEmailCreditialsEditorViewController" bundle:nil];
+            
+            if([className isEqual:@"EmailAddressHistoryModel"]) {
+                [self.tempAccountEditor2 addEmailAccount:[self.missingInformationScreensArray objectAtIndex:[self.currentMissingInformationScreen intValue]]];
+            } else {
+                [self.tempAccountEditor2 addIMAccount:[self.missingInformationScreensArray objectAtIndex:[self.currentMissingInformationScreen intValue]]];
+
+            }
+            CGRect missingScreenFrame = self.tempAccountEditor2.view.frame;
+            missingScreenFrame.origin.x = self.view.bounds.size.width;
+            missingScreenFrame.size.width = self.view.bounds.size.width;
+            missingScreenFrame.size.height = self.view.bounds.size.height;
+            self.tempAccountEditor2.view.frame = missingScreenFrame;
+            [self.profileWizardContainer addSubview:self.tempAccountEditor2.view];
+            CGRect missingScreenTo = self.tempAccountEditor2.view.frame;
             missingScreenTo.origin.x = 0;
             
             [UIView animateWithDuration:0.25
@@ -830,26 +854,35 @@ static NSDateFormatter *dateFormatter = nil;
                                 options: UIViewAnimationOptionCurveEaseOut
                              animations:^{
                                  self.missingInformationWelcome.frame = missingWelcomeTo;
-                                 tempAccountEditor.view.frame = missingScreenTo;
+                                 self.tempAccountEditor2.view.frame = missingScreenTo;
                              }completion:^(BOOL finished){}];
         } else {
-            EmailAddressEditorViewController *tempAccountEditor1 = [self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen-1];
-            CGRect missingScreen1To = tempAccountEditor1.view.frame;
+           
+            self.tempAccountEditor1 = self.tempAccountEditor2;
+            
+            self.tempAccountEditor2 = [[ProfileStartEmailCreditialsEditorViewController alloc] initWithNibName:@"ProfileStartEmailCreditialsEditorViewController" bundle:nil];
+            CGRect startFrame = self.tempAccountEditor2.view.frame;
+            startFrame.origin.x = self.view.bounds.size.width;
+            startFrame.size.width = self.view.bounds.size.width;
+            startFrame.size.height = self.view.bounds.size.height;
+            self.tempAccountEditor2.view.frame = startFrame;
+            [self.profileWizardContainer addSubview:self.tempAccountEditor2.view];
+            
+            CGRect missingScreen1To = self.tempAccountEditor1.view.frame;
             missingScreen1To.origin.x = -self.view.bounds.size.width;
             
-            EmailAddressEditorViewController *tempAccountEditor2 = [self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen];
-            CGRect missingScreen2To = tempAccountEditor2.view.frame;
-            missingScreen2To.origin.x = self.view.bounds.size.width;
-            [self.profileContainer addSubview:tempAccountEditor2.view];
+            CGRect missingScreen2To = self.tempAccountEditor2.view.frame;
             missingScreen2To.origin.x = 0;
             
             [UIView animateWithDuration:0.25
                                   delay: 0.0
                                 options: UIViewAnimationOptionCurveEaseOut
                              animations:^{
-                                 tempAccountEditor1.view.frame = missingScreen1To;
-                                 tempAccountEditor2.view.frame = missingScreen2To;
-                             }completion:^(BOOL finished){}];
+                                 self.tempAccountEditor1.view.frame = missingScreen1To;
+                                 self.tempAccountEditor2.view.frame = missingScreen2To;
+                             }completion:^(BOOL finished){
+                                 [self.tempAccountEditor1 removeFromParentViewController];
+                             }];
         }
         
     } else {
@@ -858,16 +891,33 @@ static NSDateFormatter *dateFormatter = nil;
 }
 
 -(void)doneWithProfile {
-    EmailAddressEditorViewController *tempAccountEditor = [self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen];
-    CGRect missingScreenTo = tempAccountEditor.view.frame;
+    self.tempAccountEditor1 = self.tempAccountEditor2;
+    
+    CGRect missingScreenTo = self.tempAccountEditor1.view.frame;
     missingScreenTo.origin.x = -self.view.bounds.size.width;
+    
+    [self showProfileView];
+    CGRect profileFrame = self.profileContainer.frame;
+    profileFrame.origin.x = self.view.bounds.size.width;
+    self.profileContainer.frame = profileFrame;
+    profileFrame.origin.x = 0;
     
     [UIView animateWithDuration:0.25
                           delay: 0.0
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
-                         tempAccountEditor.view.frame = missingScreenTo;
-                     }completion:^(BOOL finished){}];
+                         self.tempAccountEditor1.view.frame = missingScreenTo;
+                         self.profileContainer.frame = profileFrame;
+                     }completion:^(BOOL finished){
+                         [self.tempAccountEditor1 removeFromParentViewController];
+                         [self.tempAccountEditor2 removeFromParentViewController];
+                         self.tempAccountEditor1 = nil;
+                         self.tempAccountEditor2 = nil;
+                     }];
+}
+
+-(void)showNewProfile {
+    
 }
 
 - (void)viewDidLoad
@@ -883,22 +933,25 @@ static NSDateFormatter *dateFormatter = nil;
 -(void) showProfileView {
     self.screenHeight = [UIScreen mainScreen].bounds.size.height;
     
+    self.profileContainer = [[UIView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:self.profileContainer];
+    
     //UIImage *background = [UIImage imageNamed:@"fall.jpg"];
     
     self.backgroundImageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
     self.backgroundImageView.contentMode = UIViewContentModeScaleAspectFill;
     self.backgroundImageView.backgroundColor = [UIColor clearColor];
     self.backgroundImageView.alpha = 0;
-    [self.view addSubview:self.backgroundImageView];
+    [self.profileContainer addSubview:self.backgroundImageView];
     
     self.blurredImageView = [[UIImageView alloc] init];
     self.blurredImageView.contentMode = UIViewContentModeScaleAspectFill;
     self.blurredImageView.alpha = 0;
     // [self.blurredImageView setImageToBlur:background blurRadius:10 completionBlock:nil];
-    [self.view addSubview:self.blurredImageView];
+    [self.profileContainer addSubview:self.blurredImageView];
     
     self.tableParentContainer = [[UIView alloc] initWithFrame:self.view.bounds];
-    [self.view addSubview:self.tableParentContainer];
+    [self.profileContainer addSubview:self.tableParentContainer];
     
     self.tableView = [[UITableView alloc] init];
     self.tableView.backgroundColor = [UIColor clearColor];
@@ -967,7 +1020,7 @@ static NSDateFormatter *dateFormatter = nil;
     self.loaderImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:filePath]];
     self.loaderImage.frame = self.view.bounds;
     self.loaderImage.contentMode = UIViewContentModeScaleAspectFill;
-    [self.view addSubview:self.loaderImage];
+    [self.profileContainer addSubview:self.loaderImage];
     
     
     __block NSData *imageData;

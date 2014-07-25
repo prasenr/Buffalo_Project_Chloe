@@ -14,6 +14,7 @@
 @property (nonatomic, strong) NSMutableArray *parsedContacts;
 @property (nonatomic, strong) UILabel *firstNameCellLabel;
 @property (nonatomic, strong) UILabel *lastNameCellLabel;
+@property (nonatomic, strong) UserProfileModel *profile;
 @end
 
 @implementation WhoAreYouContactListViewController
@@ -25,6 +26,10 @@
         // Custom initialization
     }
     return self;
+}
+-(void)addProfile:(UserProfileModel *)userProfile {
+    self.profile = userProfile;
+    NSLog(@"profile id2: %@", self.profile.profileID);
 }
 
 -(id) init {
@@ -60,17 +65,18 @@
                 person.firstName = firstName;
                 person.lastName = lastName;
                 person.fullName = fullName;
-                person.contactId = &(recordID);
+                person.contactId = [NSNumber numberWithInt:(int)recordID];
                 [self.parsedContacts addObject:person];
             }
-            
+            NSLog(@"record id aprsing: %d", recordID);
+            NSLog(@"profile record id: %@", person.contactId);
             
         }
         
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-            NSSortDescriptor *sortFirstName = [NSSortDescriptor sortDescriptorWithKey:@"firstName" ascending:YES];
-            NSSortDescriptor *sortLastName = [NSSortDescriptor sortDescriptorWithKey:@"lastName" ascending:YES];
-            self.parsedContacts=[self.parsedContacts sortedArrayUsingDescriptors:[NSArray arrayWithObjects:sortFirstName, sortLastName, nil]];
+            //NSSortDescriptor *sortFirstName = [NSSortDescriptor sortDescriptorWithKey:@"firstName" ascending:YES];
+            //NSSortDescriptor *sortLastName = [NSSortDescriptor sortDescriptorWithKey:@"lastName" ascending:YES];
+            //self.parsedContacts=[self.parsedContacts sortedArrayUsingDescriptors:[NSArray arrayWithObjects:sortFirstName, sortLastName, nil]];
             [self.tableView reloadData];
         });
     });
@@ -105,20 +111,22 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    NSLog(@"index : %ld", (long)indexPath.row);
     WhoAreYouPersonModel *selectedContact = [self.parsedContacts objectAtIndex:indexPath.row];
-    ABRecordID recordId = *(selectedContact.contactId);
+    ABRecordID recordId = (ABRecordID)[selectedContact.contactId intValue];//*(selectedContact.contactId);
+    NSLog(@"record id : %d", recordId);
     
     ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, nil);
     ABRecordRef contactPerson = ABAddressBookGetPersonWithRecordID(addressBookRef,recordId);
-    UserProfileModel *profile = [[UserProfileModel alloc] init];
+    //UserProfileModel *profile = [[UserProfileModel alloc] init];
     
     NSString *firstName = (__bridge_transfer NSString *)ABRecordCopyValue(contactPerson, kABPersonFirstNameProperty);
     NSString *lastName =  (__bridge_transfer NSString *)ABRecordCopyValue(contactPerson, kABPersonLastNameProperty);
     
-    profile.firstName = firstName;
-    profile.lastName = lastName;
+    self.profile.firstName = firstName;
+    self.profile.lastName = lastName;
     
-    profile.emailAddresses = [[NSMutableArray alloc] init];
+    self.profile.emailAddresses = [[NSMutableArray alloc] init];
     ABMultiValueRef emails = ABRecordCopyValue(contactPerson, kABPersonEmailProperty);
     
     //6
@@ -129,10 +137,10 @@
         EmailAddressModel *emailAddress = [[EmailAddressModel alloc] init];
         emailAddress.emailAddress = email;
         emailHistory.account = emailAddress;
-        [profile.emailAddresses addObject:emailHistory];
+        [self.profile.emailAddresses addObject:emailHistory];
     }
     
-    profile.addresses = [[NSMutableArray alloc] init];
+    self.profile.addresses = [[NSMutableArray alloc] init];
     ABMultiValueRef addressProperty = ABRecordCopyValue(contactPerson, kABPersonAddressProperty);
     NSArray *addresses = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(addressProperty);
     NSUInteger p = 0;
@@ -166,10 +174,10 @@
             }
         }
         aAddressHistory.account = aAddress;
-        [profile.addresses addObject:aAddressHistory];
+        [self.profile.addresses addObject:aAddressHistory];
     }
     
-    profile.phoneNumbers = [[NSMutableArray alloc] init];
+    self.profile.phoneNumbers = [[NSMutableArray alloc] init];
     ABMultiValueRef phoneProperty = ABRecordCopyValue(contactPerson, kABPersonPhoneProperty);
     NSArray *phoneNumberArray = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(phoneProperty);
     p = 0;
@@ -181,10 +189,10 @@
         [aPhoneNumber setRawPhoneNumber:[phoneNumberArray objectAtIndex:p]];
         aPhoneHistory.account = aPhoneNumber;
         aPhoneNumber.type = aPhoneType;
-        [profile.phoneNumbers addObject:aPhoneHistory];
+        [self.profile.phoneNumbers addObject:aPhoneHistory];
     }
     
-    profile.instantMessengerAccounts = [[NSMutableArray alloc] init];
+    self.profile.instantMessengerAccounts = [[NSMutableArray alloc] init];
     ABMultiValueRef instantMessengerProperty = ABRecordCopyValue(contactPerson, kABPersonInstantMessageProperty);
     NSArray *instantMessengerArray = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(instantMessengerProperty);
     p = 0;
@@ -196,10 +204,10 @@
         aInstantMessenger.type = aInstantMessengerType;
         aInstantMessengerHistory.account = aInstantMessenger;
         
-        [profile.instantMessengerAccounts addObject:aInstantMessengerHistory];
+        [self.profile.instantMessengerAccounts addObject:aInstantMessengerHistory];
     }
     
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:profile forKey:@"profile"];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self.profile forKey:@"profile"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"profileSelected" object:nil userInfo:userInfo];
     
     NSDictionary *userInfo1 = [NSDictionary dictionaryWithObject:selectedContact forKey:@"contactId"];

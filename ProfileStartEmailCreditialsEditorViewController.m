@@ -27,13 +27,25 @@
     self.emailAccount = emailAccount;
 }
 
+-(void)addIMAccount:(InstantMessengerAccountHistoryModel *)instantMessengerAccount {
+    self.instantMessengerAccount = instantMessengerAccount;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.view.backgroundColor = [UIColor clearColor];
+    
     CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
     UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
     [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Didot" size:30]];
-    [justSoYouKnowLabel setText:@"Say cheese!"];
+    if(self.emailAccount!=nil) {
+        [justSoYouKnowLabel setText:@"Email Account!"];
+    } else {
+        [justSoYouKnowLabel setText:@"Instant Messenger Account"];
+    }
+    
     [justSoYouKnowLabel setTextColor:[UIColor whiteColor]];
     [justSoYouKnowLabel setBackgroundColor:[UIColor clearColor]];
     [self.view addSubview:justSoYouKnowLabel];
@@ -70,7 +82,7 @@
     [self.view addSubview:justSoYouKnowDetails];
     
     UIButton *loginButton = [[UIButton alloc] init];
-    [loginButton setTitle:@"Let's picture" forState:UIControlStateNormal];
+    [loginButton setTitle:@"Save" forState:UIControlStateNormal];
     loginButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
     [loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [loginButton setBackgroundColor:[UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0]];
@@ -78,7 +90,7 @@
     [loginButton sizeToFit];
     [loginButton addTarget:self action:@selector(onSubmit:) forControlEvents:UIControlEventTouchUpInside];
     CGRect loginFrame = loginButton.frame;
-    loginFrame.origin.y =justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 30;
+    loginFrame.origin.y = self.view.bounds.size.height - 50;
     loginFrame.origin.x = 0;
     loginFrame.size.width = self.view.bounds.size.width/2;
     loginFrame.size.height = 50;
@@ -91,7 +103,7 @@
     [skipButton setTitleColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0] forState:UIControlStateNormal];
     [skipButton setBackgroundColor: [UIColor whiteColor]];
     skipButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
-    [skipButton addTarget:self action:@selector(onSkip:) forControlEvents:UIControlEventTouchUpInside];
+    [skipButton addTarget:self action:@selector(onSkip1:) forControlEvents:UIControlEventTouchUpInside];
     CGRect oldSchoolFrame = skipButton.frame;
     oldSchoolFrame.origin.y = loginFrame.origin.y;
     oldSchoolFrame.origin.x = self.view.bounds.size.width/2;
@@ -103,11 +115,16 @@
 }
 
 -(IBAction)onSubmit:(id)sender {
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self.emailAccount forKey:@"account"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"accountFixed" object:nil userInfo:userInfo];
+    if(self.emailAccount!=nil) {
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self.emailAccount forKey:@"account"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"emailAccountFixed" object:nil userInfo:userInfo];
+    } else {
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self.emailAccount forKey:@"account"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"instantMessengerAccountFixed" object:nil userInfo:userInfo];
+    }
 }
 
--(IBAction)onSkip:(id)sender {
+-(IBAction)onSkip1:(id)sender {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"accountSkipped" object:nil];
 }
 

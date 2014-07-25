@@ -13,5 +13,5 @@
 @property (nonatomic, strong) NSString *firstName;
 @property (nonatomic, strong) NSString *lastName;
 @property (nonatomic, strong) NSString *fullName;
-@property (nonatomic, assign) int *contactId;
+@property (nonatomic, assign) NSNumber *contactId;
 @end
