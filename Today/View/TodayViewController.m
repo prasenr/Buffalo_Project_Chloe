@@ -29,6 +29,7 @@
 @property (nonatomic, strong) UILabel *todoMeetingSummaryLabel;
 @property (nonatomic, strong) UILabel *temperatureLabel;
 @property (nonatomic, strong) UILabel *conditionsLabel;
+@property (nonatomic, strong) UILabel *cityLabel;
 @property (nonatomic, strong) UIImageView *iconView;
 
 @property (nonatomic, assign) CGFloat screenHeight;
@@ -147,13 +148,13 @@ static NSDateFormatter *dateFormatter = nil;
     self.temperatureLabel.font = myFont;
     [header addSubview:self.temperatureLabel];
     
-    UILabel *cityLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, self.view.bounds.size.width, 30)];
-    cityLabel.backgroundColor = [UIColor clearColor];
-    cityLabel.textColor = [UIColor whiteColor];
-    cityLabel.text = @"Loading ...";
-    cityLabel.font = [UIFont fontWithName:@"Colaborate-Thin" size:6];
-    cityLabel.textAlignment = NSTextAlignmentCenter;
-    [header addSubview:cityLabel];
+    self.cityLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, self.view.bounds.size.width, 30)];
+    self.cityLabel.backgroundColor = [UIColor clearColor];
+    self.cityLabel.textColor = [UIColor whiteColor];
+    self.cityLabel.text = @"Loading ...";
+    self.cityLabel.font = [UIFont fontWithName:@"Colaborate-Thin" size:6];
+    self.cityLabel.textAlignment = NSTextAlignmentCenter;
+    [header addSubview:self.cityLabel];
     
     self.conditionsLabel = [[UILabel alloc] initWithFrame:conditionsFrame];
     self.conditionsLabel.backgroundColor = [UIColor clearColor];
@@ -166,15 +167,19 @@ static NSDateFormatter *dateFormatter = nil;
     self.iconView.backgroundColor = [UIColor clearColor];
     [header addSubview:self.iconView];
     
+}
+
+-(void)fetchWeather {
     [[RACObserve([WeatherController sharedManager], currentCondition)
       deliverOn:RACScheduler.mainThreadScheduler]
      subscribeNext:^(WeatherCondition *newCondition) {
          self.temperatureLabel.text = [NSString stringWithFormat:@"%.0f°", newCondition.temperature.floatValue];
          self.conditionsLabel.text = [newCondition.conditionDescription[0] capitalizedString];
-         cityLabel.alpha = 0;
+         self.cityLabel.alpha = 0;
          self.iconView.image = [UIImage imageNamed: [newCondition imageName]];
          [self setTodayLayout];
          self.isWeatherLoaded = YES;
+         
          [self isReadyToLaunch];
      }];
     
@@ -203,6 +208,13 @@ static NSDateFormatter *dateFormatter = nil;
          [self isReadyToLaunch];
      }];
     
+     [[TodaySummary_Controller sharedManager] fetchTodaySummary];
+}
+
+-(void)fetchTodosAndMeetings {
+
+    
+    
     [[RACObserve([TodaySummary_Controller sharedManager], todaySummaryListItems)
       deliverOn:RACScheduler.mainThreadScheduler]
      subscribeNext:^(NSMutableArray *newTodaySummaryListItem) {
@@ -225,7 +237,7 @@ static NSDateFormatter *dateFormatter = nil;
          [[TodaySummary_Controller sharedManager] addToDos:newToDos];
      }];
     
-    [[TodaySummary_Controller sharedManager] fetchTodaySummary];
+   
     [[MeetingsController sharedManager] fetchMeetings];
     [[ToDoController sharedManager] fetchToDos];
     
@@ -561,7 +573,8 @@ static NSDateFormatter *dateFormatter = nil;
 }
 
 -(void) isReadyToLaunch {
-    if(self.isWeatherLoaded == YES && self.isTodaySummaryLoaded == YES && self.isTodaySummaryListLoaded == YES && self.isFirstLaunch && YES && self.isBackgroundLoaded == YES) {
+   // if(self.isWeatherLoaded == YES && self.isTodaySummaryLoaded == YES && self.isTodaySummaryListLoaded == YES && self.isFirstLaunch && YES && self.isBackgroundLoaded == YES) {
+    if(self.isWeatherLoaded== YES && self.isBackgroundLoaded == YES) {
         
         
         [UIView beginAnimations:nil context:nil];

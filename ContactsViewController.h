@@ -30,5 +30,5 @@
 @property (strong, nonatomic) NSMutableArray* filteredTableData;
 -(void)reset;
 -(void)resetKeyboard;
-
+-(void)addContactsData:(NSMutableArray *)incomingContacts;
 @end

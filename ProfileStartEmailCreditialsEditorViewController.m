@@ -23,11 +23,11 @@
     return self;
 }
 
--(void)addAccount:(EmailAddressHistoryModel *)emailAccount {
+-(void)addEmailAccount:(EmailAddressHistoryModel *)emailAccount {
     self.emailAccount = emailAccount;
 }
 
--(void)addIMAccount:(InstantMessengerAccountHistoryModel *)instantMessengerAccount {
+-(void)addIMAccount:(InstantMessengerAccountHistoryModel *)instantMessengerAccount{
     self.instantMessengerAccount = instantMessengerAccount;
 }
 

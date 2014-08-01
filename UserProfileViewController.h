@@ -56,6 +56,8 @@
     FacebookEditorViewController *contactFacebookEditorView;
     ContactRelationshipsListViewController *contactRelationshipListView;
     ContactBirthdayEditorViewController *contactBirthdayEditor;
+    
+    
 }
 -(void)addProfile:(UserProfileModel *)userProfile;
 -(void)createNewProfile;

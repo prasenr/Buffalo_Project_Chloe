@@ -61,12 +61,13 @@
     self.loaderScreen.image = [UIImage imageNamed:@"Default.png"];
     
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTodayShowing:) name:@"todayIsShowing" object:nil];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onEditToDo:) name:@"editToDo" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onEditMeeting:) name:@"editMeeting" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactSelectedFromGrid:) name:@"contactClickedFromGrid" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactEditorBack:) name:@"contactEditCanceled" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onProcessContacts:) name:@"processContacts" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactsCreated:) name:@"contactsProcessed" object:nil];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if(![defaults objectForKey:@"profileId"]) {
@@ -75,10 +76,13 @@
         profileFrame.origin = CGPointMake(0, 0);
         profileFrame.size = CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height);
         profileView.view.frame = profileFrame;
-        
         [self.view addSubview:profileView.view];
         [profileView createNewProfile];
-        /*meetingView = [[MeetingsViewController alloc] init];
+        profileGestureLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(profileSwipeLeft:)];
+        profileGestureLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+        [self.view addGestureRecognizer:profileGestureLeft];
+        
+        meetingView = [[MeetingsViewController alloc] init];
         CGRect meetingFrame = meetingView.view.frame;
         meetingFrame.origin = CGPointMake(self.view.frame.size.width, 0);
         meetingView.view.frame = meetingFrame;
@@ -86,22 +90,25 @@
         
         toDoView = [[TodosViewController alloc] init];
         CGRect todoFrame = toDoView.view.frame;
-        todoFrame.origin = CGPointMake(-self.view.frame.size.width, 0);
+        todoFrame.origin = CGPointMake(self.view.frame.size.width, 0);
         toDoView.view.frame = todoFrame;
         [self.view addSubview:toDoView.view];
         
         todayView = [[TodayViewController alloc] init];
-        todayGestureLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(todaySwipeLeft:)];
-        todayGestureLeft.direction = UISwipeGestureRecognizerDirectionLeft;
-        todayGestureRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(todaySwipeRight:)];
-        todayGestureRight.direction = UISwipeGestureRecognizerDirectionRight;
-        [self.view addGestureRecognizer:todayGestureRight];
-        [self.view addGestureRecognizer:todayGestureLeft];
-        [self.view addSubview:todayView.view];*/
+        CGRect todayFrame = todayView.view.frame;
+        todayFrame.origin.x = self.view.bounds.size.width;
+        todayView.view.frame = todayFrame;
+        [self.view addSubview:todayView.view];
+        
+        contactsView = [[ContactsViewController alloc] init];
+        CGRect contactFrame = contactsView.view.frame;
+        contactFrame.origin.x = self.view.bounds.size.width;
+        contactsView.view.frame = contactFrame;
+        [self.view addSubview:contactsView.view];
         
     } else {
         NSString *userId = [defaults objectForKey:@"profileId"];
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onTodayShowing:) name:@"todayIsShowing" object:nil];
         todayView = [[TodayViewController alloc] init];
         todayGestureLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(todaySwipeLeft:)];
         todayGestureLeft.direction = UISwipeGestureRecognizerDirectionLeft;
@@ -111,6 +118,9 @@
         [self.view addGestureRecognizer:todayGestureLeft];
         [self.view addSubview:todayView.view];
         [self.view addSubview:self.loaderScreen];
+        
+        [todayView fetchWeather];
+        [todayView fetchTodosAndMeetings];
     }
     
 }
@@ -404,6 +414,12 @@
     [UIView commitAnimations];
 }
 
+-(void) onContactsCreated:(NSNotification *)notification {
+    NSMutableArray *contacts = [[notification userInfo] valueForKey:@"contacts"];
+    [contactsView addContactsData:contacts];
+    [todayView fetchWeather];
+}
+
 -(void)onFinishedShowingContactEditorFromSearch:(NSString *)animationId finished:(NSNumber *)finished context:(void *)context {
     //[contactGrid reset];
 }
@@ -611,8 +627,8 @@
 }
 
 -(void) onProcessContacts:(NSNotification *)notification {
-    WhoAreYouPersonModel *tempUserProfile = [[notification userInfo] valueForKey:@"contactId"];
-    [[TodaySummary_Controller sharedManager] processContacts:tempUserProfile];
+    NSMutableArray *tempUserProfileIds = [[notification userInfo] valueForKey:@"contactId"];
+    [[TodaySummary_Controller sharedManager] processContacts:tempUserProfileIds];
 }
 
 

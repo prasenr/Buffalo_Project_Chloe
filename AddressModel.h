@@ -17,4 +17,5 @@
 @property (nonatomic, strong) NSMutableString *county;
 @property (nonatomic, strong) NSMutableString *zipcode;
 @property (nonatomic, strong) NSMutableString *country;
+@property (nonatomic, strong) NSString *type;
 @end

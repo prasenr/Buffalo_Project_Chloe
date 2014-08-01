@@ -10,4 +10,6 @@
 
 @interface TodayViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 -(void)updateList;
+-(void)fetchWeather;
+-(void)fetchTodosAndMeetings;
 @end

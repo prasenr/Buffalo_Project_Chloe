@@ -49,7 +49,7 @@
 {
     [super viewDidLoad];
     
-    contacts = [[NSMutableArray alloc] init];
+    /*contacts = [[NSMutableArray alloc] init];
     
     PersonModel *shaneModel = [[PersonModel alloc] init];
     shaneModel.firstName = [NSMutableString stringWithString: @"Shane"];;
@@ -302,12 +302,16 @@
 
     //_allTableData = delegate.contacts;
     
-    /*float aFloat = self.view.frame.size.width;
+    float aFloat = self.view.frame.size.width;
     NSLog(@"This is my float: %f \n\nAnd here again: %.2f", aFloat, aFloat);
     
     float aFloat1 = self.view.frame.size.height;
     NSLog(@"This is my float: %f \n\nAnd here again: %.2f", aFloat1, aFloat1);*/
+}
+
+-(void)addContactsData:(NSMutableArray *)incomingContacts {
     
+    contacts = incomingContacts;
     gridButtons = [[NSMutableArray alloc] init];
     gridHolder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     [gridHolder setBackgroundColor:[UIColor clearColor]];

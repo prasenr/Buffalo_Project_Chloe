@@ -13,7 +13,8 @@
 #import "ToDoListViewController.h"
 
 @interface TodosViewController ()
-//@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) UIView *noAccountView;
 @property (nonatomic, strong) UILabel *detailTextLabel;
 @property (nonatomic, strong) UILabel *headerStartTimeLabel;
 @property (nonatomic, strong) UILabel *headerEndTimeLabel;
@@ -41,114 +42,110 @@ static NSDateFormatter *todayFormatter = nil;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     
-    self.currentDateShowing = [NSDate dateWithTimeIntervalSinceNow:0];
+    self.view.backgroundColor = [UIColor blackColor];
     
-    UILabel *contactsHeader = [[UILabel alloc] initWithFrame:CGRectMake(0, 19, self.view.frame.size.width, 18)];
+    UILabel *contactsHeader = [[UILabel alloc] initWithFrame:CGRectMake(0, 20, self.view.bounds.size.width, 50)];
     contactsHeader.backgroundColor = [UIColor clearColor];
-    contactsHeader.textColor = [UIColor whiteColor];
-    contactsHeader.text = @"To do";
+    contactsHeader.textColor = [UIColor blackColor];
+    contactsHeader.text = @"Meetings";
     contactsHeader.textAlignment = NSTextAlignmentCenter;
-    contactsHeader.font = [UIFont fontWithName:@"Colaborate-Thin" size:24];;
+    contactsHeader.font = [UIFont fontWithName:@"Colaborate-Thin" size:20];;
     [self.view addSubview:contactsHeader];
     
-    self.dateController = [[ToDoDateViewController alloc] initWtihToDo:[NSDate dateWithTimeIntervalSinceNow:0] initWithNibName:@"ToDoDateViewController" bundle:nil];
-    CGRect dateFrame = self.dateController.view.frame;
-    dateFrame.origin.y = contactsHeader.frame.size.height + contactsHeader.frame.origin.y;
-    self.dateController.view.frame = dateFrame;
-    [self.view addSubview:self.dateController.view];
+    if([[TodaySummary_Controller sharedManager].allToDosSorted count]>0) {
+        [self createTableView];
+    } else {
+        [self createNoAccountsView];
+    }
     
-    self.todayList = [[ToDoListViewController alloc] init];
-    [self.todayList setViewDate:[NSDate dateWithTimeIntervalSince1970:0]];
-    [self.view addSubview: self.todayList.view];
+}
+
+-(void)createNoAccountsView {
     
-    /*self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 165, self.view.frame.size.width, self.view.frame.size.height - 165)];
+    self.noAccountView = [[UIView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:self.noAccountView];
+    self.noAccountView.backgroundColor = [UIColor clearColor];
+    
+    CGSize maxiToDoMeetingSummaryLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
+    
+    NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it.";
+    unichar chr[1] = {'\n'};
+    NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
+    CGRect labelFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
+    UILabel *justSoYouKnowDetails = [[UILabel alloc] initWithFrame:labelFrame];
+    [justSoYouKnowDetails setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
+    [justSoYouKnowDetails setText: [NSString stringWithFormat:welcomeText, cr]];
+    [justSoYouKnowDetails setTextColor:[UIColor whiteColor]];
+    [justSoYouKnowDetails setBackgroundColor:[UIColor clearColor]];
+    [justSoYouKnowDetails setLineBreakMode:NSLineBreakByWordWrapping];
+    [justSoYouKnowDetails setNumberOfLines:0];
+    
+    CGRect expectedLabelSize1 = [justSoYouKnowDetails.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowDetails.font} context:nil ];
+    CGRect newFrame1 = justSoYouKnowDetails.frame;
+    newFrame1.origin.x = 10;
+    newFrame1.origin.y = 100;
+    newFrame1.size.width = expectedLabelSize1.size.width;
+    newFrame1.size.height = expectedLabelSize1.size.height;
+    justSoYouKnowDetails.frame = newFrame1;
+    [self.noAccountView addSubview:justSoYouKnowDetails];
+    
+    UIButton *getProfilePictureButton = [[UIButton alloc] init];
+    [getProfilePictureButton setTitle:@"Add an account" forState:UIControlStateNormal];
+    getProfilePictureButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [getProfilePictureButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [getProfilePictureButton setBackgroundColor:[UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0]];
+    getProfilePictureButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [getProfilePictureButton sizeToFit];
+    [getProfilePictureButton addTarget:self action:@selector(onAddAnAccount:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect getProfilePictureFrame = getProfilePictureButton.frame;
+    getProfilePictureFrame.origin.y =justSoYouKnowDetails.frame.origin.y + justSoYouKnowDetails.frame.size.height + 30;
+    getProfilePictureFrame.origin.x = 0;
+    getProfilePictureFrame.size.width = self.view.bounds.size.width/2;
+    getProfilePictureFrame.size.height = 50;
+    getProfilePictureButton.frame = getProfilePictureFrame;
+    [self.noAccountView addSubview:getProfilePictureButton];
+    
+    UIButton *skipPickProfilePicture = [[UIButton alloc] init];
+    [skipPickProfilePicture setTitle:@"Add a todo" forState:UIControlStateNormal];
+    skipPickProfilePicture.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [skipPickProfilePicture setTitleColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0] forState:UIControlStateNormal];
+    [skipPickProfilePicture setBackgroundColor: [UIColor whiteColor]];
+    skipPickProfilePicture.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [skipPickProfilePicture addTarget:self action:@selector(onAddAToDo:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect skipPickProfilePictureFrame = skipPickProfilePicture.frame;
+    skipPickProfilePictureFrame.origin.y = getProfilePictureFrame.origin.y;
+    skipPickProfilePictureFrame.origin.x = self.view.bounds.size.width/2;
+    skipPickProfilePictureFrame.size.width = self.view.bounds.size.width/2;
+    skipPickProfilePictureFrame.size.height = 50;
+    skipPickProfilePicture.frame = skipPickProfilePictureFrame;
+    [self.noAccountView addSubview:skipPickProfilePicture];
+}
+
+-(IBAction)onAddAnAccount:(id)sender {
+    
+}
+
+-(IBAction)onAddAToDo:(id)sender {
+    
+}
+                                  
+
+-(void)createTableView {
+    
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 50, self.view.frame.size.width, self.view.frame.size.height - 50)];
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.showsVerticalScrollIndicator = NO;
-    [self.view addSubview:self.tableView];*/
-    
-    self.view.backgroundColor = [UIColor blackColor];
-}
-
-/*- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 60;
-}
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    [self.view addSubview:self.tableView];
+    // Do any additional setup after loading the view from its nib.
     
     
-    NSString *headerText;
     
-    if(todayFormatter == nil) {
-        todayFormatter = [[NSDateFormatter alloc] init];
-        [todayFormatter setDateFormat:@"MM/dd/yyyy"];
-    }
-    NSString *todayFormatted = [todayFormatter stringFromDate:[NSDate dateWithTimeIntervalSinceNow:0]];
-    NSString *currentDateShowingFormatted = [todayFormatter stringFromDate:self.currentDateShowing];
-    UIView* headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 60)];
-    [headerView setBackgroundColor:[UIColor blackColor]];
-    self.headerStartTimeLabel = [[UILabel alloc] init];
-    self.headerEndTimeLabel = [[UILabel alloc] init];
-    self.headerStartTimeLabel.textColor = [UIColor whiteColor];
-    self.headerStartTimeLabel.font = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:30];
-    self.headerStartTimeLabel.adjustsFontSizeToFitWidth = NO;
-    self.headerStartTimeLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-    self.headerStartTimeLabel.textAlignment = NSTextAlignmentRight;
-    
-    self.headerEndTimeLabel.textColor = [UIColor whiteColor];
-    self.headerEndTimeLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12];
-    self.headerEndTimeLabel.adjustsFontSizeToFitWidth = NO;
-    self.headerEndTimeLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-    self.headerEndTimeLabel.textAlignment = NSTextAlignmentRight;
-    
-    if([todayFormatted isEqualToString:currentDateShowingFormatted]) {
-        if(section ==0) {
-           // NSString *begininingOfTimeFormatted = [todayFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:0]];
-           // NSDictionary *noStartTimeDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:begininingOfTimeFormatted];
-            
-            //NSArray *keys = [noStartTimeDict allKeys];
-            self.headerStartTimeLabel.frame = CGRectMake(20, 10, self.view.bounds.size.width, 30);
-            self.headerStartTimeLabel.textAlignment = NSTextAlignmentLeft;
-            self.headerStartTimeLabel.text = @"SOMETIME TODAY";
-        } else {
-            NSDictionary *currentDateDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:currentDateShowingFormatted];
-            NSArray *keys = [currentDateDict allKeys];
-            self.headerEndTimeLabel.frame = CGRectMake(10, 10, 110, 12);
-            self.headerEndTimeLabel.text = @"BY";
-            self.headerStartTimeLabel.frame = CGRectMake(10, (self.headerEndTimeLabel.frame.origin.y + self.headerEndTimeLabel.frame.size.height) - 2, 110, 30);
-            self.headerStartTimeLabel.text = [keys objectAtIndex:section-1];
-            //headerText = [keys objectAtIndex:section-1];
-        }
-    } else {
-        NSDictionary *currentDateDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:currentDateShowingFormatted];
-        NSArray *keys = [currentDateDict allKeys];
-        self.headerEndTimeLabel.frame = CGRectMake(10, 10, 110, 12);
-        self.headerEndTimeLabel.text = @"BY";
-        self.headerStartTimeLabel.frame = CGRectMake(10, (self.headerEndTimeLabel.frame.origin.y + self.headerEndTimeLabel.frame.size.height) - 2, 110, 30);
-        self.headerStartTimeLabel.text = [keys objectAtIndex:section];
-        //headerText = [keys objectAtIndex:section];
-    }
-    NSLog(@"headerText %@", headerText);
-
-    // 3. Add a label
-    UILabel* headerLabel = [[UILabel alloc] init];
-    headerLabel.frame = CGRectMake(5, 2, tableView.frame.size.width - 5, 18);
-    headerLabel.backgroundColor = [UIColor clearColor];
-    headerLabel.textColor = [UIColor whiteColor];
-    headerLabel.font = [UIFont boldSystemFontOfSize:16.0];
-    headerLabel.text = headerText;
-    headerLabel.textAlignment = NSTextAlignmentLeft;
-    
-    // 4. Add the label to the header view
-    [headerView addSubview:self.headerStartTimeLabel];
-    [headerView addSubview:self.headerEndTimeLabel];
-    //[headerView addSubview:headerLabel];
-    
-    // 5. Finally return
-    return headerView;
+    //self.calendarHeader = [[CalendarHeaderViewController alloc] init];
+    //[self.view addSubview:self.calendarHeader.view];
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -161,7 +158,18 @@ static NSDateFormatter *todayFormatter = nil;
         //self.startTimeLabel = [[UILabel alloc] init];
         //self.endTimeLabel = [[UILabel alloc] init];
         self.detailTextLabel = [[UILabel alloc] init];
-
+        
+        //self.startTimeLabel.textColor = [UIColor whiteColor];
+        //self.startTimeLabel.font = [UIFont fontWithName:@"HelveticaNeue-CondensedBold" size:30];
+        //self.startTimeLabel.adjustsFontSizeToFitWidth = NO;
+        //self.startTimeLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        //self.startTimeLabel.textAlignment = NSTextAlignmentRight;
+        
+        //self.endTimeLabel.textColor = [UIColor whiteColor];
+        //self.endTimeLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12];
+        //self.endTimeLabel.adjustsFontSizeToFitWidth = NO;
+        //self.endTimeLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        //self.endTimeLabel.textAlignment = NSTextAlignmentRight;
         
         
         self.detailTextLabel.textColor = [UIColor whiteColor];
@@ -184,62 +192,23 @@ static NSDateFormatter *todayFormatter = nil;
         [dateFormatter setDateFormat:@"hh:mma"];
     }
     
-    if(todayFormatter == nil) {
-        todayFormatter = [[NSDateFormatter alloc] init];
-        [todayFormatter setDateFormat:@"MM/dd/yyyy"];
-    }
-    
     CGRect detailFrame = self.detailTextLabel.frame;
     
-    if(todayFormatter == nil) {
-        todayFormatter = [[NSDateFormatter alloc] init];
-        [todayFormatter setDateFormat:@"MM/dd/yyyy"];
+    NSString *todayString = [dateFormatter stringFromDate:[[NSDate alloc] initWithTimeIntervalSinceNow:0]];
+    
+    ToDoModel *cellData = [[[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:todayString] objectAtIndex:indexPath.row];
+    //self.startTimeLabel.frame = CGRectMake(10, 10, 110, 30);
+    //self.startTimeLabel.text = [NSString stringWithFormat:@"%@", [dateFormatter stringFromDate:cellData.startDate]];
+    //self.endTimeLabel.frame = CGRectMake(10, (self.startTimeLabel.frame.origin.y + self.startTimeLabel.frame.size.height) - 5, 110, 20);
+    //self.endTimeLabel.text = [NSString stringWithFormat:@"%@", [dateFormatter stringFromDate:cellData.endDate]];
+    self.detailTextLabel.frame = CGRectMake(20, 40, self.view.frame.size.width - 40, 100);
+    
+    if(self.detailAttributedString){
+        self.detailTextLabel.attributedText = nil;
+        self.detailTextLabel.alpha = 1.0;
+        //self.startTimeLabel.alpha = 1.0;
+        //self.endTimeLabel.alpha = 1.0;
     }
-    NSString *todayFormatted = [todayFormatter stringFromDate:[NSDate dateWithTimeIntervalSinceNow:0]];
-    NSString *currentDateShowingFormatted = [todayFormatter stringFromDate:self.currentDateShowing];
-    
-    ToDoModel *cellData;
-    if([todayFormatted isEqualToString:currentDateShowingFormatted]) {
-        if(indexPath.section ==0) {
-            NSLog(@"current row section 0: %ld", (long)indexPath.row);
-            NSString *begininingOfTimeFormatted = [todayFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:0]];
-            NSDictionary *noStartTimeDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:begininingOfTimeFormatted];
-            
-            NSArray *keys = [noStartTimeDict allKeys];
-            cellData = [[noStartTimeDict valueForKey:[keys objectAtIndex:0]] objectAtIndex:indexPath.row];
-            NSLog(@"made a cell");
-        } else {
-            NSLog(@"current row section %ld: %ld", (long)indexPath.section,(long)indexPath.row);
-            NSDictionary *currentDateDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:currentDateShowingFormatted];
-            NSArray *keys = [currentDateDict allKeys];
-            cellData = [[currentDateDict valueForKey:[keys objectAtIndex:indexPath.section -1]] objectAtIndex:indexPath.row];
-        }
-    } else {
-        NSDictionary *currentDateDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:currentDateShowingFormatted];
-        NSArray *keys = [currentDateDict allKeys];
-
-        cellData = [[currentDateDict valueForKey:[keys objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
-    }
-
-    
-    self.detailTextLabel.frame = CGRectMake(20, 20, self.view.frame.size.width - 40, 100);
-    
-    if(cellData.isComplete) {
-        self.detailAttributedString = [[NSMutableAttributedString alloc] initWithString:cellData.todo];
-        [self.detailAttributedString addAttribute:NSStrikethroughStyleAttributeName value:@2 range:NSMakeRange(0, [self.detailAttributedString length])];
-        self.detailTextLabel.attributedText = self.detailAttributedString;
-        self.detailTextLabel.alpha = 0.25;
-        //self.startTimeLabel.alpha = 0.25;
-        //self.endTimeLabel.alpha = 0.25;
-    } else {
-        if(self.detailAttributedString){
-            self.detailTextLabel.attributedText = nil;
-            self.detailTextLabel.alpha = 1.0;
-            //self.startTimeLabel.alpha = 1.0;
-            //self.endTimeLabel.alpha = 1.0;
-        }
-    }
-    
     self.detailTextLabel.text = cellData.todo;
     
     CGSize maxDetailLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
@@ -248,10 +217,8 @@ static NSDateFormatter *todayFormatter = nil;
     self.detailTextLabel.frame = expectedDetailLabelSize;
     
     detailFrame = self.detailTextLabel.frame;
-    detailFrame.origin.y = 10;
+    detailFrame.origin.y = 52;
     detailFrame.origin.x = 20;
-    self.detailTextLabel.frame = detailFrame;
-
     self.detailTextLabel.frame = detailFrame;
     
     return cell;
@@ -260,9 +227,9 @@ static NSDateFormatter *todayFormatter = nil;
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    ToDoModel *cellData = [[TodaySummary_Controller sharedManager].rawToDos objectAtIndex:indexPath.row];
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:cellData forKey:@"todo"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"editToDo" object:nil userInfo:userInfo];
+    MeetingModel *cellData = [[TodaySummary_Controller sharedManager].rawMeetings objectAtIndex:indexPath.row];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:cellData forKey:@"meeting"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"editMeeting" object:nil userInfo:userInfo];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -275,124 +242,73 @@ static NSDateFormatter *todayFormatter = nil;
     NSString *textString;
     CGRect expectedDetailLabelSize;
     
-    if(dateFormatter == nil){
-        dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"hh:mma"];
-    }
-    
-    if(todayFormatter == nil) {
-        todayFormatter = [[NSDateFormatter alloc] init];
-        [todayFormatter setDateFormat:@"MM/dd/yyyy"];
-    }
-    
-    //CGRect detailFrame = self.detailTextLabel.frame;
-    
-    if(todayFormatter == nil) {
-        todayFormatter = [[NSDateFormatter alloc] init];
-        [todayFormatter setDateFormat:@"MM/dd/yyyy"];
-    }
-    NSString *todayFormatted = [todayFormatter stringFromDate:[NSDate dateWithTimeIntervalSinceNow:0]];
-    NSString *currentDateShowingFormatted = [todayFormatter stringFromDate:self.currentDateShowing];
-    
-    ToDoModel *cellData;
-    if([todayFormatted isEqualToString:currentDateShowingFormatted]) {
-        if(indexPath.section ==0) {
-            NSLog(@"current row section 0: %ld", (long)indexPath.row);
-            NSString *begininingOfTimeFormatted = [todayFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:0]];
-            NSDictionary *noStartTimeDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:begininingOfTimeFormatted];
-            
-            NSArray *keys = [noStartTimeDict allKeys];
-            cellData = [[noStartTimeDict valueForKey:[keys objectAtIndex:0]] objectAtIndex:indexPath.row];
-            NSLog(@"made a cell");
-        } else {
-            NSLog(@"current row section %ld: %ld", (long)indexPath.section,(long)indexPath.row);
-            NSDictionary *currentDateDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:currentDateShowingFormatted];
-            NSArray *keys = [currentDateDict allKeys];
-            cellData = [[currentDateDict valueForKey:[keys objectAtIndex:indexPath.section -1]] objectAtIndex:indexPath.row];
-        }
-    } else {
-        NSDictionary *currentDateDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:currentDateShowingFormatted];
-        NSArray *keys = [currentDateDict allKeys];
-        
-        cellData = [[currentDateDict valueForKey:[keys objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
-    }
-    
-    //ToDoModel *cellData = [[TodaySummary_Controller sharedManager].rawToDos objectAtIndex:indexPath.row];
-    textString = cellData.todo;
+    MeetingModel *cellData = [[TodaySummary_Controller sharedManager].rawMeetings objectAtIndex:indexPath.row];
+    textString = cellData.meetingDescription;
     CGSize maxDetailLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
     expectedDetailLabelSize = [textString boundingRectWithSize:CGSizeMake(maxDetailLabelSize.width, maxDetailLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Colaborate-Thin" size:16]} context:nil];
-
-    
-    
-    //For padding
+    expectedDetailLabelSize.size.height += 52;
     
     expectedDetailLabelSize.size.height += 30;
     return expectedDetailLabelSize.size.height;
 }
 
-
+/*- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
+ return 1;
+ }*/
 
 -(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if(todayFormatter == nil) {
-        todayFormatter = [[NSDateFormatter alloc] init];
-        [todayFormatter setDateFormat:@"MM/dd/yyyy"];
-    }
-    NSString *todayFormatted = [todayFormatter stringFromDate:[NSDate dateWithTimeIntervalSinceNow:0]];
-    NSString *currentDateShowingFormatted = [todayFormatter stringFromDate:self.currentDateShowing];
-    
-    if([todayFormatted isEqualToString:currentDateShowingFormatted]) {
-        if(section ==0) {
-            NSString *begininingOfTimeFormatted = [todayFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:0]];
-            NSDictionary *noStartTimeDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:begininingOfTimeFormatted];
-            
-            NSArray *keys = [noStartTimeDict allKeys];
-            return [[noStartTimeDict valueForKey:[keys objectAtIndex:0]] count];
-        } else {
-            NSDictionary *currentDateDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:currentDateShowingFormatted];
-            NSArray *keys = [currentDateDict allKeys];
-            return [[currentDateDict valueForKey:[keys objectAtIndex:section-1]] count];
-        }
-    } else {
-        NSDictionary *currentDateDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:currentDateShowingFormatted];
-        NSArray *keys = [currentDateDict allKeys];
-        return [[currentDateDict valueForKey:[keys objectAtIndex:section]] count];
-    }
-}
-
--(NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
-    
-    if(todayFormatter == nil) {
-        todayFormatter = [[NSDateFormatter alloc] init];
-        [todayFormatter setDateFormat:@"MM/dd/yyyy"];
-    }
-
-    NSString *todayFormatted = [todayFormatter stringFromDate:[NSDate dateWithTimeIntervalSinceNow:0]];
-    NSString *currentDateShowingFormatted = [todayFormatter stringFromDate:self.currentDateShowing];
-    NSUInteger sectionCount = 0;
-    
-    
-    if([todayFormatted isEqualToString:currentDateShowingFormatted]) {
-        
-        NSString *begininingOfTimeFormatted = [todayFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:0]];
-        NSDictionary *noStartTimeDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:begininingOfTimeFormatted];
-        
-        sectionCount = [noStartTimeDict count];
-    }
-    
-    NSDictionary *currentDateDict = [[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:currentDateShowingFormatted];
-    sectionCount = sectionCount + [currentDateDict count];
-    
-    NSLog(@"total: %lu", (unsigned long)sectionCount);
-    
-    //NSUInteger tcount = [[[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:todayString] count];
-    //NSUInteger bcount = [[[TodaySummary_Controller sharedManager].allToDosSorted valueForKey:beginingOfTimeString] count];
-
-    return sectionCount;
+    return [[TodaySummary_Controller sharedManager].rawMeetings count];
 }
 
 -(void)updateToDos {
-    [self.tableView reloadData];
-}*/
+    if([[TodaySummary_Controller sharedManager].allToDosSorted count] >0) {
+        if(self.tableView == nil) {
+            [self createTableView];
+            self.tableView.alpha = 0;
+            [self.tableView reloadData];
+            [UIView animateWithDuration:0.25
+                                  delay: 0.0
+                                options: UIViewAnimationOptionCurveEaseOut
+                             animations:^{
+                                 self.tableView.alpha = 1;
+                                 self.noAccountView.alpha = 0;
+                                 
+                             }completion:^(BOOL finished){
+                                 [self.noAccountView removeFromSuperview];
+                                 self.noAccountView = nil;
+                             }];
+        } else {
+            [self.tableView reloadData];
+        }
+        
+    } else {
+        if(self.noAccountView == nil) {
+            [self createNoAccountsView];
+            if(self.tableView) {
+                [UIView animateWithDuration:0.25
+                                      delay: 0.0
+                                    options: UIViewAnimationOptionCurveEaseOut
+                                 animations:^{
+                                     self.tableView.alpha = 0;
+                                     self.noAccountView.alpha = 1;
+                                     
+                                 }completion:^(BOOL finished){
+                                     [self.tableView removeFromSuperview];
+                                     self.tableView = nil;
+                                 }];
+            } else {
+                [UIView animateWithDuration:0.25
+                                      delay: 0.0
+                                    options: UIViewAnimationOptionCurveEaseOut
+                                 animations:^{
+                                     self.noAccountView.alpha = 1;
+                                     
+                                 }completion:^(BOOL finished){}];
+            }
+        }
+    }
+    
+}
 
 - (void)didReceiveMemoryWarning
 {

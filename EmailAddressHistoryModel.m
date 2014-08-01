@@ -7,14 +7,21 @@
 //
 
 #import "EmailAddressHistoryModel.h"
+#import "EmailAddressModel.h"
 
 @implementation EmailAddressHistoryModel : MTLModel
 +(NSDictionary *) JSONKeyPathsByPropertyKey {
     return @{
-             @"startDate": @"person",
-             @"endDate": @"relationshipType",
+             @"startDate": @"startDate",
+             @"endDate": @"endDate",
              @"account" : @"account"
              };
+}
+
++ (NSValueTransformer *)appURLSchemeJSONTransformer {
+    // use Mantle's built-in "value transformer" to convert strings to NSURL and vice-versa
+    // you can write your own transformers
+    return [NSValueTransformer valueTransformerForName:MTLURLValueTransformerName];
 }
 
 +(NSValueTransformer *) dateJSONTransformer {
@@ -23,6 +30,11 @@
     } reverseBlock:^(NSDate *date) {
         return [NSString stringWithFormat:@"%f", [date timeIntervalSince1970]];
     }];
+}
+
++ (NSValueTransformer *)accountJSONTransformer {
+    // tell Mantle to populate appActions property with an array of ChoosyAppAction objects
+    return [NSValueTransformer mtl_JSONDictionaryTransformerWithModelClass:[EmailAddressModel class]];
 }
 
 +(NSValueTransformer *) startDateJSONTransformer {

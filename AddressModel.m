@@ -16,7 +16,8 @@
              @"addressLine2": @"addressLine2",
              @"city": @"city",
              @"state": @"state",
-             @"zipcode": @"zipcode"
+             @"zipcode": @"zipcode",
+             @"type":@"type"
              };
 }
 @end

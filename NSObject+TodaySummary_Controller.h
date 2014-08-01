@@ -47,5 +47,5 @@
 -(void)completeMeeting:(MeetingModel *)meeting;
 -(void)deleteMeeting:(MeetingModel *)meeting;
 -(void)helpMe;
--(void)processContacts:(WhoAreYouPersonModel *)userProfile;
+-(void)processContacts:(NSMutableArray *)userProfileIds;
 @end

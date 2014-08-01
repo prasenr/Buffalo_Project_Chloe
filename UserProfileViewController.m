@@ -49,6 +49,7 @@
 @property (nonatomic, strong) UIView *buttonContent;
 @property (nonatomic, strong) UIImageView *loaderImage;
 @property (nonatomic, strong) ContactAddressSearchViewController *addressSearchResults;
+@property (nonatomic, strong) UIImagePickerController *picker;
 @end
 
 static NSDateFormatter *dateFormatter = nil;
@@ -620,12 +621,12 @@ static NSDateFormatter *dateFormatter = nil;
 }
 
 -(IBAction)onPickProfilePicture:(id)sender {
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    picker.allowsEditing = YES;
-    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    self.picker = [[UIImagePickerController alloc] init];
+    self.picker.delegate = self;
+    self.picker.allowsEditing = YES;
+    self.picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     
-    [self presentViewController:picker animated:YES completion:NULL];
+    [self presentViewController:self.picker animated:YES completion:NULL];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
@@ -645,17 +646,46 @@ static NSDateFormatter *dateFormatter = nil;
     
     self.confirmPicture = [[UIView alloc] initWithFrame:self.view.bounds];
     
-    /*CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
     CGRect maskRect = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
     CGPathRef path = CGPathCreateWithRect(maskRect, NULL);
     maskLayer.path = path;
     CGPathRelease(path);
-    self.confirmPicture.layer.mask = maskLayer;*/
+    self.confirmPicture.layer.mask = maskLayer;
     
     self.profilePicture = [[UIImageView alloc] initWithFrame:self.view.bounds];
     self.profilePicture.image = chosenImage;
     self.profilePicture.contentMode = UIViewContentModeScaleAspectFill;
     [self.confirmPicture addSubview:self.profilePicture];
+    
+    UIView *uploadBackground = [[UIView alloc] initWithFrame:self.view.bounds];
+    [uploadBackground setBackgroundColor:[UIColor colorWithRed:0.0/255.0 green:0.0/255.0 blue:0.0/255.0 alpha:0.5]];
+    
+    NSString *uploadingText = @"Uploading image";
+    unichar chr[1] = {'\n'};
+    NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
+    CGRect labelFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
+    UILabel *uploadingLabel = [[UILabel alloc] initWithFrame:labelFrame];
+    [uploadingLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:20]];
+    [uploadingLabel setText: [NSString stringWithFormat:uploadingText, cr]];
+    [uploadingLabel setTextColor:[UIColor whiteColor]];
+    uploadingLabel.textAlignment = NSTextAlignmentCenter;
+    [uploadingLabel setBackgroundColor:[UIColor clearColor]];
+    [uploadingLabel setLineBreakMode:NSLineBreakByWordWrapping];
+    [uploadingLabel setNumberOfLines:0];
+    
+    CGSize maxiToDoMeetingSummaryLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
+    CGRect expectedLabelSize1 = [uploadingLabel.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:uploadingLabel.font} context:nil ];
+    CGRect newFrame1 = uploadingLabel.frame;
+    newFrame1.origin.x = 10;
+    newFrame1.size.width = expectedLabelSize1.size.width;
+    newFrame1.size.height = expectedLabelSize1.size.height;
+    newFrame1.origin.y = self.view.bounds.size.height/2-(newFrame1.size.height);
+    uploadingLabel.frame = newFrame1;
+    [uploadBackground addSubview:uploadingLabel];
+    
+    [self.confirmPicture addSubview:uploadBackground];
+    
     [self.profileWizardContainer addSubview:self.confirmPicture];
 
     [picker dismissViewControllerAnimated:YES completion:NULL];
@@ -678,6 +708,7 @@ static NSDateFormatter *dateFormatter = nil;
     [[credentialsProvider getIdentityId] continueWithSuccessBlock:^id(BFTask *task){
         return nil;
     }];
+
     
     AWSServiceConfiguration *configuration = [AWSServiceConfiguration configurationWithRegion:AWSRegionUSEast1
                                                                           credentialsProvider:credentialsProvider];
@@ -703,27 +734,71 @@ static NSDateFormatter *dateFormatter = nil;
             NSLog(@"Success");
             NSMutableString *profileBigImagePath = [[NSMutableString alloc] initWithString:@"https://s3.amazonaws.com/buffaloimages/"];
             [profileBigImagePath appendString:request.key];
-            [self getMissingCreditials];
+            self.userProfileModel.personBigImage = profileBigImagePath;
+            [self saveProfileToRemoveDuplicates];
         }
         return nil;
     }];
     
 }
 
+-(void)saveProfileToRemoveDuplicates {
+    
+   // NSDictionary *jsonDictionary = [NSDictionary dictionaryWithObjectsAndKeys:self.usernameInput.text,@"username", self.passwordInput.text, @"password", nil];
+    
+    NSDictionary *jsonDictionary = [MTLJSONAdapter JSONDictionaryFromModel:self.userProfileModel];
+    //NSData *jsonData = [NSJSONSerialization dataWithJSONObject:appInfosJSON options:0 error:&error];
+
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDictionary options:NSJSONWritingPrettyPrinted error:&error];
+
+    //NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDictionary options:0 error:nil];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSLog(@"string to send: %@", jsonString);
+    
+    NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://api.buffalop.com/profiles/"] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
+    
+    [postRequest setHTTPMethod:@"POST"];
+    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [postRequest setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[jsonData length]] forHTTPHeaderField:@"Content-Length"];
+    [postRequest setHTTPBody:jsonData];
+    
+    NSURLResponse *response = nil;
+    NSError *requestError = nil;
+    NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
+    
+    if (requestError == nil) {
+        id json = [NSJSONSerialization JSONObjectWithData:returnData options:kNilOptions error:nil];
+        self.userProfileModel =[MTLJSONAdapter modelOfClass: [UserProfileModel class] fromJSONDictionary:json error:nil];
+        [self onCredititalsCreated];
+    } else {
+        NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
+    }
+    
+    
+    [self getMissingCreditials];
+}
+
 -(void)getMissingCreditials {
 
     self.currentMissingInformationScreen = [NSNumber numberWithInt:-1];
     
+    self.missingInformationScreensArray = [[NSMutableArray alloc] init];
     NSUInteger p = 0;
     for(;p< [self.userProfileModel.emailAddresses count]; p++) {
         [self.missingInformationScreensArray addObject:[self.userProfileModel.emailAddresses objectAtIndex:p]];
     }
     
+    p = 0;
     for(;p< [self.userProfileModel.instantMessengerAccounts count]; p++) {
         [self.missingInformationScreensArray addObject:[self.userProfileModel.instantMessengerAccounts objectAtIndex:p]];
     }
 
     self.missingInformationWelcome = [[UIView alloc] initWithFrame:self.view.bounds];
+    CGRect missingFrame = self.missingInformationWelcome.frame;
+    missingFrame.origin.x = self.view.bounds.size.width;
+    self.missingInformationWelcome.frame = missingFrame;
     [self.profileWizardContainer addSubview:self.missingInformationWelcome];
     
     CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
@@ -812,16 +887,13 @@ static NSDateFormatter *dateFormatter = nil;
 
 -(void) onAccountSkipped:(NSNotification *)notification {
    [self showNextMissingInformationScreen];
-    NSLog(@"gotit");
 }
 
 -(void)showNextMissingInformationScreen {
     int value = [self.currentMissingInformationScreen intValue];
     self.currentMissingInformationScreen = [NSNumber numberWithInt:value + 1];
-    int minusOne = [self.missingInformationScreensArray count];
+    int minusOne = (int)[self.missingInformationScreensArray count];
     minusOne = minusOne -1;
-    NSLog(@"first one: %d", value);
-    NSLog(@"second one: %d", minusOne);
     
     if(value != minusOne  ) {
        // [self.profileContainer addSubview:[self.missingInformationScreensArray objectAtIndex:self.currentMissingInformationScreen]];
@@ -835,9 +907,11 @@ static NSDateFormatter *dateFormatter = nil;
             self.tempAccountEditor2 = [[ProfileStartEmailCreditialsEditorViewController alloc] initWithNibName:@"ProfileStartEmailCreditialsEditorViewController" bundle:nil];
             
             if([className isEqual:@"EmailAddressHistoryModel"]) {
-                [self.tempAccountEditor2 addEmailAccount:[self.missingInformationScreensArray objectAtIndex:[self.currentMissingInformationScreen intValue]]];
+                EmailAddressHistoryModel *emailAccount = [self.missingInformationScreensArray objectAtIndex:[self.currentMissingInformationScreen intValue]];
+                [self.tempAccountEditor2 addEmailAccount:emailAccount];
             } else {
-                [self.tempAccountEditor2 addIMAccount:[self.missingInformationScreensArray objectAtIndex:[self.currentMissingInformationScreen intValue]]];
+                InstantMessengerAccountHistoryModel *imAccount = [self.missingInformationScreensArray objectAtIndex:[self.currentMissingInformationScreen intValue]];
+                [self.tempAccountEditor2 addIMAccount: imAccount];
 
             }
             CGRect missingScreenFrame = self.tempAccountEditor2.view.frame;
@@ -952,6 +1026,13 @@ static NSDateFormatter *dateFormatter = nil;
     
     self.tableParentContainer = [[UIView alloc] initWithFrame:self.view.bounds];
     [self.profileContainer addSubview:self.tableParentContainer];
+    
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    CGRect maskRect = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    CGPathRef path = CGPathCreateWithRect(maskRect, NULL);
+    maskLayer.path = path;
+    CGPathRelease(path);
+    self.profileContainer.layer.mask = maskLayer;
     
     self.tableView = [[UITableView alloc] init];
     self.tableView.backgroundColor = [UIColor clearColor];

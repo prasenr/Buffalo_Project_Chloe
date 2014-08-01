@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TodosViewController : UIViewController
-//-(void)updateToDos;
+@interface TodosViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
+-(void)updateToDos;
 @end
