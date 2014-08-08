@@ -751,32 +751,39 @@ static NSDateFormatter *dateFormatter = nil;
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDictionary options:NSJSONWritingPrettyPrinted error:&error];
-
+    NSString *jsonSendString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     //NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDictionary options:0 error:nil];
-    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    NSLog(@"string to send: %@", jsonString);
+    NSLog(@"%@", jsonSendString);  // To verify the jsonString.
     
-    NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://api.buffalop.com/profiles/"] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
+    
+    NSMutableString *url = [NSMutableString stringWithString:@"http://api.buffalop.com/profiles/"];
+    [url appendString:self.userProfileModel.profileID];
+    
+    NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
     
     [postRequest setHTTPMethod:@"POST"];
+    //[req setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+
     [postRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [postRequest setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[jsonData length]] forHTTPHeaderField:@"Content-Length"];
+    [postRequest setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    [postRequest setValue:[NSString stringWithFormat:@"%d", [jsonData length]] forHTTPHeaderField:@"Content-Length"];
     [postRequest setHTTPBody:jsonData];
-    
+
     NSURLResponse *response = nil;
     NSError *requestError = nil;
     NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
     
     if (requestError == nil) {
         id json = [NSJSONSerialization JSONObjectWithData:returnData options:kNilOptions error:nil];
+        NSString *jsonString = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
+        NSLog(@"string to send: %@", jsonString);
         self.userProfileModel =[MTLJSONAdapter modelOfClass: [UserProfileModel class] fromJSONDictionary:json error:nil];
-        [self onCredititalsCreated];
+       // [self onCredititalsCreated];
     } else {
         NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
     }
     
-    
+    [self createSocketConnection];
     [self getMissingCreditials];
 }
 
@@ -873,6 +880,23 @@ static NSDateFormatter *dateFormatter = nil;
                          [self.confirmPicture removeFromSuperview];
                          self.confirmPicture = nil;
                      }];
+}
+
+-(void) createSocketConnection {
+    NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://api.buffalop.com/connections/"] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
+    
+    [postRequest setHTTPMethod:@"POST"];
+    
+    NSURLResponse *response = nil;
+    NSError *requestError = nil;
+    NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
+    
+    if (requestError == nil) {
+        NSString *returnString = [NSString stringWithFormat:@"reutrn data %@", returnData];
+        NSLog(@"return string: %@", returnString);
+    } else {
+        NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
+    }
 }
 
 -(IBAction)onStartMissingInformation:(id)sender {
