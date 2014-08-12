@@ -599,6 +599,34 @@ static NSDateFormatter *timeFormatter = nil;
                     }
                 }
             }
+            
+            NSDictionary *jsonDictionary = [MTLJSONAdapter JSONDictionaryFromModel:profile];
+            //NSData *jsonData = [NSJSONSerialization dataWithJSONObject:appInfosJSON options:0 error:&error];
+            
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDictionary options:NSJSONWritingPrettyPrinted error:&error];
+            NSString *jsonSendString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            //NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDictionary options:0 error:nil];
+            NSLog(@"%@", jsonSendString);  // To verify the jsonString.
+            
+            
+            NSMutableString *url = [NSMutableString stringWithString:@"http://api.buffalop.com/profiles/friend/"];
+            [url appendString:profile.personId];
+            
+            NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
+            
+            [postRequest setHTTPMethod:@"POST"];
+            //[req setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+            
+            [postRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+            [postRequest setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+            [postRequest setValue:[NSString stringWithFormat:@"%d", [jsonData length]] forHTTPHeaderField:@"Content-Length"];
+            [postRequest setHTTPBody:jsonData];
+            
+            NSURLResponse *response = nil;
+            NSError *requestError = nil;
+            NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
+            
         }
         dispatch_async(dispatch_get_main_queue(), ^(void) {
             [TSMessage showNotificationWithTitle:@"Contact Done" subtitle:@"We have all of your contacts.  We are working on getting you their up-to-date information." type:TSMessageNotificationTypeMessage];

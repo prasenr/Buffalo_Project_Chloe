@@ -1,7 +1,8 @@
 #import <Foundation/Foundation.h>
+#import <Mantle.h>
 
-@interface PersonModel : NSObject
-@property (nonatomic, assign) int *personId;
+@interface PersonModel : MTLModel <MTLJSONSerializing>
+@property (nonatomic, assign) NSString *personId;
 @property (nonatomic, strong) NSDate *birthday;
 @property (nonatomic, strong) NSMutableString *firstName;
 @property (nonatomic, strong) NSString *lastName;

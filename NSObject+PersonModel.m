@@ -8,7 +8,30 @@
 
 #import "NSObject+PersonModel.h"
 
-@implementation PersonModel
+@implementation PersonModel : MTLModel
 
++(NSDictionary *) JSONKeyPathsByPropertyKey {
+    return @{
+             @"profileID"                   :   @"profileID",
+             @"firstName"                   :   @"firstName",
+             @"lastName"                    :   @"lastName",
+             @"names"                       :   @"names",
+             @"emailAddresses"              :   @"emailAddresses",
+             @"instantMessengerAccounts"    :   @"instantMessengerAccounts",
+             @"phoneNumbers"                :   @"phoneNumbers",
+             @"addresses"                   :   @"addresses",
+             @"calendars"                   :   @"calendars",
+             @"facebookAccounts"            :   @"facebookAccounts",
+             @"googlePlusAccounts"          :   @"googlePlusAccounts",
+             @"linkedInAccounts"            :   @"linkedInAccounts",
+             @"twitterAccounts"             :   @"twitterAccounts",
+             @"relationships"               :   @"relationships",
+             @"personImage"                 :   @"personImage",
+             @"personBigImage"              :   @"personBigImage",
+             @"username"                    :   @"userName",
+             @"password"                    :   @"password",
+             @"numberOfConversations"       :   @"numberOfConversations"
+             };
+}
 
 @end
