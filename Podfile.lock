@@ -135,7 +135,7 @@ PODS:
     - TMCache (~> 1.2.0)
     - UICKeyChainStore (~> 1.0.5)
     - XMLDictionary (~> 1.4.0)
-  - Bolts (1.1.0)
+  - Bolts (1.1.1)
   - CSURITemplate (0.3)
   - FMDB (2.0):
     - FMDB/standard
@@ -166,7 +166,7 @@ PODS:
     - ReactiveCocoa/Core
   - SMCalloutView (1.1)
   - STTwitter (0.1.3)
-  - TMCache (1.2.0)
+  - TMCache (1.2.1)
   - TSMessages (0.9.7):
     - HexColors
   - UICKeyChainStore (1.0.5)
@@ -187,7 +187,7 @@ DEPENDENCIES:
 SPEC CHECKSUMS:
   AWSCognitoSync: 02a04cb3c66eef82abce39c013efa5b32cdd2023
   AWSiOSSDKv2: 2f01e69a983bf04cb447865cc2694ccb111cada5
-  Bolts: 91c2af8eae1d44e1dd75946a5b0ae04a43ea43e4
+  Bolts: 0ca796081c3e7c139bd86d6903c27f1b83036a5d
   CSURITemplate: a0708251b4453338dea48bf1ebdeee2bec6f6fe9
   FMDB: 51325701b48cc929ff967fa3047ebc893e798a23
   GRMustache: ab96109b7ba4b9568425bea40d6cd2cdc7582b6c
@@ -196,13 +196,13 @@ SPEC CHECKSUMS:
   JSONModel: 62ea96b49ea18a8b91ef89c249dba291d8601d82
   LBBlurredImage: 30cc42be977bbcece286d26d2d9c08b8be7f05e8
   Mantle: 1ca9c0fa84d3d3fc98524e7229f30489b6dd44e5
-  MapBox: 01bd6999838d8dfbe8b48d33cae01ffcec8a7ab7
+  MapBox: 6d8baa83e276aab5d98a49e867cfffbb77081187
   pop: 0aa6c37cbbeedfa2a52c972fdca1e43c79c1c579
   Reachability: 8e9635e3cb4f98e7f825e51147f677ecc694d0e7
   ReactiveCocoa: 2066583826c17dde8e90c41e489f682048cc57c9
   SMCalloutView: b1c20930f57bc4470f5477979e2decf066397c82
   STTwitter: cbfe847b9dc263e6206fc1e92ce325764bbbc18b
-  TMCache: ea1c509badaf9a1245422aabf3c975b3277ab138
+  TMCache: ed936c5b4684e4ea15113d46fba8829ed3baadad
   TSMessages: 06ea11e48b9df3767757229fd2b4cf50f8692ce3
   UICKeyChainStore: 4f9719600cc70025064e26f28f1210bcfc3b0c35
   XMLDictionary: 735e81b9a043e220b0d24e9d4f16719606f2e0fc

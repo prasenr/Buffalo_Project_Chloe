@@ -51,11 +51,8 @@
 		640DAAAB190F1A2800F6545D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 640DAAAA190F1A2800F6545D /* main.m */; };
 		640DAAAF190F1A2800F6545D /* com_chloeprojectAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 640DAAAE190F1A2800F6545D /* com_chloeprojectAppDelegate.m */; };
 		640DAAB1190F1A2800F6545D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 640DAAB0190F1A2800F6545D /* Images.xcassets */; };
-		640DAAB8190F1A2800F6545D /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 640DAAB7190F1A2800F6545D /* XCTest.framework */; };
-		640DAAB9190F1A2800F6545D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 640DAA9E190F1A2800F6545D /* Foundation.framework */; };
-		640DAABA190F1A2800F6545D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 640DAAA2190F1A2800F6545D /* UIKit.framework */; };
-		640DAAC2190F1A2800F6545D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 640DAAC0190F1A2800F6545D /* InfoPlist.strings */; };
-		640DAAC4190F1A2800F6545D /* Buffalo_Project_ChloeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 640DAAC3190F1A2800F6545D /* Buffalo_Project_ChloeTests.m */; };
+		64164FA0199974D200F4A0D8 /* YoMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 64164F9F199974D200F4A0D8 /* YoMessage.m */; };
+		64164FA31999A1FA00F4A0D8 /* MessageBodyModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 64164FA21999A1FA00F4A0D8 /* MessageBodyModel.m */; };
 		642279A0197443490012B28C /* UserProfileClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 6422799F197443490012B28C /* UserProfileClient.m */; };
 		642279A3197443600012B28C /* UserProfileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 642279A2197443600012B28C /* UserProfileController.m */; };
 		642279A81974C97C0012B28C /* UserProfileModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 642279A71974C97C0012B28C /* UserProfileModel.m */; };
@@ -300,18 +297,9 @@
 		64C9BAD81911E74D0008C83B /* TodosViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 64C9BAD61911E74D0008C83B /* TodosViewController.xib */; };
 		64C9BADE1913274D0008C83B /* CalendarHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64C9BADC1913274D0008C83B /* CalendarHeaderViewController.m */; };
 		64C9BADF1913274D0008C83B /* CalendarHeaderViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 64C9BADD1913274D0008C83B /* CalendarHeaderViewController.xib */; };
+		64F98A6519986A5C005BB20C /* ConversationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F98A6419986A5C005BB20C /* ConversationModel.m */; };
 		9EEFE20A77A9466E9FE3EEDF /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2ECE003067214880A3006223 /* libPods.a */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		640DAABB190F1A2800F6545D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 640DAA93190F1A2800F6545D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 640DAA9A190F1A2800F6545D;
-			remoteInfo = Buffalo_Project_Chloe;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		27184E0265AE4C9C895DD4FA /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
@@ -365,11 +353,14 @@
 		640DAAAD190F1A2800F6545D /* com_chloeprojectAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = com_chloeprojectAppDelegate.h; sourceTree = "<group>"; };
 		640DAAAE190F1A2800F6545D /* com_chloeprojectAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = com_chloeprojectAppDelegate.m; sourceTree = "<group>"; };
 		640DAAB0190F1A2800F6545D /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		640DAAB6190F1A2800F6545D /* Buffalo_Project_ChloeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Buffalo_Project_ChloeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		640DAAB7190F1A2800F6545D /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		640DAABF190F1A2800F6545D /* Buffalo_Project_ChloeTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Buffalo_Project_ChloeTests-Info.plist"; sourceTree = "<group>"; };
 		640DAAC1190F1A2800F6545D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		640DAAC3190F1A2800F6545D /* Buffalo_Project_ChloeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Buffalo_Project_ChloeTests.m; sourceTree = "<group>"; };
+		64164F9E199974D200F4A0D8 /* YoMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YoMessage.h; sourceTree = "<group>"; };
+		64164F9F199974D200F4A0D8 /* YoMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YoMessage.m; sourceTree = "<group>"; };
+		64164FA11999A1FA00F4A0D8 /* MessageBodyModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBodyModel.h; sourceTree = "<group>"; };
+		64164FA21999A1FA00F4A0D8 /* MessageBodyModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageBodyModel.m; sourceTree = "<group>"; };
 		6422799E197443490012B28C /* UserProfileClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileClient.h; sourceTree = "<group>"; };
 		6422799F197443490012B28C /* UserProfileClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileClient.m; sourceTree = "<group>"; };
 		642279A1197443600012B28C /* UserProfileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileController.h; sourceTree = "<group>"; };
@@ -697,6 +688,8 @@
 		64C9BADB1913274D0008C83B /* CalendarHeaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalendarHeaderViewController.h; sourceTree = "<group>"; };
 		64C9BADC1913274D0008C83B /* CalendarHeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalendarHeaderViewController.m; sourceTree = "<group>"; };
 		64C9BADD1913274D0008C83B /* CalendarHeaderViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CalendarHeaderViewController.xib; sourceTree = "<group>"; };
+		64F98A6319986A5C005BB20C /* ConversationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConversationModel.h; sourceTree = "<group>"; };
+		64F98A6419986A5C005BB20C /* ConversationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConversationModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -709,16 +702,6 @@
 				640DAAA3190F1A2800F6545D /* UIKit.framework in Frameworks */,
 				640DAA9F190F1A2800F6545D /* Foundation.framework in Frameworks */,
 				9EEFE20A77A9466E9FE3EEDF /* libPods.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		640DAAB3190F1A2800F6545D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				640DAAB8190F1A2800F6545D /* XCTest.framework in Frameworks */,
-				640DAABA190F1A2800F6545D /* UIKit.framework in Frameworks */,
-				640DAAB9190F1A2800F6545D /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -840,7 +823,6 @@
 			isa = PBXGroup;
 			children = (
 				640DAA9B190F1A2800F6545D /* Buffalo_Project_Chloe.app */,
-				640DAAB6190F1A2800F6545D /* Buffalo_Project_ChloeTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1678,6 +1660,7 @@
 		64C9BABE1911E0680008C83B /* Conversations */ = {
 			isa = PBXGroup;
 			children = (
+				64F98A5E19986755005BB20C /* Model */,
 				64C9BABF1911E0700008C83B /* View */,
 			);
 			name = Conversations;
@@ -1714,6 +1697,19 @@
 			name = View;
 			sourceTree = "<group>";
 		};
+		64F98A5E19986755005BB20C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				64F98A6319986A5C005BB20C /* ConversationModel.h */,
+				64F98A6419986A5C005BB20C /* ConversationModel.m */,
+				64164F9E199974D200F4A0D8 /* YoMessage.h */,
+				64164F9F199974D200F4A0D8 /* YoMessage.m */,
+				64164FA11999A1FA00F4A0D8 /* MessageBodyModel.h */,
+				64164FA21999A1FA00F4A0D8 /* MessageBodyModel.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1736,24 +1732,6 @@
 			productReference = 640DAA9B190F1A2800F6545D /* Buffalo_Project_Chloe.app */;
 			productType = "com.apple.product-type.application";
 		};
-		640DAAB5190F1A2800F6545D /* Buffalo_Project_ChloeTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 640DAACA190F1A2800F6545D /* Build configuration list for PBXNativeTarget "Buffalo_Project_ChloeTests" */;
-			buildPhases = (
-				640DAAB2190F1A2800F6545D /* Sources */,
-				640DAAB3190F1A2800F6545D /* Frameworks */,
-				640DAAB4190F1A2800F6545D /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				640DAABC190F1A2800F6545D /* PBXTargetDependency */,
-			);
-			name = Buffalo_Project_ChloeTests;
-			productName = Buffalo_Project_ChloeTests;
-			productReference = 640DAAB6190F1A2800F6545D /* Buffalo_Project_ChloeTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1772,9 +1750,6 @@
 							};
 						};
 					};
-					640DAAB5190F1A2800F6545D = {
-						TestTargetID = 640DAA9A190F1A2800F6545D;
-					};
 				};
 			};
 			buildConfigurationList = 640DAA96190F1A2800F6545D /* Build configuration list for PBXProject "Buffalo_Project_Chloe" */;
@@ -1790,7 +1765,6 @@
 			projectRoot = "";
 			targets = (
 				640DAA9A190F1A2800F6545D /* Buffalo_Project_Chloe */,
-				640DAAB5190F1A2800F6545D /* Buffalo_Project_ChloeTests */,
 			);
 		};
 /* End PBXProject section */
@@ -2001,14 +1975,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		640DAAB4190F1A2800F6545D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				640DAAC2190F1A2800F6545D /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -2050,6 +2016,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				642279B019761C200012B28C /* WhoAreYouPersonModel.m in Sources */,
+				64164FA31999A1FA00F4A0D8 /* MessageBodyModel.m in Sources */,
 				64BD73B3196F64D600D8016A /* UserProfileViewController.m in Sources */,
 				648DD9A0194F84F20034872B /* ContactGooglePlusAccountListViewController.m in Sources */,
 				642279A0197443490012B28C /* UserProfileClient.m in Sources */,
@@ -2059,6 +2026,7 @@
 				6490F70B197AD9D100EC90E7 /* ProfileStartEmailCreditialsEditorViewController.m in Sources */,
 				648DD9E819507E660034872B /* AddressHistoryModel.m in Sources */,
 				6484D15F1948BB0D00D8A0A3 /* ToDoListViewController.m in Sources */,
+				64F98A6519986A5C005BB20C /* ConversationModel.m in Sources */,
 				643773601922F40D00DAFA80 /* NSObject+PersonModel.m in Sources */,
 				648DD9DC195079920034872B /* FacebookAccountHistoryModel.m in Sources */,
 				647D9AFF1962422300319938 /* ContactAddressSearchClient.m in Sources */,
@@ -2095,6 +2063,7 @@
 				642279AC19760A8E0012B28C /* WhoAreYouContactListViewController.m in Sources */,
 				64C9BA72190F2BAC0008C83B /* MainViewController.m in Sources */,
 				64000D6B1938D099001FC2EC /* ToDoEditorViewController.m in Sources */,
+				64164FA0199974D200F4A0D8 /* YoMessage.m in Sources */,
 				648DD9C4194FE46F0034872B /* GooglePlusAccountModel.m in Sources */,
 				648DDA09195C57120034872B /* EmailAddressEditorViewController.m in Sources */,
 				643773BA1924596A00DAFA80 /* ContactProfileConversationViewController.m in Sources */,
@@ -2138,23 +2107,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		640DAAB2190F1A2800F6545D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				640DAAC4190F1A2800F6545D /* Buffalo_Project_ChloeTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		640DAABC190F1A2800F6545D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 640DAA9A190F1A2800F6545D /* Buffalo_Project_Chloe */;
-			targetProxy = 640DAABB190F1A2800F6545D /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		640DAAA7190F1A2800F6545D /* InfoPlist.strings */ = {
@@ -2278,46 +2231,6 @@
 			};
 			name = Release;
 		};
-		640DAACB190F1A2800F6545D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Buffalo_Project_Chloe.app/Buffalo_Project_Chloe";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Buffalo_Project_Chloe/Buffalo_Project_Chloe-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "Buffalo_Project_ChloeTests/Buffalo_Project_ChloeTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		640DAACC190F1A2800F6545D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Buffalo_Project_Chloe.app/Buffalo_Project_Chloe";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Buffalo_Project_Chloe/Buffalo_Project_Chloe-Prefix.pch";
-				INFOPLIST_FILE = "Buffalo_Project_ChloeTests/Buffalo_Project_ChloeTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2335,15 +2248,6 @@
 			buildConfigurations = (
 				640DAAC8190F1A2800F6545D /* Debug */,
 				640DAAC9190F1A2800F6545D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		640DAACA190F1A2800F6545D /* Build configuration list for PBXNativeTarget "Buffalo_Project_ChloeTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				640DAACB190F1A2800F6545D /* Debug */,
-				640DAACC190F1A2800F6545D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

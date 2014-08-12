@@ -14,7 +14,7 @@
 #import "PhoneNumberHistoryModel.h"
 #import "ContactAddressSearchViewController.h"
 #import "WhoAreYouContactListViewController.h"
-
+#import "YoMessage.h"
 @interface UserProfileViewController ()
 @property (nonatomic, strong) UIView *profileContainer;
 @property (nonatomic, strong) UIView *profileWizardContainer;
@@ -892,8 +892,24 @@ static NSDateFormatter *dateFormatter = nil;
     NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
     
     if (requestError == nil) {
-        NSString *returnString = [NSString stringWithFormat:@"reutrn data %@", returnData];
-        NSLog(@"return string: %@", returnString);
+        NSError *e = nil;
+        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:returnData options:0 error:&e];
+        
+        
+        if(!jsonArray) {
+            NSLog(@"Error parsing JSON: %@", e);
+        } else {
+            NSMutableArray *messages = [[NSMutableArray alloc] init];
+            for(NSDictionary *message in jsonArray) {
+                NSError *error = nil;
+                /*YoMessage *messageModel = [[YoMessage alloc] init];
+                messageModel.seqno = [message objectForKey:@"seqno"];*/
+                [messages addObject: [MTLJSONAdapter modelOfClass:[YoMessage class] fromJSONDictionary:message error:&error]];
+                NSLog(@"number: %@", [message objectForKey:@"boundary"]);
+                NSLog(@"Error making class: %@", error);
+            }
+            NSLog(@"number of message %lu", (unsigned long)[messages count]);
+        }
     } else {
         NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
     }
