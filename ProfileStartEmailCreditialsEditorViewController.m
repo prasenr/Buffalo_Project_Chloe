@@ -9,7 +9,17 @@
 #import "ProfileStartEmailCreditialsEditorViewController.h"
 
 @interface ProfileStartEmailCreditialsEditorViewController ()
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *bodyLabel;
+@property (nonatomic, strong) UIButton *saveButton;
+@property (nonatomic, strong) UIButton *skipButton;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) UIView *header;
 
+@property (nonatomic, strong) UITextField *nameInput;
+@property (nonatomic, strong) UITextField *emailInput;
+@property (nonatomic, strong) UITextField *passwordInput;
+@property (nonatomic, strong) UITextField *descriptionInput;
 @end
 
 @implementation ProfileStartEmailCreditialsEditorViewController
@@ -25,6 +35,24 @@
 
 -(void)addEmailAccount:(EmailAddressHistoryModel *)emailAccount {
     self.emailAccount = emailAccount;
+    
+    NSArray *emailSplit = [self.emailAccount.account.emailAddress componentsSeparatedByString:@"@"];
+    NSString *emaiType = emailSplit[1];
+    emailSplit = nil;
+    
+    if([emaiType  isEqual: @"@gmail.com"]) {
+        [self createGmailAccountScreen];
+    } else if([emaiType isEqual:@"@aol.com"]) {
+        [self createAOLAccountScreen];
+    } else if([emaiType isEqual:@"@hotmail.com"]) {
+        [self createHotmailAccountScreen];
+    } else if([emaiType isEqual:@"@yahoo.com"]) {
+        [self createYahooAccountScreen];
+    } else {
+        [self createUnkownEmailScreen];
+    }
+    
+    emaiType = nil;
 }
 
 -(void)addIMAccount:(InstantMessengerAccountHistoryModel *)instantMessengerAccount{
@@ -61,57 +89,114 @@
     justSoYouKnowLabel.frame = newFrame;
     
     NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it.";
+    
+    
+    
+    
+}
+
+-(void)createGmailAccountScreen {
+    
+    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:self.tableView];
+
+    [self createHeader];
+    [self createTitle:self.emailAccount.account.emailAddress];
+    [self createBody:@"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it."];
+    
+    
+    [self createSaveSkipButtons];
+}
+
+-(void)createAOLAccountScreen {
+    
+    [self createSaveSkipButtons];
+}
+
+-(void)createHotmailAccountScreen {
+    
+    [self createSaveSkipButtons];
+}
+
+-(void)createYahooAccountScreen {
+    
+    [self createSaveSkipButtons];
+}
+
+-(void)createUnkownEmailScreen {
+    
+    [self createSaveSkipButtons];
+}
+
+-(void)createSaveSkipButtons {
+    self.saveButton = [[UIButton alloc] init];
+    [self.saveButton setTitle:@"Save" forState:UIControlStateNormal];
+    self.saveButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [self.saveButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.saveButton setBackgroundColor:[UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0]];
+    self.saveButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [self.saveButton sizeToFit];
+    [self.saveButton addTarget:self action:@selector(onSubmit:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect saveButtonFrame = self.saveButton.frame;
+    saveButtonFrame.origin.y = self.view.bounds.size.height - 50;
+    saveButtonFrame.origin.x = 0;
+    saveButtonFrame.size.width = self.view.bounds.size.width/2;
+    saveButtonFrame.size.height = 50;
+    self.saveButton.frame = saveButtonFrame;
+    [self.view addSubview:self.saveButton];
+    
+    self.skipButton = [[UIButton alloc] init];
+    [self.skipButton setTitle:@"Skip this" forState:UIControlStateNormal];
+    self.skipButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    [self.skipButton setTitleColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0] forState:UIControlStateNormal];
+    [self.skipButton setBackgroundColor: [UIColor whiteColor]];
+    self.skipButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
+    [self.skipButton addTarget:self action:@selector(onSkip1:) forControlEvents:UIControlEventTouchUpInside];
+    CGRect skipButtonFrame = self.skipButton.frame;
+    skipButtonFrame.origin.y = saveButtonFrame.origin.y;
+    skipButtonFrame.origin.x = self.view.bounds.size.width/2;
+    skipButtonFrame.size.width = self.view.bounds.size.width/2;
+    skipButtonFrame.size.height = 50;
+    self.skipButton.frame = skipButtonFrame;
+    [self.view addSubview:self.skipButton];
+}
+
+-(void)createHeader {
+    self.header = [[UIView alloc] init];
+    self.header.backgroundColor = [UIColor clearColor];
+    self.tableView.tableHeaderView = self.header;
+}
+
+-(void)createTitle:(NSString *)title {
+    self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(25, 80, self.view.frame.size.width - 25, 18)];
+    [self.titleLabel setFont:[UIFont fontWithName:@"Didot" size:30]];
+    self.titleLabel.text = title;
+    [self.titleLabel setTextColor:[UIColor whiteColor]];
+    [self.titleLabel setBackgroundColor:[UIColor clearColor]];
+    [self.header addSubview:self.titleLabel];
+}
+
+-(void)createBody:(NSString *)body {
     unichar chr[1] = {'\n'};
     NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
-    CGRect labelFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
-    UILabel *justSoYouKnowDetails = [[UILabel alloc] initWithFrame:labelFrame];
-    [justSoYouKnowDetails setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
-    [justSoYouKnowDetails setText: [NSString stringWithFormat:welcomeText, cr]];
-    [justSoYouKnowDetails setTextColor:[UIColor whiteColor]];
-    [justSoYouKnowDetails setBackgroundColor:[UIColor clearColor]];
-    [justSoYouKnowDetails setLineBreakMode:NSLineBreakByWordWrapping];
-    [justSoYouKnowDetails setNumberOfLines:0];
+    CGRect bodyFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
+    self.bodyLabel = [[UILabel alloc] initWithFrame:bodyFrame];
+    [self.bodyLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
+    [self.bodyLabel setText: [NSString stringWithFormat:body, cr]];
+    [self.bodyLabel setTextColor:[UIColor whiteColor]];
+    [self.bodyLabel setBackgroundColor:[UIColor clearColor]];
+    [self.bodyLabel setLineBreakMode:NSLineBreakByWordWrapping];
+    [self.bodyLabel setNumberOfLines:0];
     
-    CGRect expectedLabelSize1 = [justSoYouKnowDetails.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowDetails.font} context:nil ];
-    CGRect newFrame1 = justSoYouKnowDetails.frame;
-    newFrame1.origin.x = 10;
-    newFrame1.origin.y = justSoYouKnowLabel.frame.size.height + justSoYouKnowLabel.frame.origin.y - 5;
-    newFrame1.size.width = expectedLabelSize1.size.width;
-    newFrame1.size.height = expectedLabelSize1.size.height;
-    justSoYouKnowDetails.frame = newFrame1;
-    [self.view addSubview:justSoYouKnowDetails];
-    
-    UIButton *loginButton = [[UIButton alloc] init];
-    [loginButton setTitle:@"Save" forState:UIControlStateNormal];
-    loginButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
-    [loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [loginButton setBackgroundColor:[UIColor colorWithRed:104.0/255.0 green:137.0/255.0 blue:179.0/255.0 alpha:1.0]];
-    loginButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
-    [loginButton sizeToFit];
-    [loginButton addTarget:self action:@selector(onSubmit:) forControlEvents:UIControlEventTouchUpInside];
-    CGRect loginFrame = loginButton.frame;
-    loginFrame.origin.y = self.view.bounds.size.height - 50;
-    loginFrame.origin.x = 0;
-    loginFrame.size.width = self.view.bounds.size.width/2;
-    loginFrame.size.height = 50;
-    loginButton.frame = loginFrame;
-    [self.view addSubview:loginButton];
-    
-    UIButton *skipButton = [[UIButton alloc] init];
-    [skipButton setTitle:@"Skip this" forState:UIControlStateNormal];
-    skipButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
-    [skipButton setTitleColor:[UIColor colorWithRed:51.0/255.0 green:51.0/255.0 blue:51.0/255.0 alpha:1.0] forState:UIControlStateNormal];
-    [skipButton setBackgroundColor: [UIColor whiteColor]];
-    skipButton.contentEdgeInsets = UIEdgeInsetsMake(7, 10, 7, 10);
-    [skipButton addTarget:self action:@selector(onSkip1:) forControlEvents:UIControlEventTouchUpInside];
-    CGRect oldSchoolFrame = skipButton.frame;
-    oldSchoolFrame.origin.y = loginFrame.origin.y;
-    oldSchoolFrame.origin.x = self.view.bounds.size.width/2;
-    oldSchoolFrame.size.width = self.view.bounds.size.width/2;
-    oldSchoolFrame.size.height = 50;
-    skipButton.frame = oldSchoolFrame;
-    [self.view addSubview:skipButton];
-    
+    CGSize maxiBodyLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
+    CGRect expectedBodyLabelSize = [self.bodyLabel.text boundingRectWithSize:CGSizeMake(maxiBodyLabelSize.width, maxiBodyLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.bodyLabel.font} context:nil ];
+    CGRect bodyLabelFrame = self.bodyLabel.frame;
+    bodyLabelFrame.origin.x = 10;
+    bodyLabelFrame.origin.y = self.titleLabel.frame.size.height + self.titleLabel.frame.origin.y - 5;
+    bodyLabelFrame.size.width = expectedBodyLabelSize.size.width;
+    bodyLabelFrame.size.height = expectedBodyLabelSize.size.height;
+    self.bodyLabel.frame = bodyLabelFrame;
+    [self.header addSubview:self.bodyLabel];
 }
 
 -(IBAction)onSubmit:(id)sender {

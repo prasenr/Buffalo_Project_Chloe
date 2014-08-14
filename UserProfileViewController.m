@@ -762,7 +762,6 @@ static NSDateFormatter *dateFormatter = nil;
     NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
     
     [postRequest setHTTPMethod:@"POST"];
-    //[req setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
 
     [postRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     [postRequest setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
@@ -775,10 +774,7 @@ static NSDateFormatter *dateFormatter = nil;
     
     if (requestError == nil) {
         id json = [NSJSONSerialization JSONObjectWithData:returnData options:kNilOptions error:nil];
-        NSString *jsonString = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
-        NSLog(@"string to send: %@", jsonString);
         self.userProfileModel =[MTLJSONAdapter modelOfClass: [UserProfileModel class] fromJSONDictionary:json error:nil];
-       // [self onCredititalsCreated];
     } else {
         NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
     }
@@ -900,14 +896,12 @@ static NSDateFormatter *dateFormatter = nil;
             NSLog(@"Error parsing JSON: %@", e);
         } else {
             NSMutableArray *messages = [[NSMutableArray alloc] init];
+            NSError *error;
             for(NSDictionary *message in jsonArray) {
-                NSError *error = nil;
-                /*YoMessage *messageModel = [[YoMessage alloc] init];
-                messageModel.seqno = [message objectForKey:@"seqno"];*/
+                error = nil;
                 [messages addObject: [MTLJSONAdapter modelOfClass:[YoMessage class] fromJSONDictionary:message error:&error]];
-                NSLog(@"number: %@", [message objectForKey:@"boundary"]);
-                NSLog(@"Error making class: %@", error);
             }
+            error = nil;
             NSLog(@"number of message %lu", (unsigned long)[messages count]);
         }
     } else {

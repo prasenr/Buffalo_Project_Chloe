@@ -8,6 +8,7 @@
 
 #import "YoMessage.h"
 #import "MessageBodyModel.h"
+#import "NSObject+PersonModel.h"
 
 @implementation YoMessage: MTLModel
 
@@ -22,7 +23,8 @@
              @"bccs":@"bccs",
              @"body":@"body",
              @"messageBodies":@"messageBodies",
-             @"boundary":@"boundary"
+             @"boundary":@"boundary",
+             @"froms" : @"froms"
  
              };
 }
@@ -38,6 +40,16 @@
 + (NSValueTransformer *)messageBodiesJSONTransformer {
     return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:[MessageBodyModel class]];
 }
+
++ (NSValueTransformer *)fromsJSONTransformer {
+    return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:[PersonModel class]];
+}
+
++ (NSValueTransformer *)tosJSONTransformer {
+    return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:[PersonModel class]];
+}
+
+
 
 /*+ (NSValueTransformer *)tosJSONTransformer {
     // tell Mantle to populate appActions property with an array of ChoosyAppAction objects
