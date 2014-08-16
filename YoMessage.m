@@ -16,15 +16,16 @@
     return @{
              @"seqno"                   :   @"seqno",
              @"header"                  :   @"header",
-             @"subject":@"subject",
-             @"messageDate":@"messageDate",
-             @"tos":@"tos",
-             @"ccs":@"ccs",
-             @"bccs":@"bccs",
-             @"body":@"body",
-             @"messageBodies":@"messageBodies",
-             @"boundary":@"boundary",
-             @"froms" : @"froms"
+             @"subject"                 :   @"subject",
+             @"messageDate"             :   @"messageDate",
+             @"tos"                     :   @"tos",
+             @"ccs"                     :   @"ccs",
+             @"bccs"                    :   @"bccs",
+             @"body"                    :   @"body",
+             @"messageBodies"           :   @"messageBodies",
+             @"boundary"                :   @"boundary",
+             @"froms"                   :   @"froms",
+             @"messageStatus"           :   @"messageStatus"
  
              };
 }

@@ -69,8 +69,6 @@
                 person.contactId = [NSNumber numberWithInt:(int)recordID];
                 [self.parsedContacts addObject:person];
             }
-            NSLog(@"record id aprsing: %d", recordID);
-            NSLog(@"profile record id: %@", person.contactId);
             
         }
         

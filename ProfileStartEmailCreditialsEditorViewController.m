@@ -40,13 +40,13 @@
     NSString *emaiType = emailSplit[1];
     emailSplit = nil;
     
-    if([emaiType  isEqual: @"@gmail.com"]) {
+    if([emaiType  isEqual: @"gmail.com"]) {
         [self createGmailAccountScreen];
-    } else if([emaiType isEqual:@"@aol.com"]) {
+    } else if([emaiType isEqual:@"aol.com"]) {
         [self createAOLAccountScreen];
-    } else if([emaiType isEqual:@"@hotmail.com"]) {
+    } else if([emaiType isEqual:@"hotmail.com"]) {
         [self createHotmailAccountScreen];
-    } else if([emaiType isEqual:@"@yahoo.com"]) {
+    } else if([emaiType isEqual:@"yahoo.com"]) {
         [self createYahooAccountScreen];
     } else {
         [self createUnkownEmailScreen];
@@ -57,6 +57,8 @@
 
 -(void)addIMAccount:(InstantMessengerAccountHistoryModel *)instantMessengerAccount{
     self.instantMessengerAccount = instantMessengerAccount;
+    
+    [self createSaveSkipButtons];
 }
 
 - (void)viewDidLoad
@@ -64,63 +66,83 @@
     [super viewDidLoad];
     
     self.view.backgroundColor = [UIColor clearColor];
-    
-    CGRect labelFrame1 = CGRectMake(25, 80, self.view.frame.size.width - 25, 18);
-    UILabel *justSoYouKnowLabel = [[UILabel alloc] initWithFrame:labelFrame1];
-    [justSoYouKnowLabel setFont:[UIFont fontWithName:@"Didot" size:30]];
-    if(self.emailAccount!=nil) {
-        [justSoYouKnowLabel setText:@"Email Account!"];
-    } else {
-        [justSoYouKnowLabel setText:@"Instant Messenger Account"];
-    }
-    
-    [justSoYouKnowLabel setTextColor:[UIColor whiteColor]];
-    [justSoYouKnowLabel setBackgroundColor:[UIColor clearColor]];
-    [self.view addSubview:justSoYouKnowLabel];
-    
-    CGSize maxiToDoMeetingSummaryLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
-    CGRect expectedLabelSize = [justSoYouKnowLabel.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:justSoYouKnowLabel.font} context:nil ];
-    
-    CGRect newFrame = justSoYouKnowLabel.frame;
-    newFrame.size.height = expectedLabelSize.size.height;
-    newFrame.size.width = expectedLabelSize.size.width;
-    newFrame.origin.x = 20;
-    newFrame.origin.y = 50;
-    justSoYouKnowLabel.frame = newFrame;
-    
-    NSString *welcomeText = @"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it.";
-    
-    
-    
-    
+
 }
 
 -(void)createGmailAccountScreen {
     
-    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height - 50)];
+    self.tableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:self.tableView];
 
     [self createHeader];
     [self createTitle:self.emailAccount.account.emailAddress];
     [self createBody:@"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it."];
-    
+    [self createNameLabel];
+    [self createEmailLabel];
+    [self createPasswordLabel];
+    [self createDescriptionLabel];
     
     [self createSaveSkipButtons];
+    
+    self.header.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.descriptionInput.frame.origin.y + self.descriptionInput.frame.size.height + 20);
 }
 
 -(void)createAOLAccountScreen {
     
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height - 50)];
+    self.tableView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:self.tableView];
+    
+    [self createHeader];
+    [self createTitle:self.emailAccount.account.emailAddress];
+    [self createBody:@"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it."];
+    [self createNameLabel];
+    [self createEmailLabel];
+    [self createPasswordLabel];
+    [self createDescriptionLabel];
+    
     [self createSaveSkipButtons];
+    
+    self.header.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.descriptionInput.frame.origin.y + self.descriptionInput.frame.size.height + 20);
 }
 
 -(void)createHotmailAccountScreen {
     
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height - 50)];
+    self.tableView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:self.tableView];
+    
+    [self createHeader];
+    [self createTitle:self.emailAccount.account.emailAddress];
+    [self createBody:@"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it."];
+    [self createNameLabel];
+    [self createEmailLabel];
+    [self createPasswordLabel];
+    [self createDescriptionLabel];
+    
     [self createSaveSkipButtons];
+    
+    self.header.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.descriptionInput.frame.origin.y + self.descriptionInput.frame.size.height + 20);
 }
 
 -(void)createYahooAccountScreen {
     
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height - 50)];
+    self.tableView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:self.tableView];
+    
+    [self createHeader];
+    [self createTitle:self.emailAccount.account.emailAddress];
+    [self createBody:@"Magna brunch asymmetrical dolore Kickstarter. Kitsch food truck cardigan Etsy, direct trade PBR viral put a bird on it."];
+    [self createNameLabel];
+    [self createEmailLabel];
+    [self createPasswordLabel];
+    [self createDescriptionLabel];
+    
     [self createSaveSkipButtons];
+    
+    self.header.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.descriptionInput.frame.origin.y + self.descriptionInput.frame.size.height + 20);
 }
 
 -(void)createUnkownEmailScreen {
@@ -162,14 +184,14 @@
 }
 
 -(void)createHeader {
-    self.header = [[UIView alloc] init];
+    self.header = [[UIView alloc] initWithFrame:self.tableView.bounds];
     self.header.backgroundColor = [UIColor clearColor];
     self.tableView.tableHeaderView = self.header;
 }
 
 -(void)createTitle:(NSString *)title {
-    self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(25, 80, self.view.frame.size.width - 25, 18)];
-    [self.titleLabel setFont:[UIFont fontWithName:@"Didot" size:30]];
+    self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, self.view.frame.size.width - 25, 18)];
+    [self.titleLabel setFont:[UIFont fontWithName:@"Didot" size:20]];
     self.titleLabel.text = title;
     [self.titleLabel setTextColor:[UIColor whiteColor]];
     [self.titleLabel setBackgroundColor:[UIColor clearColor]];
@@ -179,7 +201,7 @@
 -(void)createBody:(NSString *)body {
     unichar chr[1] = {'\n'};
     NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
-    CGRect bodyFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
+    CGRect bodyFrame = CGRectMake(20, 100, self.view.frame.size.width - 50, 500);
     self.bodyLabel = [[UILabel alloc] initWithFrame:bodyFrame];
     [self.bodyLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
     [self.bodyLabel setText: [NSString stringWithFormat:body, cr]];
@@ -191,12 +213,105 @@
     CGSize maxiBodyLabelSize = CGSizeMake(self.view.bounds.size.width - 40, FLT_MAX);
     CGRect expectedBodyLabelSize = [self.bodyLabel.text boundingRectWithSize:CGSizeMake(maxiBodyLabelSize.width, maxiBodyLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.bodyLabel.font} context:nil ];
     CGRect bodyLabelFrame = self.bodyLabel.frame;
-    bodyLabelFrame.origin.x = 10;
-    bodyLabelFrame.origin.y = self.titleLabel.frame.size.height + self.titleLabel.frame.origin.y - 5;
+    bodyLabelFrame.origin.x = 20;
+    bodyLabelFrame.origin.y = self.titleLabel.frame.size.height + self.titleLabel.frame.origin.y - 0;
     bodyLabelFrame.size.width = expectedBodyLabelSize.size.width;
     bodyLabelFrame.size.height = expectedBodyLabelSize.size.height;
     self.bodyLabel.frame = bodyLabelFrame;
     [self.header addSubview:self.bodyLabel];
+}
+
+-(void)createNameLabel {
+    
+    UILabel *labelTitle = [[UILabel alloc] initWithFrame:CGRectMake(20, self.bodyLabel.frame.origin.y + self.bodyLabel.frame.size.height +10, self.view.bounds.size.width - 40, 30)];
+    [labelTitle setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
+    [labelTitle setText: @"Name"];
+    [labelTitle setTextColor:[UIColor whiteColor]];
+    [labelTitle setBackgroundColor:[UIColor clearColor]];
+    [self.header addSubview:labelTitle];
+    
+    self.nameInput = [[UITextField alloc] initWithFrame:CGRectMake(20, labelTitle.frame.origin.y + labelTitle.frame.size.height, self.view.bounds.size.width-40, 50)];
+    self.nameInput.text = self.emailAccount.account.emailAddress;
+    self.nameInput.tag = 99;
+    self.nameInput.delegate  = self;
+    self.nameInput.keyboardType = UIKeyboardTypeDefault;
+    self.nameInput.returnKeyType = UIReturnKeyDone;
+    self.nameInput.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    self.nameInput.textColor = [UIColor blackColor];
+    self.nameInput.backgroundColor = [UIColor whiteColor];
+    self.nameInput.autocapitalizationType = UITextAutocapitalizationTypeWords;
+    self.nameInput.autocorrectionType = UITextAutocorrectionTypeYes;
+    [self.header addSubview:self.nameInput];
+}
+
+-(void)createEmailLabel {
+    
+    UILabel *labelTitle = [[UILabel alloc] initWithFrame:CGRectMake(20, self.nameInput.frame.origin.y + self.nameInput.frame.size.height +10, self.view.bounds.size.width - 20, 30)];
+    [labelTitle setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
+    [labelTitle setText: @"Email"];
+    [labelTitle setTextColor:[UIColor whiteColor]];
+    [labelTitle setBackgroundColor:[UIColor clearColor]];
+    [self.header addSubview:labelTitle];
+    
+    self.emailInput = [[UITextField alloc] initWithFrame:CGRectMake(20, labelTitle.frame.origin.y + labelTitle.frame.size.height, self.view.bounds.size.width-40, 50)];
+    self.emailInput.text = self.emailAccount.account.emailAddress;
+    self.emailInput.tag = 100;
+    self.emailInput.delegate = self;
+    self.emailInput.keyboardType = UIKeyboardTypeDefault;
+    self.emailInput.returnKeyType = UIReturnKeyDone;
+    self.emailInput.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    self.emailInput.textColor = [UIColor colorWithRed:153.0/255.0 green:153.0/255.0 blue:153.0/255.0 alpha:1.0];
+    self.emailInput.backgroundColor = [UIColor whiteColor];
+    self.emailInput.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    self.emailInput.autocorrectionType = UITextAutocorrectionTypeNo;
+    self.emailInput.enabled = false;
+    [self.header addSubview:self.emailInput];
+}
+
+-(void)createPasswordLabel {
+    
+    UILabel *labelTitle = [[UILabel alloc] initWithFrame:CGRectMake(20, self.emailInput.frame.origin.y + self.emailInput.frame.size.height +10, self.view.bounds.size.width - 20, 30)];
+    [labelTitle setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
+    [labelTitle setText: @"Password"];
+    [labelTitle setTextColor:[UIColor whiteColor]];
+    [labelTitle setBackgroundColor:[UIColor clearColor]];
+    [self.header addSubview:labelTitle];
+    
+    self.passwordInput = [[UITextField alloc] initWithFrame:CGRectMake(20, labelTitle.frame.origin.y + labelTitle.frame.size.height, self.view.bounds.size.width-40, 50)];
+    self.passwordInput.placeholder = @"your password";
+    self.passwordInput.tag = 101;
+    self.passwordInput.delegate = self;
+    self.passwordInput.keyboardType = UIKeyboardTypeDefault;
+    self.passwordInput.returnKeyType = UIReturnKeyDone;
+    self.passwordInput.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    self.passwordInput.textColor = [UIColor blackColor];
+    self.passwordInput.backgroundColor = [UIColor whiteColor];
+    self.passwordInput.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    self.passwordInput.autocorrectionType = UITextAutocorrectionTypeNo;
+    self.passwordInput.secureTextEntry = YES;
+    [self.header addSubview:self.passwordInput];
+}
+
+-(void)createDescriptionLabel {
+    UILabel *labelTitle = [[UILabel alloc] initWithFrame:CGRectMake(20, self.passwordInput.frame.origin.y + self.passwordInput.frame.size.height +10, self.view.bounds.size.width - 20, 30)];
+    [labelTitle setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
+    [labelTitle setText: @"Description"];
+    [labelTitle setTextColor:[UIColor whiteColor]];
+    [labelTitle setBackgroundColor:[UIColor clearColor]];
+    [self.header addSubview:labelTitle];
+    
+    self.descriptionInput = [[UITextField alloc] initWithFrame:CGRectMake(20, labelTitle.frame.origin.y + labelTitle.frame.size.height, self.view.bounds.size.width-40, 50)];
+    self.descriptionInput.placeholder = @"Description";
+    self.descriptionInput.tag = 100;
+    self.descriptionInput.delegate = self;
+    self.descriptionInput.keyboardType = UIKeyboardTypeDefault;
+    self.descriptionInput.returnKeyType = UIReturnKeyDone;
+    self.descriptionInput.font = [UIFont fontWithName:@"HelveticaNeue" size:14];
+    self.descriptionInput.textColor = [UIColor colorWithRed:153.0/255.0 green:153.0/255.0 blue:153.0/255.0 alpha:1.0];
+    self.descriptionInput.backgroundColor = [UIColor whiteColor];
+    self.descriptionInput.autocapitalizationType = UITextAutocapitalizationTypeWords;
+    self.descriptionInput.autocorrectionType = UITextAutocorrectionTypeYes;
+    [self.header addSubview:self.descriptionInput];
 }
 
 -(IBAction)onSubmit:(id)sender {
@@ -217,6 +332,16 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField {
+    
+    [self.nameInput resignFirstResponder];
+    [self.emailInput resignFirstResponder];
+    [self.passwordInput resignFirstResponder];
+    [self.descriptionInput resignFirstResponder];
+    
+    return YES;
 }
 
 @end

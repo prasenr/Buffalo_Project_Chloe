@@ -33,6 +33,10 @@
 //@property (nonatomic, strong) UserProfileModel *profile;
 @property (nonatomic, strong) ProfileStartEmailCreditialsEditorViewController *tempAccountEditor1;
 @property (nonatomic, strong) ProfileStartEmailCreditialsEditorViewController *tempAccountEditor2;
+@property (nonatomic, strong) UIView *contactsStatusContainer;
+@property (nonatomic, strong) UILabel *contactsStatusLabel;
+@property (assign) BOOL allContactsProcessed;
+
 
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) UIImageView *blurredImageView;
@@ -59,6 +63,7 @@ static NSDateFormatter *dateFormatter = nil;
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onProfileSelected:) name:@"profileSelected" object:nil];
+        self.allContactsProcessed = NO;
     }
     return self;
 }
@@ -484,6 +489,7 @@ static NSDateFormatter *dateFormatter = nil;
     accessContactTo.origin.x = -self.view.bounds.size.width;
     CGRect whoAreTo = self.whoAreYou.view.frame;
     whoAreTo.origin.x = 0;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAllContactsProcessed:) name:@"contactsProcessed" object:nil];
     
     [UIView animateWithDuration:0.25
                           delay: 0.0
@@ -496,6 +502,26 @@ static NSDateFormatter *dateFormatter = nil;
                          [self.accessContacts removeFromSuperview];
                          self.accessContacts = nil;
                      }];
+}
+
+-(void) onAllContactsProcessed:(NSNotification *)notification {
+    self.allContactsProcessed = YES;
+    
+    if(self.contactsStatusContainer) {
+        [UIView animateWithDuration:0.25
+                              delay: 0.0
+                            options: UIViewAnimationOptionCurveEaseOut
+                         animations:^{
+                             self.contactsStatusContainer.alpha = 0;
+                             
+                         }completion:^(BOOL finished){
+                             [self.accessContacts removeFromSuperview];
+                             self.accessContacts = nil;
+                             [self createSocketConnection];
+                         }];
+        [self.contactsStatusContainer removeFromSuperview];
+        self.contactsStatusContainer = nil;
+    }
 }
 
 -(IBAction)onSubmitProfileTouch:(id)sender {
@@ -779,7 +805,7 @@ static NSDateFormatter *dateFormatter = nil;
         NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
     }
     
-    [self createSocketConnection];
+    
     [self getMissingCreditials];
 }
 
@@ -900,6 +926,8 @@ static NSDateFormatter *dateFormatter = nil;
             for(NSDictionary *message in jsonArray) {
                 error = nil;
                 [messages addObject: [MTLJSONAdapter modelOfClass:[YoMessage class] fromJSONDictionary:message error:&error]];
+                YoMessage *tempMessage = [messages objectAtIndex:[messages count]-1];
+                NSLog(@"message status: %@", tempMessage.messageStatus);
             }
             error = nil;
             NSLog(@"number of message %lu", (unsigned long)[messages count]);
@@ -963,7 +991,10 @@ static NSDateFormatter *dateFormatter = nil;
                              animations:^{
                                  self.missingInformationWelcome.frame = missingWelcomeTo;
                                  self.tempAccountEditor2.view.frame = missingScreenTo;
-                             }completion:^(BOOL finished){}];
+                             }completion:^(BOOL finished){
+                                 [self.missingInformationWelcome removeFromSuperview];
+                                 self.missingInformationWelcome = nil;
+                             }];
         } else {
            
             self.tempAccountEditor1 = self.tempAccountEditor2;
@@ -975,6 +1006,17 @@ static NSDateFormatter *dateFormatter = nil;
             startFrame.size.height = self.view.bounds.size.height;
             self.tempAccountEditor2.view.frame = startFrame;
             [self.profileWizardContainer addSubview:self.tempAccountEditor2.view];
+            
+            NSString *className = NSStringFromClass([[self.missingInformationScreensArray objectAtIndex:[self.currentMissingInformationScreen intValue]] class]);
+
+            if([className isEqual:@"EmailAddressHistoryModel"]) {
+                EmailAddressHistoryModel *emailAccount = [self.missingInformationScreensArray objectAtIndex:[self.currentMissingInformationScreen intValue]];
+                [self.tempAccountEditor2 addEmailAccount:emailAccount];
+            } else {
+                InstantMessengerAccountHistoryModel *imAccount = [self.missingInformationScreensArray objectAtIndex:[self.currentMissingInformationScreen intValue]];
+                [self.tempAccountEditor2 addIMAccount: imAccount];
+                
+            }
             
             CGRect missingScreen1To = self.tempAccountEditor1.view.frame;
             missingScreen1To.origin.x = -self.view.bounds.size.width;
@@ -990,6 +1032,7 @@ static NSDateFormatter *dateFormatter = nil;
                                  self.tempAccountEditor2.view.frame = missingScreen2To;
                              }completion:^(BOOL finished){
                                  [self.tempAccountEditor1 removeFromParentViewController];
+                                 self.tempAccountEditor1 = nil;
                              }];
         }
         
@@ -1010,6 +1053,24 @@ static NSDateFormatter *dateFormatter = nil;
     self.profileContainer.frame = profileFrame;
     profileFrame.origin.x = 0;
     
+    if(!self.allContactsProcessed) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactProcessed:) name:@"contactProcessed" object:nil];
+        
+        self.contactsStatusContainer = [[UIView alloc] initWithFrame:self.view.bounds];
+        self.contactsStatusContainer.backgroundColor = [UIColor colorWithRed:0.0/255.0 green:0.0/255.0 blue:0.0/255.0 alpha:.5];
+        [self.profileContainer addSubview:self.contactsStatusContainer];
+        
+        self.contactsStatusLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height/2, self.view.bounds.size.width, 30)];
+        self.contactsStatusLabel.text = @"hello";
+        [self.contactsStatusLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:16]];
+        self.contactsStatusLabel.textColor = [UIColor whiteColor];
+        self.contactsStatusLabel.textAlignment = NSTextAlignmentCenter;
+        [self.contactsStatusContainer addSubview:self.contactsStatusLabel];
+        
+    } else {
+        [self createSocketConnection];
+    }
+    
     [UIView animateWithDuration:0.25
                           delay: 0.0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -1018,10 +1079,14 @@ static NSDateFormatter *dateFormatter = nil;
                          self.profileContainer.frame = profileFrame;
                      }completion:^(BOOL finished){
                          [self.tempAccountEditor1 removeFromParentViewController];
-                         [self.tempAccountEditor2 removeFromParentViewController];
                          self.tempAccountEditor1 = nil;
-                         self.tempAccountEditor2 = nil;
                      }];
+}
+
+-(void) onContactProcessed:(NSNotification *)notification {
+    NSString *status = [[notification userInfo] valueForKey:@"contact"];
+    [self.contactsStatusLabel setText:status];
+
 }
 
 -(void)showNewProfile {

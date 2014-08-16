@@ -44,7 +44,6 @@
         NSMutableString *filePath = [[NSMutableString alloc] init];
         [filePath appendString:[personModel.firstName substringToIndex:1].lowercaseString];
         [filePath appendString:@".png"];
-        NSLog(@"file path: %@", filePath);
         
         self.loaderImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:filePath]];
         self.loaderImage.frame = CGRectMake(0, 0, 80, 142);

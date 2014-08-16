@@ -21,4 +21,5 @@
 @property (nonatomic, strong)NSMutableArray *messageBodies;
 @property (nonatomic, strong)NSMutableString *boundary;
 @property (nonatomic, strong)NSMutableArray *froms;
+@property (nonatomic, strong)NSString *messageStatus;
 @end

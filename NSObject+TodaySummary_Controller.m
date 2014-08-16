@@ -25,6 +25,7 @@
 @property(nonatomic, strong, readwrite)NSMutableArray *contacts;
 @property(nonatomic, strong) NSMutableArray *selectedProfileIds;
 @property(nonatomic, strong) NSMutableDictionary *tempContacts;
+@property(nonatomic, strong) NSNumber *contactsProcessed;
 
 @property (nonatomic, strong) TodaySummaryClient *client;
 @property (nonatomic, strong) UserUtil *userUtil;
@@ -49,6 +50,7 @@ static NSDateFormatter *timeFormatter = nil;
 -(id)init {
     if (self= [super init]) {
         
+        self.contactsProcessed = 0;
         self.fetchTodaySummaryTrigger = 0;
         self.todaySummaryListItems = [[NSMutableArray alloc] init];
         self.allMeetingsSorted = [[NSMutableDictionary alloc] init];
@@ -383,6 +385,7 @@ static NSDateFormatter *timeFormatter = nil;
     
     dispatch_async(backgroundQueue, ^(void) {
         NSUInteger i = 0;
+        NSInteger k = 100;
         for (i = 0; i < [allContacts count]; i++)
         {
             //ABRecordRef contactPerson = ABAddressBookGetPersonWithRecordID(addressBookRef,recordId);
@@ -414,7 +417,7 @@ static NSDateFormatter *timeFormatter = nil;
                         emailHistory.account = emailAddress;
                         [profile.emailAddresses addObject:emailHistory];
                     }
-                    
+                    emails = nil;
                     
                     ABMultiValueRef addressProperty = ABRecordCopyValue(contactPerson, kABPersonAddressProperty);
                     NSArray *addresses = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(addressProperty);
@@ -453,6 +456,7 @@ static NSDateFormatter *timeFormatter = nil;
                         aAddressHistory.account = aAddress;
                         [profile.addresses addObject:aAddressHistory];
                     }
+                    addressProperty = nil;
                     
                     
                     ABMultiValueRef phones = ABRecordCopyValue(contactPerson, kABPersonPhoneProperty);
@@ -468,6 +472,7 @@ static NSDateFormatter *timeFormatter = nil;
                         [profile.phoneNumbers addObject:phoneHistory];
                         
                     }
+                    phones = nil;
                     
                     
                     ABMultiValueRef instantMessengerAccounts = ABRecordCopyValue(contactPerson, kABPersonInstantMessageProperty);
@@ -481,6 +486,7 @@ static NSDateFormatter *timeFormatter = nil;
                         imHistory.account = imAccount;
                         [profile.instantMessengerAccounts addObject:imHistory];
                     }
+                    instantMessengerAccounts = nil;
                 } else {
 
                     //[self createNewProfile:i];
@@ -517,6 +523,7 @@ static NSDateFormatter *timeFormatter = nil;
                         profile.firstName = [[NSMutableString alloc] initWithString: firstName];
                         profile.lastName = lastName;
                         
+                        
                         NSArray *names = [[NSArray alloc] initWithObjects:@"Shane Landry", @"Adrienne Fisher", @"Claire Cunningham", @"Darrell Simien", @"Kelley Bogdan", @"Maddie Hill", @"Allison DiMartino", @"Matt Smith", @"Leslie Simein", @"Justin Watkins", @"Jessica Cox", @"Paul Gordon", @"Zach Frank", @"John Tenjack", @"Lindsey Patterson", @"Megan Voepel", nil];
                         
                         NSString *longName = [NSString stringWithFormat:@"%@ %@", profile.firstName, profile.lastName];
@@ -527,8 +534,8 @@ static NSDateFormatter *timeFormatter = nil;
                         
                         for (m = 0; m < [names count]; m++) {
                             if([longName isEqualToString:[names objectAtIndex:m]]) {
-                                //profile.numberOfConversations = [NSNumber numberWithInt:40];
-                                //k--;
+                                profile.numberOfConversations = [NSNumber numberWithInt:k];
+                                k--;
                                 found = true;
                             }
                         }
@@ -557,6 +564,7 @@ static NSDateFormatter *timeFormatter = nil;
                             emailHistory.account = emailAddress;
                             [profile.emailAddresses addObject:emailHistory];
                         }
+                        emails = nil;
                         
                         
                         ABMultiValueRef addressProperty = ABRecordCopyValue(contactPerson, kABPersonAddressProperty);
@@ -596,7 +604,7 @@ static NSDateFormatter *timeFormatter = nil;
                             aAddressHistory.account = aAddress;
                             [profile.addresses addObject:aAddressHistory];
                         }
-                        
+                        addressProperty = nil;
                         
                         ABMultiValueRef phones = ABRecordCopyValue(contactPerson, kABPersonPhoneProperty);
                         
@@ -611,7 +619,7 @@ static NSDateFormatter *timeFormatter = nil;
                             [profile.phoneNumbers addObject:phoneHistory];
                             
                         }
-                        
+                        phones = nil;
                         
                         ABMultiValueRef instantMessengerAccounts = ABRecordCopyValue(contactPerson, kABPersonInstantMessageProperty);
                         
@@ -624,12 +632,16 @@ static NSDateFormatter *timeFormatter = nil;
                             imHistory.account = imAccount;
                             [profile.instantMessengerAccounts addObject:imHistory];
                         }
+                        instantMessengerAccounts = nil;
                         [self.tempContacts setValue:profile forKey:fullName];
                     }
                 }
             }
+            contactPerson = nil;
+            recordID = nil;
         }
         dispatch_async(dispatch_get_main_queue(), ^(void) {
+
             [self saveFriends];
         });
     });
@@ -637,12 +649,14 @@ static NSDateFormatter *timeFormatter = nil;
 
 -(void)saveFriends {
     
+   
+    
     dispatch_queue_t backgroundQueue1  = dispatch_queue_create("com.buffaloproject.contactsPBGqueue", NULL);
     
     dispatch_async(backgroundQueue1, ^(void) {
         
         //[self sortContacts];
-        
+        int a = 0;
         NSArray *allKeys = [self.tempContacts allKeys];
         
         for(NSString *aKey in allKeys) {
@@ -682,14 +696,39 @@ static NSDateFormatter *timeFormatter = nil;
             NSURLResponse *response = nil;
             NSError *requestError = nil;
             NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
+
+            
+            [self performSelectorOnMainThread:@selector(sendStatus:) withObject:[NSNumber numberWithInt:a] waitUntilDone:NO];
+            
+            a++;
         }
         dispatch_async(dispatch_get_main_queue(), ^(void) {
             [TSMessage showNotificationWithTitle:@"Contacts Done" subtitle:@"We have all of your contacts.  We are working on getting you their up-to-date information." type:TSMessageNotificationTypeMessage];
-            
-            NSDictionary *userInfo1 = [NSDictionary dictionaryWithObject:self.contacts forKey:@"contacts"];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"contactsProcessed" object:nil userInfo:userInfo1];
+
+
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"contactsProcessed" object:nil userInfo:nil];
         });
     });
+}
+
+-(void)sendStatus:(NSNumber *)currentCount {
+
+    NSNumber *contactsCount = [NSNumber numberWithUnsignedInteger:[self.contacts count]];
+    NSInteger total = [contactsCount integerValue];
+    
+    NSInteger currentAmountProcessed = [currentCount integerValue];
+    NSInteger remaining = total - currentAmountProcessed;
+    NSMutableString *contactProcessedStatus;
+    if(remaining!=1) {
+        contactProcessedStatus = [NSMutableString stringWithFormat:@"%ld contacts left to do", (long)remaining];
+    } else {
+        contactProcessedStatus = [NSMutableString stringWithFormat:@"%ld contact left", (long)remaining];
+    }
+    
+    
+    NSDictionary *userInfo1 = [NSDictionary dictionaryWithObject:contactProcessedStatus forKey:@"contact"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"contactProcessed" object:nil userInfo:userInfo1];
+    
 }
 
 -(void)sortContacts {
@@ -705,258 +744,6 @@ static NSDateFormatter *timeFormatter = nil;
     NSArray *sortDescriptors = [NSArray arrayWithObjects:firstDescriptor,  nil];
     
     self.contacts = [[NSMutableArray alloc] initWithArray:[self.contacts sortedArrayUsingDescriptors:sortDescriptors]];
-}
-
-//-(void)aToDoStartDate:(NSString *)aDate aToDoStartTime:(NSString*)aTime aNewTodo:(ToDoModel *)newToDo {
--(void)updateProfile:(int *)position aFullName:(NSString *)fullName {
-    
-    ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, nil);
-    NSArray *allContacts = [[NSArray alloc] init];
-    allContacts = (__bridge NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBookRef);
-    
-    NSUInteger position1 = position;
-    
-    ABRecordRef contactPerson = (__bridge ABRecordRef)allContacts[position1];
-    ABRecordID recordID = ABRecordGetRecordID(contactPerson);
-    
-    PersonModel *profile = [self.tempContacts valueForKey:fullName];
-    
-    ABMultiValueRef emails = ABRecordCopyValue(contactPerson, kABPersonEmailProperty);
-    
-    //6
-    NSUInteger j = 0;
-    for (j = 0; j < ABMultiValueGetCount(emails); j++) {
-        NSString *email = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(emails, j);
-        NSString *emailType = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(emails, j);
-        EmailAddressHistoryModel *emailHistory = [[EmailAddressHistoryModel alloc] init];
-        EmailAddressModel *emailAddress = [[EmailAddressModel alloc] init];
-        emailAddress.emailAddress = email;
-        emailAddress.emailType = emailType;
-        emailHistory.account = emailAddress;
-        [profile.emailAddresses addObject:emailHistory];
-    }
-    
-    
-    ABMultiValueRef addressProperty = ABRecordCopyValue(contactPerson, kABPersonAddressProperty);
-    NSArray *addresses = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(addressProperty);
-    NSUInteger p = 0;
-    for(;p< [addresses count]; p++) {
-        AddressHistoryModel *aAddressHistory = [[AddressHistoryModel alloc] init];
-        AddressModel *aAddress = [[AddressModel alloc] init];
-        
-        NSDictionary *aPotentialAddress = (__bridge NSDictionary *)((__bridge ABRecordRef)([addresses objectAtIndex:p]));
-        NSString *aAddressType = (__bridge NSString*) ABMultiValueCopyLabelAtIndex(addressProperty,p);
-        
-        for (NSString* key in aPotentialAddress) {
-            
-            NSString *value = [aPotentialAddress objectForKey:key];
-            if([key isEqual: @"Country"]) {
-                aAddress.country = [aPotentialAddress objectForKey:key];
-                
-            }
-            
-            if([key isEqual: @"Street"]) {
-                aAddress.addressLine1 = [aPotentialAddress objectForKey:key];
-            }
-            
-            if([key isEqual:@"ZIP"]) {
-                aAddress.zipcode = [aPotentialAddress objectForKey:key];
-            }
-            
-            if([key isEqual:@"City"]) {
-                aAddress.city = [aPotentialAddress objectForKey:key];
-            }
-            if([key isEqual:@"State"]) {
-                aAddress.state = [aPotentialAddress objectForKey:key];
-            }
-        }
-        aAddress.type  = aAddressType;
-        aAddressHistory.account = aAddress;
-        [profile.addresses addObject:aAddressHistory];
-    }
-    
-    
-    ABMultiValueRef phones = ABRecordCopyValue(contactPerson, kABPersonPhoneProperty);
-    
-    for (j = 0; j < ABMultiValueGetCount(phones); j++) {
-        NSString *phone = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(phones, j);
-        NSString *phoneType = (__bridge NSString*)ABMultiValueCopyLabelAtIndex(phones, j);
-        PhoneNumberHistoryModel *phoneHistory = [[PhoneNumberHistoryModel alloc] init];
-        PhoneNumberModel *phoneAccount = [[PhoneNumberModel alloc] init];
-        [phoneAccount setRawPhoneNumber:phone];
-        phoneAccount.type = [NSMutableString stringWithString:phoneType];
-        phoneHistory.account = phoneAccount;
-        [profile.phoneNumbers addObject:phoneHistory];
-        
-    }
-    
-    
-    ABMultiValueRef instantMessengerAccounts = ABRecordCopyValue(contactPerson, kABPersonInstantMessageProperty);
-    
-    for (j = 0; j < ABMultiValueGetCount(instantMessengerAccounts); j++) {
-        NSDictionary *instantMessengerAccount = (__bridge_transfer NSDictionary *)ABMultiValueCopyValueAtIndex(instantMessengerAccounts, j);
-        InstantMessengerAccountHistoryModel *imHistory = [[InstantMessengerAccountHistoryModel alloc] init];
-        InstantMessengerModel *imAccount = [[InstantMessengerModel alloc] init];
-        imAccount.username = [instantMessengerAccount objectForKey:@"username"];
-        imAccount.serverType = [instantMessengerAccount objectForKey:@"service"];
-        imHistory.account = imAccount;
-        [profile.instantMessengerAccounts addObject:imHistory];
-    }
-}
-
--(void)createNewProfile:(int *)position{
-
-    ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, nil);
-    NSArray *allContacts = [[NSArray alloc] init];
-    allContacts = (__bridge NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBookRef);
-    
-    NSUInteger position1 = position;
-    
-    ABRecordRef contactPerson = (__bridge ABRecordRef)allContacts[position1];
-    ABRecordID recordID = ABRecordGetRecordID(contactPerson);
-    
-    
-    PersonModel *profile = [[PersonModel alloc] init];
-    
-    profile.firstName = [[NSMutableString alloc] init];
-    profile.lastName = [[NSMutableString alloc] init];
-    profile.fullName = [[NSMutableString alloc] init];
-    profile.personId = [[NSProcessInfo processInfo] globallyUniqueString];
-    profile.emailAddresses = [[NSMutableArray alloc] init];
-    profile.addresses = [[NSMutableArray alloc] init];
-    profile.phoneNumbers = [[NSMutableArray alloc] init];
-    profile.instantMessengerAccounts = [[NSMutableArray alloc] init];
-    profile.calendars = [[NSMutableArray alloc] init];
-    profile.facebookAccounts = [[NSMutableArray alloc] init];
-    profile.googlePlusAccounts = [[NSMutableArray alloc] init];
-    profile.birthday = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
-    profile.fullName = @"";
-    profile.linkedInAccounts = [[NSMutableArray alloc] init];
-    profile.names = [[NSMutableArray alloc] init];
-    profile.relationships = [[NSMutableArray alloc] init];
-    profile.twitterAccounts = [[NSMutableArray alloc] init];
-    profile.personImage = @"";
-    profile.personBigImage = @"";
-    profile.numberOfConversations = [NSNumber numberWithInt:0];
-    
-    NSString *firstName = (__bridge_transfer NSString *)ABRecordCopyValue(contactPerson, kABPersonFirstNameProperty);
-    NSString *lastName =  (__bridge_transfer NSString *)ABRecordCopyValue(contactPerson, kABPersonLastNameProperty);
-    NSString *fullName = [NSString stringWithFormat:@"%@%@", firstName, lastName];
-    
-    if(firstName !=nil || lastName!=nil) {
-        
-        profile.firstName = [[NSMutableString alloc] initWithString: firstName];
-        profile.lastName = lastName;
-        
-        NSArray *names = [[NSArray alloc] initWithObjects:@"Shane Landry", @"Adrienne Fisher", @"Claire Cunningham", @"Darrell Simien", @"Kelley Bogdan", @"Maddie Hill", @"Allison DiMartino", @"Matt Smith", @"Leslie Simein", @"Justin Watkins", @"Jessica Cox", @"Paul Gordon", @"Zach Frank", @"John Tenjack", @"Lindsey Patterson", @"Megan Voepel", nil];
-        
-        NSString *longName = [NSString stringWithFormat:@"%@ %@", profile.firstName, profile.lastName];
-        
-        BOOL found = false;
-        
-        NSUInteger m = 0;
-        
-        for (m = 0; m < [names count]; m++) {
-            if([longName isEqualToString:[names objectAtIndex:m]]) {
-                //profile.numberOfConversations = [NSNumber numberWithInt:40];
-                //k--;
-                found = true;
-            }
-        }
-        
-        if(!found) {
-            //profile.numberOfConversations = 0;
-        }
-        
-        
-        profile.personBigImage = [self getBigImage:[NSString stringWithFormat:@"%@ %@", profile.firstName, profile.lastName]];
-        profile.personImage = [self getImage:[NSString stringWithFormat:@"%@ %@", profile.firstName, profile.lastName]];
-        
-        
-        profile.emailAddresses = [[NSMutableArray alloc] init];
-        ABMultiValueRef emails = ABRecordCopyValue(contactPerson, kABPersonEmailProperty);
-        
-        //6
-        NSUInteger j = 0;
-        for (j = 0; j < ABMultiValueGetCount(emails); j++) {
-            NSString *email = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(emails, j);
-            NSString *emailType = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(emails, j);
-            EmailAddressHistoryModel *emailHistory = [[EmailAddressHistoryModel alloc] init];
-            EmailAddressModel *emailAddress = [[EmailAddressModel alloc] init];
-            emailAddress.emailAddress = email;
-            emailAddress.emailType = emailType;
-            emailHistory.account = emailAddress;
-            [profile.emailAddresses addObject:emailHistory];
-        }
-        
-        
-        ABMultiValueRef addressProperty = ABRecordCopyValue(contactPerson, kABPersonAddressProperty);
-        NSArray *addresses = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(addressProperty);
-        NSUInteger p = 0;
-        for(;p< [addresses count]; p++) {
-            AddressHistoryModel *aAddressHistory = [[AddressHistoryModel alloc] init];
-            AddressModel *aAddress = [[AddressModel alloc] init];
-            
-            NSDictionary *aPotentialAddress = (__bridge NSDictionary *)((__bridge ABRecordRef)([addresses objectAtIndex:p]));
-            NSString *aAddressType = (__bridge NSString*) ABMultiValueCopyLabelAtIndex(addressProperty,p);
-            
-            for (NSString* key in aPotentialAddress) {
-                
-                NSString *value = [aPotentialAddress objectForKey:key];
-                if([key isEqual: @"Country"]) {
-                    aAddress.country = [aPotentialAddress objectForKey:key];
-                    
-                }
-                
-                if([key isEqual: @"Street"]) {
-                    aAddress.addressLine1 = [aPotentialAddress objectForKey:key];
-                }
-                
-                if([key isEqual:@"ZIP"]) {
-                    aAddress.zipcode = [aPotentialAddress objectForKey:key];
-                }
-                
-                if([key isEqual:@"City"]) {
-                    aAddress.city = [aPotentialAddress objectForKey:key];
-                }
-                if([key isEqual:@"State"]) {
-                    aAddress.state = [aPotentialAddress objectForKey:key];
-                }
-            }
-            aAddress.type  = aAddressType;
-            aAddressHistory.account = aAddress;
-            [profile.addresses addObject:aAddressHistory];
-        }
-        
-        
-        ABMultiValueRef phones = ABRecordCopyValue(contactPerson, kABPersonPhoneProperty);
-        
-        for (j = 0; j < ABMultiValueGetCount(phones); j++) {
-            NSString *phone = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(phones, j);
-            NSString *phoneType = (__bridge NSString*)ABMultiValueCopyLabelAtIndex(phones, j);
-            PhoneNumberHistoryModel *phoneHistory = [[PhoneNumberHistoryModel alloc] init];
-            PhoneNumberModel *phoneAccount = [[PhoneNumberModel alloc] init];
-            [phoneAccount setRawPhoneNumber:phone];
-            phoneAccount.type = [NSMutableString stringWithString:phoneType];
-            phoneHistory.account = phoneAccount;
-            [profile.phoneNumbers addObject:phoneHistory];
-            
-        }
-        
-        
-        ABMultiValueRef instantMessengerAccounts = ABRecordCopyValue(contactPerson, kABPersonInstantMessageProperty);
-        
-        for (j = 0; j < ABMultiValueGetCount(instantMessengerAccounts); j++) {
-            NSDictionary *instantMessengerAccount = (__bridge_transfer NSDictionary *)ABMultiValueCopyValueAtIndex(instantMessengerAccounts, j);
-            InstantMessengerAccountHistoryModel *imHistory = [[InstantMessengerAccountHistoryModel alloc] init];
-            InstantMessengerModel *imAccount = [[InstantMessengerModel alloc] init];
-            imAccount.username = [instantMessengerAccount objectForKey:@"username"];
-            imAccount.serverType = [instantMessengerAccount objectForKey:@"service"];
-            imHistory.account = imAccount;
-            [profile.instantMessengerAccounts addObject:imHistory];
-        }
-        [self.tempContacts setValue:profile forKey:fullName];
-    }
 }
 
 -(NSString *)getBigImage:(NSString *)name {
