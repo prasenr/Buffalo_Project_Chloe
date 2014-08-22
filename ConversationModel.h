@@ -10,5 +10,6 @@
 #import <Mantle.h>
 
 @interface ConversationModel : MTLModel <MTLJSONSerializing>
-
+@property (nonatomic, strong) NSMutableString *conversationId;
+@property (nonatomic, strong) NSMutableArray *messages;
 @end

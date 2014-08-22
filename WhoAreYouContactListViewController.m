@@ -10,7 +10,6 @@
 
 @interface WhoAreYouContactListViewController ()
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) NSArray *allContacts;
 @property (nonatomic, strong) NSMutableArray *parsedContacts;
 @property (nonatomic, strong) UILabel *firstNameCellLabel;
 @property (nonatomic, strong) UILabel *lastNameCellLabel;
@@ -37,15 +36,15 @@
     self.selectedContacts = [[NSMutableDictionary alloc] init];
     self.parsedContacts = [[NSMutableArray alloc] init];
     ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, nil);
-    self.allContacts = (__bridge NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBookRef);
-    
+    NSArray *allContacts = (__bridge NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBookRef);
+    addressBookRef = nil;
     //__block NSData *imageData;
     dispatch_queue_t backgroundQueue  = dispatch_queue_create("com.buffaloproject.contactsBGqueue", NULL);
     
     dispatch_async(backgroundQueue, ^(void) {
-        NSUInteger i = 0; for (i = 0; i < [self.allContacts count]; i++) {
+        NSUInteger i = 0; for (i = 0; i < [allContacts count]; i++) {
             WhoAreYouPersonModel *person = [[WhoAreYouPersonModel alloc] init];
-            ABRecordRef contactPerson = (__bridge ABRecordRef)self.allContacts[i];
+            ABRecordRef contactPerson = (__bridge ABRecordRef)allContacts[i];
             ABRecordID recordID = ABRecordGetRecordID(contactPerson);
             NSMutableString *firstName = (__bridge_transfer NSString *)ABRecordCopyValue(contactPerson,
                                                                                   kABPersonFirstNameProperty);
@@ -77,9 +76,10 @@
             NSSortDescriptor *sortLastName = [NSSortDescriptor sortDescriptorWithKey:@"lastName" ascending:YES];
             self.parsedContacts=[self.parsedContacts sortedArrayUsingDescriptors:[NSArray arrayWithObjects:sortFirstName, sortLastName, nil]];
             [self.tableView reloadData];
+            
         });
     });
-    
+    //allContacts = nil;
     return self;
 }
 
@@ -183,7 +183,12 @@
             emailAddress.emailType = emailType;
             emailHistory.account = emailAddress;
             [self.profile.emailAddresses addObject:emailHistory];
+            
+            email = nil;
+            emailType = nil;
         }
+        
+        emails = nil;
         
         
         ABMultiValueRef addressProperty = ABRecordCopyValue(contactPerson, kABPersonAddressProperty);
@@ -222,7 +227,12 @@
             aAddress.type  = aAddressType;
             aAddressHistory.account = aAddress;
             [self.profile.addresses addObject:aAddressHistory];
+            aPotentialAddress = nil;
+            aAddressType = nil;
         }
+        
+        addressProperty = nil;
+        addresses = nil;
         
         
         ABMultiValueRef phones = ABRecordCopyValue(contactPerson, kABPersonPhoneProperty);
@@ -236,8 +246,11 @@
             phoneAccount.type = [NSMutableString stringWithString:phoneType];
             phoneHistory.account = phoneAccount;
             [self.profile.phoneNumbers addObject:phoneHistory];
-
+            phone = nil;
+            phoneType = nil;
         }
+        
+        phones = nil;
         
         
         ABMultiValueRef instantMessengerAccounts = ABRecordCopyValue(contactPerson, kABPersonInstantMessageProperty);
@@ -250,7 +263,9 @@
             imAccount.serverType = [instantMessengerAccount objectForKey:@"service"];
             imHistory.account = imAccount;
             [self.profile.instantMessengerAccounts addObject:imHistory];
+            instantMessengerAccount = nil;
         }
+        instantMessengerAccounts = nil;
     }
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self.profile forKey:@"profile"];

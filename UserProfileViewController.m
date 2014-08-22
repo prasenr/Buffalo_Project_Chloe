@@ -14,6 +14,7 @@
 #import "PhoneNumberHistoryModel.h"
 #import "ContactAddressSearchViewController.h"
 #import "WhoAreYouContactListViewController.h"
+#import "NSObject+TodaySummary_Controller.h"
 #import "YoMessage.h"
 @interface UserProfileViewController ()
 @property (nonatomic, strong) UIView *profileContainer;
@@ -692,7 +693,7 @@ static NSDateFormatter *dateFormatter = nil;
     NSString *cr = [NSString stringWithCharacters:(const unichar *)chr length:1];
     CGRect labelFrame = CGRectMake(25, 100, self.view.frame.size.width - 50, 500);
     UILabel *uploadingLabel = [[UILabel alloc] initWithFrame:labelFrame];
-    [uploadingLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:20]];
+    [uploadingLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
     [uploadingLabel setText: [NSString stringWithFormat:uploadingText, cr]];
     [uploadingLabel setTextColor:[UIColor whiteColor]];
     uploadingLabel.textAlignment = NSTextAlignmentCenter;
@@ -704,7 +705,7 @@ static NSDateFormatter *dateFormatter = nil;
     CGRect expectedLabelSize1 = [uploadingLabel.text boundingRectWithSize:CGSizeMake(maxiToDoMeetingSummaryLabelSize.width, maxiToDoMeetingSummaryLabelSize.height) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:uploadingLabel.font} context:nil ];
     CGRect newFrame1 = uploadingLabel.frame;
     newFrame1.origin.x = 10;
-    newFrame1.size.width = expectedLabelSize1.size.width;
+    newFrame1.size.width = self.view.bounds.size.width;
     newFrame1.size.height = expectedLabelSize1.size.height;
     newFrame1.origin.y = self.view.bounds.size.height/2-(newFrame1.size.height);
     uploadingLabel.frame = newFrame1;
@@ -765,6 +766,12 @@ static NSDateFormatter *dateFormatter = nil;
         }
         return nil;
     }];
+    
+    transferManager = nil;
+    credentialsProvider = nil;
+    configuration = nil;
+    [picker removeFromParentViewController];
+    picker = nil;
     
 }
 
@@ -905,36 +912,7 @@ static NSDateFormatter *dateFormatter = nil;
 }
 
 -(void) createSocketConnection {
-    NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://api.buffalop.com/connections/"] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
-    
-    [postRequest setHTTPMethod:@"POST"];
-    
-    NSURLResponse *response = nil;
-    NSError *requestError = nil;
-    NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
-    
-    if (requestError == nil) {
-        NSError *e = nil;
-        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:returnData options:0 error:&e];
-        
-        
-        if(!jsonArray) {
-            NSLog(@"Error parsing JSON: %@", e);
-        } else {
-            NSMutableArray *messages = [[NSMutableArray alloc] init];
-            NSError *error;
-            for(NSDictionary *message in jsonArray) {
-                error = nil;
-                [messages addObject: [MTLJSONAdapter modelOfClass:[YoMessage class] fromJSONDictionary:message error:&error]];
-                YoMessage *tempMessage = [messages objectAtIndex:[messages count]-1];
-                NSLog(@"message status: %@", tempMessage.messageStatus);
-            }
-            error = nil;
-            NSLog(@"number of message %lu", (unsigned long)[messages count]);
-        }
-    } else {
-        NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
-    }
+    [[TodaySummary_Controller sharedManager] fetchConversatons];
 }
 
 -(IBAction)onStartMissingInformation:(id)sender {
@@ -1062,7 +1040,7 @@ static NSDateFormatter *dateFormatter = nil;
         
         self.contactsStatusLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height/2, self.view.bounds.size.width, 30)];
         self.contactsStatusLabel.text = @"hello";
-        [self.contactsStatusLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:16]];
+        [self.contactsStatusLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:14]];
         self.contactsStatusLabel.textColor = [UIColor whiteColor];
         self.contactsStatusLabel.textAlignment = NSTextAlignmentCenter;
         [self.contactsStatusContainer addSubview:self.contactsStatusLabel];

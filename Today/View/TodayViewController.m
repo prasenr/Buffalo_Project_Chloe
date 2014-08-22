@@ -208,7 +208,7 @@ static NSDateFormatter *dateFormatter = nil;
          [self isReadyToLaunch];
      }];
     
-     [[TodaySummary_Controller sharedManager] fetchTodaySummary];
+    // [[TodaySummary_Controller sharedManager] fetchTodaySummary];
 }
 
 -(void)fetchTodosAndMeetings {

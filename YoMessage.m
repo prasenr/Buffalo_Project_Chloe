@@ -42,13 +42,27 @@
     return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:[MessageBodyModel class]];
 }
 
-+ (NSValueTransformer *)fromsJSONTransformer {
+-(MessageBodyModel *)plainTextMessage {
+    int a = 0;
+    int b = [self.messageBodies count];
+    for(;a<b;a++) {
+        MessageBodyModel *possibleMessage = [self.messageBodies objectAtIndex:a];
+        if([possibleMessage.encoding isEqual: @"text"]) {
+            return possibleMessage;
+        }
+        
+    }
+    
+    return [self.messageBodies objectAtIndex:0];
+}
+
+/*+ (NSValueTransformer *)fromsJSONTransformer {
     return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:[PersonModel class]];
 }
 
 + (NSValueTransformer *)tosJSONTransformer {
     return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:[PersonModel class]];
-}
+}*/
 
 
 

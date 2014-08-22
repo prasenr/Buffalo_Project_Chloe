@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import"YoMessage.h"
 #import <Mantle.h>
 
 @interface YoMessage : MTLModel <MTLJSONSerializing>
@@ -22,4 +23,6 @@
 @property (nonatomic, strong)NSMutableString *boundary;
 @property (nonatomic, strong)NSMutableArray *froms;
 @property (nonatomic, strong)NSString *messageStatus;
+
+-(YoMessage *)plainTextMessage;
 @end

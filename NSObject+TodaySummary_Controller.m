@@ -12,6 +12,8 @@
 #import "NSObject+UserUtil.h"
 #import "NSObject+MeetingModel.h"
 #import "ToDoModel.h"
+#import "YoMessage.h"
+#import "ConversationModel.h"
 #import <TSMessages/TSMessage.h>
 
 @interface TodaySummary_Controller()
@@ -26,6 +28,7 @@
 @property(nonatomic, strong) NSMutableArray *selectedProfileIds;
 @property(nonatomic, strong) NSMutableDictionary *tempContacts;
 @property(nonatomic, strong) NSNumber *contactsProcessed;
+@property(nonatomic, strong) NSMutableArray *conversations;
 
 @property (nonatomic, strong) TodaySummaryClient *client;
 @property (nonatomic, strong) UserUtil *userUtil;
@@ -56,6 +59,7 @@ static NSDateFormatter *timeFormatter = nil;
         self.allMeetingsSorted = [[NSMutableDictionary alloc] init];
         self.allToDosSorted = [[NSMutableDictionary alloc] init];
         self.contacts = [[NSMutableArray alloc] init];
+        self.conversations = [[NSMutableArray alloc] init];
         
         _client = [[TodaySummaryClient alloc] init];
         
@@ -378,9 +382,8 @@ static NSDateFormatter *timeFormatter = nil;
     self.tempContacts = [[NSMutableDictionary alloc] init];
     self.selectedProfileIds = userProfileIds;
     ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, nil);
-    NSArray *allContacts = [[NSArray alloc] init];
-    allContacts = (__bridge NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBookRef);
-    
+    NSArray *allContacts = (__bridge NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBookRef);
+    addressBookRef = nil;
     dispatch_queue_t backgroundQueue  = dispatch_queue_create("com.buffaloproject.contactsBGqueue", NULL);
     
     dispatch_async(backgroundQueue, ^(void) {
@@ -457,6 +460,7 @@ static NSDateFormatter *timeFormatter = nil;
                         [profile.addresses addObject:aAddressHistory];
                     }
                     addressProperty = nil;
+                    addresses = nil;
                     
                     
                     ABMultiValueRef phones = ABRecordCopyValue(contactPerson, kABPersonPhoneProperty);
@@ -488,7 +492,7 @@ static NSDateFormatter *timeFormatter = nil;
                     }
                     instantMessengerAccounts = nil;
                 } else {
-
+                    
                     //[self createNewProfile:i];
                     
                     PersonModel *profile = [[PersonModel alloc] init];
@@ -563,7 +567,10 @@ static NSDateFormatter *timeFormatter = nil;
                             emailAddress.emailType = emailType;
                             emailHistory.account = emailAddress;
                             [profile.emailAddresses addObject:emailHistory];
+                            //CFRelease((__bridge CFTypeRef)(email));
+                            //CFRelease((__bridge CFTypeRef)(emailType));
                         }
+                        //CFRelease(emails);
                         emails = nil;
                         
                         
@@ -600,11 +607,15 @@ static NSDateFormatter *timeFormatter = nil;
                                     aAddress.state = [aPotentialAddress objectForKey:key];
                                 }
                             }
+                            //CFRelease((__bridge CFTypeRef)(aPotentialAddress));
+                            //CFRelease((__bridge CFTypeRef)(aAddressType));
                             aAddress.type  = aAddressType;
                             aAddressHistory.account = aAddress;
                             [profile.addresses addObject:aAddressHistory];
                         }
                         addressProperty = nil;
+                        //CFRelease((__bridge CFTypeRef)(addresses));
+                        addresses = nil;
                         
                         ABMultiValueRef phones = ABRecordCopyValue(contactPerson, kABPersonPhoneProperty);
                         
@@ -617,8 +628,10 @@ static NSDateFormatter *timeFormatter = nil;
                             phoneAccount.type = [NSMutableString stringWithString:phoneType];
                             phoneHistory.account = phoneAccount;
                             [profile.phoneNumbers addObject:phoneHistory];
-                            
+                            //CFRelease((__bridge CFTypeRef)(phone));
+                            //CFRelease((__bridge CFTypeRef)(phoneType));
                         }
+                       // CFRelease(phones);
                         phones = nil;
                         
                         ABMultiValueRef instantMessengerAccounts = ABRecordCopyValue(contactPerson, kABPersonInstantMessageProperty);
@@ -631,25 +644,30 @@ static NSDateFormatter *timeFormatter = nil;
                             imAccount.serverType = [instantMessengerAccount objectForKey:@"service"];
                             imHistory.account = imAccount;
                             [profile.instantMessengerAccounts addObject:imHistory];
+                            //CFRelease((__bridge CFTypeRef)(instantMessengerAccount));
                         }
+                        
+                        //CFRelease(instantMessengerAccounts);
                         instantMessengerAccounts = nil;
                         [self.tempContacts setValue:profile forKey:fullName];
                     }
                 }
             }
-            contactPerson = nil;
-            recordID = nil;
+            //contactPerson = nil;
+            //recordID = nil;
         }
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-
+            
             [self saveFriends];
         });
     });
+    //CFRelease((__bridge CFTypeRef)allContacts);
+    //allContacts = nil;
 }
 
 -(void)saveFriends {
     
-   
+    
     
     dispatch_queue_t backgroundQueue1  = dispatch_queue_create("com.buffaloproject.contactsPBGqueue", NULL);
     
@@ -696,7 +714,14 @@ static NSDateFormatter *timeFormatter = nil;
             NSURLResponse *response = nil;
             NSError *requestError = nil;
             NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
-
+            
+            if (requestError == nil) {
+                id json = [NSJSONSerialization JSONObjectWithData:returnData options:kNilOptions error:nil];
+                personProfile =[MTLJSONAdapter modelOfClass: [PersonModel class] fromJSONDictionary:json error:nil];
+            } else {
+                NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
+            }
+            
             
             [self performSelectorOnMainThread:@selector(sendStatus:) withObject:[NSNumber numberWithInt:a] waitUntilDone:NO];
             
@@ -704,15 +729,17 @@ static NSDateFormatter *timeFormatter = nil;
         }
         dispatch_async(dispatch_get_main_queue(), ^(void) {
             [TSMessage showNotificationWithTitle:@"Contacts Done" subtitle:@"We have all of your contacts.  We are working on getting you their up-to-date information." type:TSMessageNotificationTypeMessage];
-
-
+            
+            
             [[NSNotificationCenter defaultCenter] postNotificationName:@"contactsProcessed" object:nil userInfo:nil];
         });
     });
+    
+    backgroundQueue1  = nil;
 }
 
 -(void)sendStatus:(NSNumber *)currentCount {
-
+    
     NSNumber *contactsCount = [NSNumber numberWithUnsignedInteger:[self.contacts count]];
     NSInteger total = [contactsCount integerValue];
     
@@ -831,6 +858,115 @@ static NSDateFormatter *timeFormatter = nil;
     }
 }
 
+-(void)fetchConversatons {
+    dispatch_queue_t backgroundQueue2  = dispatch_queue_create("com.buffaloproject.contactsYOMessagequeue", NULL);
+    
+    dispatch_async(backgroundQueue2, ^(void) {
+        
+        int totalMessages = 0;
+        
+        //totalconnections
+        NSMutableURLRequest *totalMessagesRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://api.buffalop.com/totalconnections/"] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
+        [totalMessagesRequest setHTTPMethod:@"POST"];
+        NSURLResponse *totalResponse = nil;
+        NSError *totalError = nil;
+        NSData *totalReturnData = [NSURLConnection sendSynchronousRequest:totalMessagesRequest returningResponse:&totalResponse error:&totalError];
+        
+        if(totalError == nil) {
+            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:totalReturnData options:kNilOptions error:nil];
+
+            totalMessages = [[json objectForKey:@"totalMessages"] intValue];
+            int nextSection = totalMessages;
+
+            json = nil;
+            totalMessagesRequest = nil;
+            totalReturnData = nil;
+            for(;totalMessages>0;) {
+                nextSection -= 5;
+                
+                NSMutableString *urlString = [NSMutableString stringWithString:@"http://api.buffalop.com/connections/"];
+                [urlString appendString:[NSString stringWithFormat:@"%d:%d", totalMessages, nextSection]];
+                NSLog(@"message url: %@", urlString);
+                NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
+                
+                [postRequest setHTTPMethod:@"POST"];
+                
+                NSURLResponse *response = nil;
+                NSError *requestError = nil;
+                NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
+                
+                if (requestError == nil) {
+                    NSError *e = nil;
+                    NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:returnData options:0 error:&e];
+                    
+                    
+                    if(!jsonArray) {
+                        NSLog(@"Error parsing JSON: %@", e);
+                    } else {
+                        NSError *error;
+                        for(NSDictionary *message in jsonArray) {
+                            error = nil;
+                            [self.conversations addObject: [MTLJSONAdapter modelOfClass:[ConversationModel class] fromJSONDictionary:message error:&error]];
+                            [[NSNotificationCenter defaultCenter] postNotificationName:@"messagesFetched" object:nil userInfo:nil];
+                        }
+                        
+                        jsonArray = nil;
+                        error = nil;
+                        NSLog(@"number of message %lu", (unsigned long)[self.conversations count]);
+                    }
+                } else {
+                    NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
+                }
+                urlString = nil;
+                postRequest = nil;
+                returnData = nil;
+                totalMessages -= 6;
+                nextSection = totalMessages;
+            }
+            
+        } else {
+            NSLog(@"NSURLConnection sendSynchronousRequest error: %@", totalError);
+        }
+        
+        
+        /*NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://api.buffalop.com/connections/"] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
+        
+        [postRequest setHTTPMethod:@"POST"];
+        
+        NSURLResponse *response = nil;
+        NSError *requestError = nil;
+        NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
+        
+        if (requestError == nil) {
+            NSError *e = nil;
+            NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:returnData options:0 error:&e];
+            
+            
+            if(!jsonArray) {
+                NSLog(@"Error parsing JSON: %@", e);
+            } else {
+                NSError *error;
+                for(NSDictionary *message in jsonArray) {
+                    error = nil;
+                    [self.conversations addObject: [MTLJSONAdapter modelOfClass:[ConversationModel class] fromJSONDictionary:message error:&error]];
+                    
+                }
+                
+                
+                error = nil;
+                NSLog(@"number of message %lu", (unsigned long)[self.conversations count]);
+            }
+        } else {
+            NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
+        }*/
+        dispatch_async(dispatch_get_main_queue(), ^(void) {
+            [TSMessage showNotificationWithTitle:@"Messages done" subtitle:@"Message processed" type:TSMessageNotificationTypeMessage];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"messagesFetched" object:nil userInfo:nil];
+            
+            //[[NSNotificationCenter defaultCenter] postNotificationName:@"contactsProcessed" object:nil userInfo:nil];
+        });
+    });
+}
 
 
 @end

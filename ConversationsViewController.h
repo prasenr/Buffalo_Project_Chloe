@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ConversationsViewController : UIViewController
-
+@interface ConversationsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+-(void)reloadConversations;
 @end

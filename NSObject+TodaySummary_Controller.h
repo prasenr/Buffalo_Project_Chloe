@@ -35,6 +35,7 @@
 @property (nonatomic, strong, readonly) NSMutableArray *rawToDos;
 @property (nonatomic, strong, readonly) NSMutableDictionary *allToDosSorted;
 @property (nonatomic, strong, readonly) NSMutableArray *contacts;
+@property (nonatomic, strong, readonly) NSMutableArray *conversations;
 
 -(void)fetchTodaySummary;
 -(void)addMeetings:(NSMutableArray *)meetings;
@@ -48,4 +49,5 @@
 -(void)deleteMeeting:(MeetingModel *)meeting;
 -(void)helpMe;
 -(void)processContacts:(NSMutableArray *)userProfileIds;
+-(void)fetchConversatons;
 @end

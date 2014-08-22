@@ -7,7 +7,17 @@
 //
 
 #import "ConversationModel.h"
+#import "YoMessage.h"
 
 @implementation ConversationModel 
++(NSDictionary *) JSONKeyPathsByPropertyKey {
+    return @{
+             @"conversationId"          :   @"conversationId",
+             @"messages"                :   @"messages"
+             };
+}
 
++ (NSValueTransformer *)messagesJSONTransformer {
+    return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:[YoMessage class]];
+}
 @end
