@@ -21,23 +21,25 @@
 
 +(NSDictionary *) JSONKeyPathsByPropertyKey {
     return @{
-             @"personId"                   :   @"personId",
-             @"firstName"                   :   @"firstName",
-             @"lastName"                    :   @"lastName",
-             @"names"                       :   @"names",
-             @"emailAddresses"              :   @"emailAddresses",
-             @"instantMessengerAccounts"    :   @"instantMessengerAccounts",
-             @"phoneNumbers"                :   @"phoneNumbers",
-             @"addresses"                   :   @"addresses",
-             @"calendars"                   :   @"calendars",
-             @"facebookAccounts"            :   @"facebookAccounts",
-             @"googlePlusAccounts"          :   @"googlePlusAccounts",
-             @"linkedInAccounts"            :   @"linkedInAccounts",
-             @"twitterAccounts"             :   @"twitterAccounts",
-             @"relationships"               :   @"relationships",
-             @"personImage"                 :   @"personImage",
-             @"personBigImage"              :   @"personBigImage",
-             @"numberOfConversations"       :   @"numberOfConversations"
+             @"personId"                            :   @"personId",
+             @"firstName"                           :   @"firstName",
+             @"lastName"                            :   @"lastName",
+             @"names"                               :   @"names",
+             @"emailAddresses"                      :   @"emailAddresses",
+             @"instantMessengerAccounts"            :   @"instantMessengerAccounts",
+             @"phoneNumbers"                        :   @"phoneNumbers",
+             @"addresses"                           :   @"addresses",
+             @"calendars"                           :   @"calendars",
+             @"facebookAccounts"                    :   @"facebookAccounts",
+             @"googlePlusAccounts"                  :   @"googlePlusAccounts",
+             @"linkedInAccounts"                    :   @"linkedInAccounts",
+             @"twitterAccounts"                     :   @"twitterAccounts",
+             @"relationships"                       :   @"relationships",
+             @"personImage"                         :   @"personImage",
+             @"personBigImage"                      :   @"personBigImage",
+             @"numberOfConversations"               :   @"numberOfConversations",
+             @"conversationSummaryProfileImage"     :   @"conversationSummaryProfileImage",
+             @"messageProfileImage"                 :   @"messageProfileImage"
              };
 }
 

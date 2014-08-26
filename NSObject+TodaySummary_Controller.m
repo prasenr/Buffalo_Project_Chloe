@@ -29,6 +29,7 @@
 @property(nonatomic, strong) NSMutableDictionary *tempContacts;
 @property(nonatomic, strong) NSNumber *contactsProcessed;
 @property(nonatomic, strong) NSMutableArray *conversations;
+@property(nonatomic, assign) NSNumber *totalMessagesToBeProcessed;
 
 @property (nonatomic, strong) TodaySummaryClient *client;
 @property (nonatomic, strong) UserUtil *userUtil;
@@ -552,6 +553,20 @@ static NSDateFormatter *timeFormatter = nil;
                         profile.personBigImage = [self getBigImage:[NSString stringWithFormat:@"%@ %@", profile.firstName, profile.lastName]];
                         profile.personImage = [self getImage:[NSString stringWithFormat:@"%@ %@", profile.firstName, profile.lastName]];
                         
+                        NSMutableString *conversationImageFilePath = [[NSMutableString alloc] init];
+                        [conversationImageFilePath appendString:@"https://s3-us-west-2.amazonaws.com/buffaloimages/"];
+                        [conversationImageFilePath appendString:[profile.firstName substringToIndex:1].lowercaseString];
+                        [conversationImageFilePath appendString:@"_50_50_circle.png"];
+                        
+                        NSMutableString *messageImageFilePath = [[NSMutableString alloc] init];
+                        [messageImageFilePath appendString:@"https://s3-us-west-2.amazonaws.com/buffaloimages/"];
+                        [messageImageFilePath appendString:[profile.firstName substringToIndex:1].lowercaseString];
+                        [messageImageFilePath appendString:@"_30_30_circle.png"];
+
+
+                        profile.conversationSummaryProfileImage = conversationImageFilePath;
+                        profile.messageProfileImage = messageImageFilePath;
+                        
                         
                         profile.emailAddresses = [[NSMutableArray alloc] init];
                         ABMultiValueRef emails = ABRecordCopyValue(contactPerson, kABPersonEmailProperty);
@@ -865,7 +880,6 @@ static NSDateFormatter *timeFormatter = nil;
         
         int totalMessages = 0;
         
-        //totalconnections
         NSMutableURLRequest *totalMessagesRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://api.buffalop.com/totalconnections/"] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
         [totalMessagesRequest setHTTPMethod:@"POST"];
         NSURLResponse *totalResponse = nil;
@@ -876,16 +890,19 @@ static NSDateFormatter *timeFormatter = nil;
             NSDictionary *json = [NSJSONSerialization JSONObjectWithData:totalReturnData options:kNilOptions error:nil];
 
             totalMessages = [[json objectForKey:@"totalMessages"] intValue];
-            int nextSection = totalMessages;
+            //int nextSection = totalMessages;
 
             json = nil;
+
+            self.totalMessagesToBeProcessed = [NSNumber numberWithInt:totalMessages];
+            
             totalMessagesRequest = nil;
             totalReturnData = nil;
             for(;totalMessages>0;) {
-                nextSection -= 5;
+                //nextSection -= 5;
                 
                 NSMutableString *urlString = [NSMutableString stringWithString:@"http://api.buffalop.com/connections/"];
-                [urlString appendString:[NSString stringWithFormat:@"%d:%d", totalMessages, nextSection]];
+                [urlString appendString:[NSString stringWithFormat:@"%d:%d", totalMessages, totalMessages]];
                 NSLog(@"message url: %@", urlString);
                 NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
                 
@@ -907,7 +924,8 @@ static NSDateFormatter *timeFormatter = nil;
                         for(NSDictionary *message in jsonArray) {
                             error = nil;
                             [self.conversations addObject: [MTLJSONAdapter modelOfClass:[ConversationModel class] fromJSONDictionary:message error:&error]];
-                            [[NSNotificationCenter defaultCenter] postNotificationName:@"messagesFetched" object:nil userInfo:nil];
+                            
+                            [self performSelectorOnMainThread:@selector(sendMessageStatus:) withObject:[NSNumber numberWithInt:totalMessages] waitUntilDone:NO];
                         }
                         
                         jsonArray = nil;
@@ -920,45 +938,14 @@ static NSDateFormatter *timeFormatter = nil;
                 urlString = nil;
                 postRequest = nil;
                 returnData = nil;
-                totalMessages -= 6;
-                nextSection = totalMessages;
+                totalMessages -= 1;
+                //nextSection = totalMessages;
             }
             
         } else {
             NSLog(@"NSURLConnection sendSynchronousRequest error: %@", totalError);
         }
-        
-        
-        /*NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://api.buffalop.com/connections/"] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:60.0];
-        
-        [postRequest setHTTPMethod:@"POST"];
-        
-        NSURLResponse *response = nil;
-        NSError *requestError = nil;
-        NSData *returnData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&requestError];
-        
-        if (requestError == nil) {
-            NSError *e = nil;
-            NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:returnData options:0 error:&e];
-            
-            
-            if(!jsonArray) {
-                NSLog(@"Error parsing JSON: %@", e);
-            } else {
-                NSError *error;
-                for(NSDictionary *message in jsonArray) {
-                    error = nil;
-                    [self.conversations addObject: [MTLJSONAdapter modelOfClass:[ConversationModel class] fromJSONDictionary:message error:&error]];
-                    
-                }
-                
-                
-                error = nil;
-                NSLog(@"number of message %lu", (unsigned long)[self.conversations count]);
-            }
-        } else {
-            NSLog(@"NSURLConnection sendSynchronousRequest error: %@", requestError);
-        }*/
+       
         dispatch_async(dispatch_get_main_queue(), ^(void) {
             [TSMessage showNotificationWithTitle:@"Messages done" subtitle:@"Message processed" type:TSMessageNotificationTypeMessage];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"messagesFetched" object:nil userInfo:nil];
@@ -968,5 +955,23 @@ static NSDateFormatter *timeFormatter = nil;
     });
 }
 
+-(void)sendMessageStatus:(NSNumber *)currentCount {
+
+    NSInteger total = [self.totalMessagesToBeProcessed integerValue];
+    NSInteger currentAmountProcessed = [currentCount integerValue];
+    
+    NSInteger remaining = currentAmountProcessed - total;
+    NSMutableString *messageProcessedStatus;
+    if(remaining!=1) {
+        messageProcessedStatus = [NSMutableString stringWithFormat:@"%ld messages left to do", (long)remaining];
+    } else {
+        messageProcessedStatus = [NSMutableString stringWithFormat:@"%ld message left", (long)remaining];
+    }
+    
+    
+    NSDictionary *userInfo1 = [NSDictionary dictionaryWithObject:messageProcessedStatus forKey:@"messageProcessedStatus"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"messageFetched" object:nil userInfo:userInfo1];
+    
+}
 
 @end

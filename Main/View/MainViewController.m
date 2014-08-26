@@ -68,8 +68,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactEditorBack:) name:@"contactEditCanceled" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onProcessContacts:) name:@"processContacts" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onContactsCreated:) name:@"contactsProcessed" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onMessageFetched:) name:@"messagesFetched" object:nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"messagesFetched" object:nil userInfo:nil];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if(![defaults objectForKey:@"profileId"]) {
@@ -426,10 +424,6 @@
     NSMutableArray *contacts = [[notification userInfo] valueForKey:@"contacts"];
     [contactsView addContactsData:contacts];
     [todayView fetchWeather];
-}
-
--(void) onMessageFetched:(NSNotification *)notification {
-    [conversationsView reloadConversations];
 }
 
 -(void)onFinishedShowingContactEditorFromSearch:(NSString *)animationId finished:(NSNumber *)finished context:(void *)context {

@@ -20,6 +20,8 @@
 @property (nonatomic, strong) NSMutableArray *relationships;
 @property (nonatomic, strong) NSString *personImage;
 @property (nonatomic, strong) NSString *personBigImage;
+@property (nonatomic, strong) NSString *conversationSummaryProfileImage;
+@property (nonatomic, strong) NSString *messageProfileImage;
 @property (nonatomic, assign) NSNumber *numberOfConversations;
 
 @end

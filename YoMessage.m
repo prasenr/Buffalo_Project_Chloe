@@ -9,6 +9,7 @@
 #import "YoMessage.h"
 #import "MessageBodyModel.h"
 #import "NSObject+PersonModel.h"
+#import "NSObject+TodaySummary_Controller.h"
 
 @implementation YoMessage: MTLModel
 
@@ -24,7 +25,7 @@
              @"body"                    :   @"body",
              @"messageBodies"           :   @"messageBodies",
              @"boundary"                :   @"boundary",
-             @"froms"                   :   @"froms",
+             @"from"                   :   @"from",
              @"messageStatus"           :   @"messageStatus"
  
              };
@@ -38,22 +39,55 @@
     }];
 }
 
++ (NSValueTransformer *)fromJSONTransformer {
+    // tell Mantle to populate appActions property with an array of ChoosyAppAction objects
+    return [NSValueTransformer mtl_JSONDictionaryTransformerWithModelClass:[PersonModel class]];
+}
+
++ (NSValueTransformer *)tosJSONTransformer {
+    return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:[PersonModel class]];
+}
+
++ (NSValueTransformer *)ccsJSONTransformer {
+    return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:[PersonModel class]];
+}
+
++ (NSValueTransformer *)bccsJSONTransformer {
+    return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:[PersonModel class]];
+}
+
 + (NSValueTransformer *)messageBodiesJSONTransformer {
     return [NSValueTransformer mtl_JSONArrayTransformerWithModelClass:[MessageBodyModel class]];
 }
 
--(MessageBodyModel *)plainTextMessage {
-    int a = 0;
-    int b = [self.messageBodies count];
-    for(;a<b;a++) {
-        MessageBodyModel *possibleMessage = [self.messageBodies objectAtIndex:a];
-        if([possibleMessage.encoding isEqual: @"text"]) {
-            return possibleMessage;
+-(MessageBodyModel *)getPlainTextMessage {
+    if(!self.plainTextMessage) {
+        int a = 0;
+        int b = [self.messageBodies count ];
+        BOOL found = false;
+        for(;a<b;a++) {
+            MessageBodyModel *possibleMessage = [self.messageBodies objectAtIndex:a];
+            if(possibleMessage != [NSNull null]){
+                if([possibleMessage.encoding isEqual: @"text"]) {
+                    self.plainTextMessage =  possibleMessage;
+                    found = true;
+                }
+            } else {
+                [self.messageBodies removeObjectAtIndex:a];
+                MessageBodyModel *fakeMessage = [[MessageBodyModel alloc] init];
+                fakeMessage.encoding = [NSMutableString stringWithString:@"text"];
+                fakeMessage.message = [NSMutableString stringWithString:@"fake message"];
+                [self.messageBodies addObject:fakeMessage];
+            }
+        
         }
         
+        if(!found) {
+            self.plainTextMessage = [self.messageBodies objectAtIndex:0];
+        }
     }
     
-    return [self.messageBodies objectAtIndex:0];
+    return self.plainTextMessage;
 }
 
 /*+ (NSValueTransformer *)fromsJSONTransformer {
@@ -80,5 +114,6 @@
 +(NSValueTransformer *) messageDateJSONTransformer {
     return [self dateJSONTransformer];
 }
+
 
 @end
